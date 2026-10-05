@@ -19,3 +19,9 @@
 @keyframes orcChop{0%,16%{transform:rotate(-30deg)}36%{transform:rotate(-110deg);animation-timing-function:cubic-bezier(.7,0,1,.4)}44%,55%{transform:rotate(65deg)}70%,100%{transform:rotate(-30deg)}}
 #gameTimer{font-variant-numeric:tabular-nums;color:#ead19a;white-space:nowrap;border:1px solid #6b7054;padding:7px 10px;font-size:12px}
 @media(prefers-reduced-motion:reduce){.orc-axe{animation:none;transform:rotate(-60deg)}}
+
+/* One coordinated strike, with legs outside the upper-body animation group. */
+.orc-breathe{transform-origin:0px 78px;animation:orcAttackTorso 2.1s linear infinite}.orc-axe{animation:orcChop 2.1s linear infinite}.knight-march{animation:none}.knight-arm-sword{animation:knightIdleGrip 4s ease-in-out infinite}
+@keyframes orcAttackTorso{0%,16%,100%{transform:rotate(-5deg)}36%{transform:rotate(-13deg)}44%,55%{transform:rotate(10deg)}70%{transform:rotate(-5deg)}}
+@keyframes knightIdleGrip{0%,100%{transform:rotate(36deg)}50%{transform:rotate(37deg)}}
+@media(prefers-reduced-motion:reduce){.orc-breathe,.orc-axe,.knight-arm-sword{animation:none}}
