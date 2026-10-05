@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: windows-2022
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -24,20 +24,27 @@ jobs:
       - uses: actions/configure-pages@v5
       - name: Prepare browser game
         run: |
-          mkdir -p public
-          cp index.html game.js frontier-art.js style.css public/
-          cp -R assets public/
+          node -e "const fs=require('node:fs');fs.mkdirSync('public',{recursive:true});for(const file of ['index.html','game.js','frontier-art.js','style.css'])fs.copyFileSync(file,'public/'+file);fs.cpSync('assets','public/assets',{recursive:true});"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public
   deploy:
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: windows-2022
     timeout-minutes: 15
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.retry.outputs.page_url }}
     steps:
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        continue-on-error: true
+        uses: actions/deploy-pages@v5.0.1
+      - name: Wait before retrying a failed deployment
+        if: ${{ steps.deployment.outcome == 'failure' }}
+        shell: bash
+        run: sleep 15
+      - name: Retry deployment once
+        if: ${{ steps.deployment.outcome == 'failure' }}
+        id: retry
+        uses: actions/deploy-pages@v5.0.1
