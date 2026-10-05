@@ -22,8 +22,10 @@ function train(b,type){const d=units[type];if(type==='worker'&&workerCount(b.own
 function upgrade(b,key){const p=state.players[b.owner],level=key==='stronghold'?(b.level||1):p[key]||0;if(key==='fire'&&(p.faction!=='human'||b.type!=='armory')||key==='stronghold'&&b.type!=='base'||key==='capacity'&&b.type!=='mill')return;if(b.construction||b.research||state.entities.some(e=>e.owner===b.owner&&e.research?.key===key)){if(b.owner===0)toast('Construction or this upgrade is already in progress.');return;}if(level>=(key==='fire'?1:key==='stronghold'?4:3))return;const required=['fire','stronghold'].includes(key)?1:level+1;if(strongholdLevel(b.owner)<required){if(b.owner===0)toast('Requires Stronghold level '+required+'.');return;}const cost=researchPrice(key,level);if(pay(b.owner,cost.gold,cost.wood)){b.research={key,level:level+1,total:cost.time,left:cost.time,gold:cost.gold,wood:cost.wood};updateUI();}}
 
 function build(type,x,y,owner=0,append=false){const d=buildings[type],workers=state.entities.filter(e=>e.owner===owner&&e.type==='worker'&&e.hp>0&&(owner!==0||selected.includes(e)));if(!workers.length){if(owner===0)toast('Select a living collector to construct buildings.');return false;}if(x<d.size||y<d.size||x>SIZE-d.size||y>SIZE-d.size)return false;if((state.mountains||[]).some(m=>Math.abs(m.x-x)<m.half+d.size&&Math.abs(m.y-y)<m.half+d.size)){if(owner===0)toast('Cannot build in the mountains.');return false;}if(type==='wall'){x=Math.floor(x/32)*32+16;y=Math.floor(y/32)*32+16;}if(owner===0&&!visible(x,y)){toast('Build within explored, visible territory.');return false;}if(type==='wall'&&state.entities.some(e=>!e.building&&e.type!=='air'&&e.hp>0&&Math.abs(e.x-x)<16+e.size&&Math.abs(e.y-y)<16+e.size)){if(owner===0)toast('Move ground troops out of the wall construction area.');return false;}if(state.entities.some(e=>e.building&&Math.hypot(e.x-x,e.y-y)<(type==='wall'&&e.type==='wall'?31:e.size+d.size+25))||state.resources.some(e=>e.amount>0&&Math.hypot(e.x-x,e.y-y)<d.size+20)){if(owner===0)toast('Construction area is blocked.');return false;}if(pay(owner,d.gold,d.wood)){const b=entity(type,owner,x,y,true);b.construction={total:buildTimes[type],left:buildTimes[type],active:false};b.hp=b.max*.2;const worker=workers.sort((a,b)=>(a.tasks?.length||0)-(b.tasks?.length||0)||Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y))[0];assignBuilder(worker,b,append||worker.order?.kind==='build');return true;}return false;}
+function formatGameTime(seconds){const elapsed=Math.max(0,Math.floor(seconds));return String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0');}
 function updateUI(){
  if(!state)return;selected=selected.filter(e=>e.hp>0);const p=state.players[0],e=selected[0];
+ $('gameTimer').textContent=formatGameTime(state.time);
  $('resources').innerHTML=`<span>◆ <b>${Math.floor(p.gold)}</b> gold</span><span>♣ <b>${Math.floor(p.wood)}</b> lumber</span><span>⚑ ${state.entities.filter(e=>e.owner===0&&!e.building).length} troops</span><span>♟ ${state.entities.filter(e=>e.owner===0&&e.type==='worker').length}/${workerLimit(0)} collectors</span>`;
  $('selectionTitle').textContent=e?(selected.length>1?selected.length+(selected.every(s=>s.building)?' buildings':' units'):e.building?buildings[e.type].name:names[p.faction][e.type]):'Your command awaits';
  $('selectionInfo').textContent=e?`${Math.ceil(e.hp)} / ${e.max} health${e.type==='base'?' · Stronghold level '+(e.level||1):''}${e.construction?' · Under construction':''}`:'Select units, choose Move, then left-click the destination.';
@@ -173,7 +175,7 @@ function drawBuilding(e,p,horde){
  if(e.type==='base'){for(const sign of [-1,1]){ctx.fillStyle=horde?'#776448':'#929f91';ctx.fillRect(sign*s-8,-s*.8,16,s*1.5);ctx.fillStyle=horde?'#bcb08b':'#c8cbb2';for(let i=0;i<3;i++)ctx.fillRect(sign*s-9+i*7,-s*.92,5,7);ctx.fillStyle='#25382d';ctx.fillRect(sign*s-2,-s*.4,4,9);}}
  if(e.type==='barracks'){ctx.strokeStyle='#e0d1a3';ctx.lineWidth=2;for(const sign of [-1,1]){ctx.beginPath();ctx.moveTo(-9*sign,-s*.6);ctx.lineTo(9*sign,-s*1.1);ctx.stroke();}}
  ctx.strokeStyle='#e0c790';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(s*.65,-s*.4);ctx.lineTo(s*.65,-s*1.9);ctx.stroke();ctx.fillStyle=p.color;ctx.beginPath();ctx.moveTo(s*.65,-s*1.9);ctx.quadraticCurveTo(s*.65+14,-s*1.8+Math.sin(t*3+e.id)*3,s*.65+26,-s*1.78);ctx.lineTo(s*.65+22,-s*1.55);ctx.quadraticCurveTo(s*.65+12,-s*1.64+Math.sin(t*3+e.id)*3,s*.65,-s*1.65);ctx.fill();
- facilityDetails(e,p,horde);ctx.fillStyle='#e2dbc0';ctx.textAlign='center';ctx.font='9px Inter, sans-serif';ctx.fillText(buildings[e.type].name,0,s+16);
+ buildingMaterials(e,p,horde);facilityDetails(e,p,horde);ctx.fillStyle='#e2dbc0';ctx.textAlign='center';ctx.font='9px Inter, sans-serif';ctx.fillText(buildings[e.type].name,0,s+16);
 }
 
 const directionFrames=[
@@ -237,6 +239,10 @@ function drawUnit3D(e,p,horde){
  const armor=['melee','hero'].includes(e.type);box(0,10+offset,0,14,14,9,armor?steel:e.type==='worker'?'#a88a5c':p.color);box(0,10+offset,5,8,13,1,p.color);box(0,12+offset,0,15,2,10,leather);box(0,12+offset,6,3,2,1,'#ebc66f');
  for(const side of [-1,1]){sphere(side*9,23+offset,0,4,3,4,armor?steel:skin);if(armor)for(let n=0;n<3;n++)sphere(side*6,16+n*3+offset,5,1,1,1,'#e0d3a0');}
  if(['hero','sniper'].includes(e.type)){box(0,9+offset,-6,15,14,1,e.type==='hero'?'#425e79':'#394b3d');rod([-6,10+offset,-7],[-6,23+offset,-7],.6,'#d4bd7a');rod([6,10+offset,-7],[6,23+offset,-7],.6,'#d4bd7a');}
+ // Raised seams, layered plates, leather straps and metal fasteners.
+ rod([-6,24+offset,5],[5,13+offset,5],.8,leather);box(0,20+offset,6,2,2,1,'#e0bf78');
+ for(const side of [-1,1]){box(side*6,13+offset,5,1,9,1,armor?'#d0dce0':'#c9ad79');sphere(side*5,24+offset,5,.8,.8,.8,'#ead7a3');box(side*4,5+offset,gait*side*4+5,4,3,1,armor?steel:leather);}
+ if(armor){for(let n=0;n<3;n++)box(0,15+n*2+offset,5,10,1,1,'#697f85');box(0,23+offset,6,4,2,1,'#e6ca80');}
  sphere(0,30+offset,0,horde?7:6,7,6,skin);sphere(-2.5,31+offset,5,1,1,1,'#1b2d25');sphere(2.5,31+offset,5,1,1,1,'#1b2d25');box(0,28+offset,6,3,1,1,'#8c5f42');
  if(horde){mesh([[-5,32+offset,0],[-13,34+offset,0],[-6,28+offset,1],[5,32+offset,0],[13,34+offset,0],[6,28+offset,1]],[[0,1,2],[3,5,4]],skin);for(const x of [-4,4])rod([x,27+offset,5],[x,30+offset,7],.8,'#e6dabb');}
  if(armor){sphere(0,35+offset,-1,7,4,6,steel);box(0,36+offset,0,2,5,9,'#d1caa8');}else if(e.type==='worker'){box(0,35+offset,0,15,1,13,'#c4ac6c');box(0,36+offset,0,10,3,9,'#a5925c');box(0,18+offset,-7,9,9,4,leather);}else if(e.type==='sniper'){sphere(0,34+offset,-2,7,6,6,'#394b3d');}
@@ -314,4 +320,35 @@ function drawConstruction(e){const s=e.size,c=e.construction,progress=1-c.left/c
  for(let i=0;i<4;i++){ctx.fillStyle=i%2?'#aa8c57':'#857958';ctx.fillRect(-s-20+i%2*8,s*.4+Math.floor(i/2)*5,7,4);}ctx.strokeStyle='#a3b592';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(s+18,s);ctx.lineTo(s+18,-s*.6);ctx.stroke();
  ctx.fillStyle='#15251e';ctx.fillRect(-s,-s*1.3-10,s*2,6);ctx.fillStyle='#d7b66a';ctx.fillRect(-s,-s*1.3-10,s*2*progress,6);ctx.fillStyle='#e3d4ab';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText(buildings[e.type].name+' · '+Math.ceil(c.left)+'s'+(c.active?'':' · waiting'),0,s+18);
  if(c.active){ctx.strokeStyle='#ecc985';ctx.lineWidth=1;for(let i=0;i<3;i++){const x=s*Math.sin(state.time*5+i),y=4+Math.cos(state.time*4+i)*8;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+3,y-4);ctx.stroke();}}
+}
+
+// Stable material variation keeps masonry and timber detailed without flicker.
+function buildingMaterials(e,p,horde){
+ const s=e.size;
+ ctx.save();
+ // Mortar, weathering, and highlights along individual wall courses.
+ for(let row=0;row<7;row++)for(let col=0;col<5;col++){
+  const x=-s+col*s*.4+(row%2?s*.12:0),y=-s*.6+row*s*.16;
+  const grain=(e.id*13+row*17+col*11)%7;
+  ctx.fillStyle=horde?['#d2aa6622','#251e2222','#e7c38322'][grain%3]:['#eef3d522','#263a3522','#afbaa822'][grain%3];
+  ctx.fillRect(x+2,y+2,Math.min(s*.34,s-x-2),s*.11);
+  ctx.fillStyle='#eee1b722';ctx.fillRect(x+2,y+1,Math.min(s*.34,s-x-2),1);
+ }
+ // Timber buttresses or stone quoins ground the front facade.
+ for(const side of [-1,1]){const x=side*(s-5);ctx.fillStyle=horde?'#473321':'#c4c7b0';ctx.fillRect(x-3,-s*.63,6,s*1.23);ctx.fillStyle=horde?'#bf955d':'#e4e3c8';ctx.fillRect(x-3,-s*.63,1,s*1.23);if(horde){ctx.strokeStyle='#d1ae71';ctx.lineWidth=1;for(let y=-s*.5;y<s*.5;y+=10){ctx.beginPath();ctx.moveTo(x-3,y);ctx.lineTo(x+3,y+3);ctx.stroke();}}else{ctx.strokeStyle='#586a60';for(let y=-s*.6;y<s*.6;y+=9){ctx.beginPath();ctx.moveTo(x-3,y);ctx.lineTo(x+3,y);ctx.stroke();}}}
+ // Roof edge casts a contact shadow on the wall.
+ ctx.fillStyle='#101a2166';ctx.fillRect(-s,-s*.64,s*2,4);
+ ctx.strokeStyle=horde?'#c18c55':'#91acaf';ctx.lineWidth=1;
+ for(let i=1;i<9;i++){const f=i/9;ctx.beginPath();ctx.moveTo(-s*(1-f),-s*.65);ctx.lineTo(-s*(1-f)*.5,-s*(.65+.85*f));ctx.stroke();}
+ // Iron door straps, hinges, recessed entry, and paved doorstep.
+ ctx.fillStyle='#111b2466';ctx.fillRect(-9,-2,18,3);ctx.fillStyle='#384441';for(const y of [s*.15,s*.45]){ctx.fillRect(-6,y,12,2);ctx.fillStyle='#d6be89';ctx.fillRect(-5,y,1,1);ctx.fillRect(4,y,1,1);ctx.fillStyle='#384441';}
+ for(let i=0;i<4;i++){ctx.fillStyle=i%2?'#9b9c82':'#b6b598';ctx.fillRect(-15+i*8,s*.78,7,5);}
+ // Lamps, storage, and distinct extensions identify each facility from its silhouette.
+ if(['base','barracks','armory'].includes(e.type)){for(const side of [-1,1]){ctx.fillStyle='#574432';ctx.fillRect(side*13-1,0,2,12);ctx.fillStyle='#e59b43';ctx.beginPath();ctx.ellipse(side*13,0,3,5,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffe7a2';ctx.fillRect(side*13-1,-3,2,4);}}
+ if(['forge','foundry'].includes(e.type)){ctx.fillStyle='#252b28';ctx.fillRect(-s*.7,-s*.35,s*.48,s*.65);ctx.fillStyle='#e88937';ctx.fillRect(-s*.65,-s*.26,s*.36,s*.5);ctx.fillStyle='#ffd080';ctx.fillRect(-s*.57,-s*.12,s*.15,s*.3);}
+ if(e.type==='barracks'){ctx.fillStyle=p.color;ctx.beginPath();ctx.moveTo(-s*.4,-s*.55);ctx.lineTo(-s*.15,-s*.55);ctx.lineTo(-s*.15,s*.08);ctx.lineTo(-s*.27,s*.2);ctx.lineTo(-s*.4,s*.08);ctx.closePath();ctx.fill();}
+ if(e.type==='mill'){ctx.fillStyle='#705239';ctx.fillRect(s+6,-s*.4,24,s*.9);ctx.fillStyle='#b59463';ctx.fillRect(s+6,-s*.4,24,3);ctx.strokeStyle='#392f24';for(let i=0;i<4;i++)ctx.strokeRect(s+8+i*5,-s*.3,4,s*.7);}
+ if(e.type==='roost'){ctx.strokeStyle='#ceb47a';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,-s*.9,s*.85,9,0,0,Math.PI*2);ctx.stroke();for(let i=0;i<7;i++){const x=-s*.65+i*s*.22;ctx.beginPath();ctx.moveTo(x,-s*.86);ctx.lineTo(x+7,-s*.72);ctx.stroke();}}
+ if(e.type==='altar'){ctx.strokeStyle=p.color;ctx.lineWidth=1;ctx.beginPath();ctx.arc(0,-s*.85,s*.26,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(-s*.22,-s*.85);ctx.lineTo(s*.22,-s*.85);ctx.moveTo(0,-s*1.07);ctx.lineTo(0,-s*.63);ctx.stroke();}
+ ctx.restore();
 }
