@@ -5,7 +5,7 @@ A dependency-free 2D browser RTS. Run `npm start`, then open the served game on 
 
 Choose the human **Dawnward** or the orc/troll **The Dominion**, customize banners, and play against one or two AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
 
-Click or drag to select friendly units. Shift-click adds to selection. **Right-click** the map to move selected units. Choose **Move** (or press **M**) and right-click to force movement even when pointing at a target. Left-click selects units and never issues movement. Use **Attack / gather** to target an enemy, resource, or construction site. Right-click an enemy to attack, a resource to gather, or a damaged Stronghold to repair. A destination ring and message confirm the order. Collectors choose buildings from the separate right-hand construction sidebar. Buildings begin as construction sites and require a nearby collector until completed. Finished production buildings train units through timed queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
+Click or drag to select friendly units. Shift-click adds to selection. **Right-click** the map to move selected units. Choose **Move** (or press **M**) and right-click to force movement even when pointing at a target. Left-click selects units and never issues movement. Use **Attack / gather** to target an enemy, resource, or construction site. Right-click an enemy to attack, a resource to gather, or a damaged Stronghold to repair. A destination ring and message confirm the order. Collectors choose buildings from the right-hand construction section. Buildings begin as construction sites and require a nearby collector until completed. Finished production buildings train units through timed queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
 
 - Stronghold: collectors.
 - Infantry Lodge: durable melee, balanced ranged, and fragile high-damage ranged infantry.
@@ -131,8 +131,8 @@ Facility artwork now uses continuous shaded roof planes, clean masonry courses, 
 
 Battlefield and terrain rendering use **2× resolution on each axis**, giving four times the rendered pixels at the same map scale. Frontier artwork now uses **144×192 pixels per frame** instead of 96×128 (2.25× the pixels), with **16 frames** per animation instead of eight. Eight facing directions are retained. WebP sheets reduce download size while preserving transparency.
 
-The command panel and construction catalog are independent panels. Unit commands stay visible while peasants browse buildings. The field manual is now under **Settings → Controls**, accessible from the main menu or during play. Selected heroes display their aura's effect, percentage, radius, and troop-only restriction.
+The command panel and construction catalog are independent panels. Unit commands stay visible while peasants browse buildings. The field manual has been removed. Selected heroes display their aura's effect, percentage, radius, and troop-only restriction.
 
 **Stop** activates on press and puts selected troops into a persistent idle state, clearing attack targets, animation, movement and queued tasks. **X** is its keyboard shortcut. Infantry stop damaging building targets; a new order releases the idle state. Shift orders on stopped troops execute immediately.
 
-Worker commands stay in the bottom command bar. Construction choices appear in a separate right-hand battlefield sidebar when workers are selected. Open **Settings → Controls** from the main menu or game header for the field manual.
+When peasants are selected, their bottom action panel shows commands on the left and construction choices on the right, separated by a vertical gold line. The field manual has been removed.
