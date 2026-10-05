@@ -30,3 +30,9 @@ The game runs directly in a browser; GitHub Pages does not need Node.js.
 4. When deployment completes, open **https://cardiacx-hub.github.io/Civ2/** to play.
 
 For local play, run `npm start` and visit `http://localhost:3000`.
+
+## Unit artwork and rally points
+
+Units have faction-specific armor, leather details, weapons, walking cycles, and flying mounts with animated wings. Collectors swing axes while chopping lumber and pickaxes while mining gold. Melee units swing their weapons; ranged units fire arrows, spears, bullets, or magical bolts; siege engines recoil or launch rocks. Animations pause with the simulation.
+
+Select a Stronghold, Infantry Lodge, Siege Works, Sky Roost, or Hero Sanctum and choose **Set rally point**, then click the destination. Right-clicking with a production building selected also sets its rally point. A flag and dashed line identify the destination while the building is selected. Newly trained units automatically move there. A Stronghold rallied to a visible tree or gold deposit assigns its new collectors to gather that resource. **Clear rally point** restores spawning beside the building. Existing units keep their current orders.
