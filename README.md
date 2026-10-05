@@ -5,7 +5,7 @@ A dependency-free 2D browser RTS. Run `npm start`, then open the served game on 
 
 Choose the human **Dawnward** or the orc/troll **Ashfang Horde**, customize banners, and play against one or two AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
 
-Click or drag to select friendly units. Shift-click adds to selection. Right-click to move, attack an enemy, or assign collectors to lumber and gold. Collectors construct buildings from the command panel. Buildings appear immediately and train units through timed production queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
+Click or drag to select friendly units. Shift-click adds to selection. After selecting units, click **Move / command** (or press **M**), then click ground to move, an enemy to attack, or lumber/gold to gather. Right-click also issues these orders. A destination ring and message confirm the order. Collectors construct buildings from the command panel. Buildings appear immediately and train units through timed production queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
 
 - Stronghold: collectors.
 - Infantry Lodge: durable melee, balanced ranged, and fragile high-damage ranged infantry.
