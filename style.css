@@ -4,3 +4,5 @@
 #world{touch-action:none}#actions{max-height:145px;overflow-y:auto}
 
 #workQueue{position:absolute;left:12px;top:12px;width:195px;max-height:calc(100% - 24px);overflow-y:auto;background:#13251ee8;border:1px solid #677455;padding:12px;box-shadow:0 5px 20px #0004}#workQueue .eyebrow{font-size:9px;margin-bottom:10px}.work-item{border-top:1px solid #4d5c43;padding:9px 0}.work-item b,.work-item span,.work-item small{display:block;font-size:10px}.work-item b{color:#e8d5a3}.work-item span{color:#a8b89f;margin:4px 0}.work-item small{color:#c4c6a5;margin-top:4px}.work-item progress{width:100%;height:7px;accent-color:#d9b873}.work-empty{font-size:11px;color:#a4b393}#workQueue:has(.work-empty){opacity:.8}@media(max-width:800px){#workQueue{width:150px}}
+
+.work-heading{display:flex;align-items:center;justify-content:space-between;gap:6px}.work-heading .eyebrow{margin:0!important}#queueToggle{padding:2px 6px;font-size:15px}.collapsed #workItems{display:none}#workQueue.collapsed{max-height:50px}.work-heading{margin-bottom:8px}.collapsed .work-heading{margin-bottom:0}#resources{gap:20px}

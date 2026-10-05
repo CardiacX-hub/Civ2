@@ -45,7 +45,7 @@ Detailed troop artwork includes riveted armor, leather aprons, ammunition pouche
 
 ## Group selection and scenery
 
-Double-click a friendly unit to select **all living friendly units of that exact type across the map**, including offscreen units. Shift-double-click adds that type to your current selection. Enemy entities are excluded. Double-clicking a friendly building selects all buildings of its exact type. You can click the head or body of a unit to select it.
+Double-click a friendly unit to select **all living friendly units of that exact type currently on screen**. Offscreen units are excluded. Shift-double-click adds that type to your current selection. Enemy entities are excluded. Double-clicking a friendly building selects all onscreen buildings of its exact type. You can click the head or body of a unit to select it.
 
 The battlefield features cached grass and soil textures, moss, pebbles, flowers, varied tree canopies, bark, and faceted gold deposits. Buildings feature stone or timber courses, tiled roofs, doors, windows, moving faction banners, and specialized details such as turning harvest-mill blades, glowing sanctum crystals, smoking forge chimneys, and sky-roost nests.
 
@@ -63,6 +63,15 @@ Units maintain spacing rather than stacking at a shared destination. Ground and 
 
 Select a collector and place a building site. The assigned builder travels to it and must remain nearby to advance construction; moving the builder away or losing it pauses progress. Right-click an unfinished friendly site with a collector selected to resume. Multiple wall sites queue on the assigned collector. Walls take 10 seconds each; other buildings take 30–65 seconds of on-site work. Incomplete buildings cannot train, research, attack, or block movement.
 
-Upgrades take 25, 35, or 45 seconds and apply only when finished. Duplicate research of the same upgrade is prevented. The left **Production & Work** panel lists every friendly construction site, training queue entry, active upgrade, and assigned gathering task with a progress bar and timer. Queued troops show their estimated waiting time. Construction without a nearby builder displays its paused state. Gathering timers estimate depletion at that collector's current rate; several collectors sharing a resource deplete it sooner.
+Upgrades take 25, 35, or 45 seconds and apply only when finished. Duplicate research of the same upgrade is prevented. The left **Production & Work** panel lists every friendly construction site, training queue entry, and active upgrade with a progress bar and timer. Resource gathering is excluded. Use its −/+ button to minimize or expand it. Queued troops show their estimated waiting time. Construction without a nearby builder displays its paused state.
 
-Double-left-click a friendly building to select every friendly building of that type, including offscreen buildings. Troop training commands are routed to the selected completed building with the shortest queue. Setting a rally point applies to all selected production buildings.
+Double-left-click a friendly building to select every friendly building of that type currently on screen. Troop training commands are routed to the selected completed building with the shortest queue. Setting a rally point applies to all selected production buildings.
+
+## Economy, sequential tasks, minimap orders, and fire arrows
+
+- Collectors take **20 seconds** to train. Each player has a **16-collector cap**, including collectors already queued at all Strongholds. Losses free capacity.
+- Base harvesting is **3 gold or lumber per second**, with the Harvest Guild's existing upgrades increasing the rate. A tree supports one active collector; additional collectors seek nearby free trees or wait. Gold supports multiple collectors.
+- **Shift-right-click**, or **Shift-left-click** on ground/resources/enemies with units selected, appends a task. Move waypoints finish on arrival, attacks finish when the target dies, gathering finishes when the resource runs out, and construction finishes when the site completes. Ordinary orders replace the sequence. Stop clears it. Shift placing a construction site queues it after current work.
+- Clicking the **minimap with troops selected** sends them to that map location. Shift adds the minimap destination to their sequence. Right-click works too. With no troops selected, left-click pans the camera; **Alt-left-click** always pans. Production-building rally points can also be placed through the minimap using Set rally point or right-click.
+- Snowcapped **mountain ranges** block construction and ground movement. Ground troops route around them; flying units pass over. Fog of war hides unexplored ranges, and discovered ranges appear on the minimap.
+- Human players can research **Fire arrows** at the Infantry Armory for **200 gold, 150 lumber, and 35 seconds**. Longbow Rangers then fire flaming arrows that ignite enemies for **5 damage per second for 4 seconds**. Repeated hits refresh the burn rather than stacking it. Other infantry retain their normal weapons.
