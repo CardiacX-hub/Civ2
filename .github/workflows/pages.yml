@@ -27,7 +27,8 @@ jobs:
       - name: Prepare browser game
         run: |
           mkdir -p public
-          cp index.html game.js style.css public/
+          cp index.html game.js frontier-art.js style.css public/
+          cp -R assets public/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public
