@@ -3,7 +3,7 @@
 
 A dependency-free 2D browser RTS. Run `npm start`, then open the served game on port 3000. Run `npm test` for simulation smoke tests.
 
-Choose the human **Dawnward** or the orc/troll **Ashfang Dominion**, customize banners, and play against one or two AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
+Choose the human **Dawnward** or the orc/troll **The Dominion**, customize banners, and play against one or two AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
 
 Click or drag to select friendly units. Shift-click adds to selection. After selecting units, click **Move / command** (or press **M**), then click ground to move, an enemy to attack, or lumber/gold to gather. Right-click also issues these orders. A destination ring and message confirm the order. Collectors construct buildings from the command panel. Buildings begin as construction sites and require a nearby collector until completed. Finished production buildings train units through timed queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
 
@@ -80,4 +80,4 @@ Double-left-click a friendly building to select every friendly building of that 
 
 Every player now starts with **100 gold and 100 lumber**. Base gathering has been reduced another 75%, from 3 to **0.75 resources per second**; Harvest Guild upgrades still multiply that rate. Select a collector to order it to a nearby resource. Its selection ring turns **green while actively gathering**, and returns to its normal color when traveling, waiting, or doing another task.
 
-The faction menu identifies your chosen allegiance in a banner. Dawnward's card shows an animated marching knight beneath a golden sun; the orc/troll faction is named **Ashfang Dominion** throughout the menu and opponent selectors. Menu animation respects the browser's reduced-motion preference.
+The faction menu identifies your chosen allegiance in a banner. Dawnward's card shows an animated marching knight beneath a golden sun; the orc/troll faction is named **The Dominion** throughout the menu and opponent selectors, with an armored orc carrying an axe on its menu banner. Menu animation respects the browser's reduced-motion preference.
