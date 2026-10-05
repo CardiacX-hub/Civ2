@@ -38,3 +38,14 @@
 
 .orders{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(250px,1.4fr);gap:20px;flex:1;min-width:0}.command-pane,#constructionPane{min-width:0}#constructionPane{border-left:1px solid #455344;padding-left:20px}#constructionPane[hidden]{display:none}.orders:has(#constructionPane[hidden]){grid-template-columns:1fr}#actions,#buildActions{max-height:215px;overflow:auto;margin-top:12px}.action-section button{min-width:100px}.stop-command{border-color:#c6a576;background:#553c2f}#heroAura{font-size:11px;line-height:1.45;color:#e0c58c}#heroAura:empty{display:none}.menu-controls{max-width:1000px;border-top:1px solid #4f5b45;padding-top:22px;margin-top:26px}.menu-controls h2{font:700 22px Georgia,serif;color:#e2c585}.menu-controls>div{display:grid;grid-template-columns:1fr 1fr;gap:8px 30px}.menu-controls p{font-size:12px;line-height:1.7;color:#b4c3ad}.menu-controls b{display:block;color:#e5d0a1}.selection{min-width:230px} @media(max-width:950px){.orders{gap:10px;grid-template-columns:1fr 1fr}#constructionPane{padding-left:10px}.menu-controls>div{grid-template-columns:1fr}}
 #buildActions button{font-size:11px;padding:9px;min-width:100px;text-align:left}#buildActions small{display:block;color:#b4bba1;margin-top:4px;font-size:9px;line-height:1.4}#buildActions .build-action{min-width:160px}
+
+/* Separate battlefield construction from the bottom command bar. */
+.orders{display:block}.command-pane{height:100%}
+#constructionPane{position:absolute;right:12px;top:12px;width:300px;max-height:calc(100% - 24px);overflow:auto;z-index:3;border:1px solid #b39964;border-radius:6px;padding:16px;background:#14251bf5;box-shadow:0 8px 25px #0007}
+#constructionPane[hidden]{display:none}.construction-heading{border-bottom:1px solid #53634b;padding-bottom:12px;color:#e2c585}.construction-heading small{display:block;margin-top:7px;font-size:11px;color:#b4c3ad}
+#buildActions{max-height:none;overflow:visible}#buildActions .build-action{width:100%;flex:none}
+#openSettings{margin-left:12px;padding:16px 24px}
+#settingsDialog{width:min(700px,calc(100vw - 32px));max-height:85vh;overflow:auto;background:#14251b;color:#e6e5cf;border:1px solid #b39964;border-radius:8px;padding:24px}
+#settingsDialog::backdrop{background:#071310cc}.settings-heading{display:flex;align-items:center;justify-content:space-between;gap:20px}.settings-heading h2{font:700 28px Georgia,serif;margin:0 0 18px}.settings-tab{background:#49503a;border-color:#b39964;color:#efd299}
+#settingsDialog .menu-controls{margin-top:18px;padding-top:12px}#settingsDialog .menu-controls>div{grid-template-columns:1fr}
+@media(max-width:700px){#constructionPane{width:240px;padding:10px}#openSettings{margin-left:0;margin-top:12px}}
