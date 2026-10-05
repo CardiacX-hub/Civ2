@@ -16,7 +16,7 @@ Click or drag to select friendly units. Shift-click adds to selection. After sel
 - Infantry Armory: three infantry attack and armor upgrades.
 - Artillery Foundry: three artillery damage upgrades.
 
-The unexplored map stays hidden. Explored areas dim outside friendly sight; enemies only appear when currently visible, with red dots on the minimap. AI collects, constructs, trains, upgrades, and attacks after building an army. This prototype has direct movement without obstacle pathfinding; flying units have distinctive visuals and faster movement, and all combat units can attack air targets. Resources are credited while collectors gather rather than transported to base.
+The unexplored map stays hidden. Explored areas dim outside friendly sight; enemies only appear when currently visible, with red dots on the minimap. AI collects, constructs, trains, upgrades, and attacks after building an army. Ground units route around walls; other scenery uses direct movement; flying units have distinctive visuals and faster movement, and all combat units can attack air targets. Resources are credited while collectors gather rather than transported to base.
 
 No accounts, secrets, external services, or build step are required.
 
@@ -48,3 +48,11 @@ Detailed troop artwork includes riveted armor, leather aprons, ammunition pouche
 Double-click a friendly unit to select **all living friendly units of that exact type across the map**, including offscreen units. Shift-double-click adds that type to your current selection. Enemies and buildings are excluded. You can click the head or body of a unit to select it.
 
 The battlefield features cached grass and soil textures, moss, pebbles, flowers, varied tree canopies, bark, and faceted gold deposits. Buildings feature stone or timber courses, tiled roofs, doors, windows, moving faction banners, and specialized details such as turning harvest-mill blades, glowing sanctum crystals, smoking forge chimneys, and sky-roost nests.
+
+## Directional poses, attack targeting, and walls
+
+Troops use eight distinct directional frames (N, NE, E, SE, S, SW, W, NW) with front, profile, and back views, different head and equipment positions, and weapons angled toward their facing. Turning updates these poses during movement, gathering, and attacks.
+
+With troops selected, click an enemy to attack, or use the Move / command button and click an enemy. Right-click also works. Hovered enemies and active attack targets show red rings; confirmed attack orders have a red destination marker. Targets remain marked while selected troops attack them and the enemy is visible.
+
+Collectors can build **Wall** segments for 15 gold and 35 lumber each. Human walls have stone battlements; Horde walls have spiked timber. Placement snaps to a 32-unit grid and stays active for consecutive segments; press Escape to finish. Each segment has 700 health and can be destroyed. Walls block ground troops of every faction; ground troops find paths around them, while flying troops pass over. Leave gaps for access—fully enclosed areas cannot be reached by ground troops until a wall is destroyed. Ranged weapons can fire over walls.
