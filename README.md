@@ -5,7 +5,7 @@ A dependency-free 2D browser RTS. Run `npm start`, then open the served game on 
 
 Choose the human **Dawnward** or the orc/troll **Ashfang Horde**, customize banners, and play against one or two AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
 
-Click or drag to select friendly units. Shift-click adds to selection. After selecting units, click **Move / command** (or press **M**), then click ground to move, an enemy to attack, or lumber/gold to gather. Right-click also issues these orders. A destination ring and message confirm the order. Collectors construct buildings from the command panel. Buildings appear immediately and train units through timed production queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
+Click or drag to select friendly units. Shift-click adds to selection. After selecting units, click **Move / command** (or press **M**), then click ground to move, an enemy to attack, or lumber/gold to gather. Right-click also issues these orders. A destination ring and message confirm the order. Collectors construct buildings from the command panel. Buildings begin as construction sites and require a nearby collector until completed. Finished production buildings train units through timed queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
 
 - Stronghold: collectors.
 - Infantry Lodge: durable melee, balanced ranged, and fragile high-damage ranged infantry.
@@ -45,14 +45,24 @@ Detailed troop artwork includes riveted armor, leather aprons, ammunition pouche
 
 ## Group selection and scenery
 
-Double-click a friendly unit to select **all living friendly units of that exact type across the map**, including offscreen units. Shift-double-click adds that type to your current selection. Enemies and buildings are excluded. You can click the head or body of a unit to select it.
+Double-click a friendly unit to select **all living friendly units of that exact type across the map**, including offscreen units. Shift-double-click adds that type to your current selection. Enemy entities are excluded. Double-clicking a friendly building selects all buildings of its exact type. You can click the head or body of a unit to select it.
 
 The battlefield features cached grass and soil textures, moss, pebbles, flowers, varied tree canopies, bark, and faceted gold deposits. Buildings feature stone or timber courses, tiled roofs, doors, windows, moving faction banners, and specialized details such as turning harvest-mill blades, glowing sanctum crystals, smoking forge chimneys, and sky-roost nests.
 
 ## Directional poses, attack targeting, and walls
 
-Troops use eight distinct directional frames (N, NE, E, SE, S, SW, W, NW) with front, profile, and back views, different head and equipment positions, and weapons angled toward their facing. Turning updates these poses during movement, gathering, and attacks.
+Troops are now polygon-based 3D models, projected into the 2D battlefield with directional lighting and depth-sorted faces. Their bodies rotate continuously, including all eight compass directions. Articulated limbs and equipment animate during movement, work, and attacks.
 
 With troops selected, click an enemy to attack, or use the Move / command button and click an enemy. Right-click also works. Hovered enemies and active attack targets show red rings; confirmed attack orders have a red destination marker. Targets remain marked while selected troops attack them and the enemy is visible.
 
 Collectors can build **Wall** segments for 15 gold and 35 lumber each. Human walls have stone battlements; Horde walls have spiked timber. Placement snaps to a 32-unit grid and stays active for consecutive segments; press Escape to finish. Each segment has 700 health and can be destroyed. Walls block ground troops of every faction; ground troops find paths around them, while flying troops pass over. Leave gaps for access—fully enclosed areas cannot be reached by ground troops until a wall is destroyed. Ranged weapons can fire over walls.
+
+## Construction, spacing, and the global work queue
+
+Units maintain spacing rather than stacking at a shared destination. Ground and air units occupy separate movement layers. Group commands use spaced formation destinations.
+
+Select a collector and place a building site. The assigned builder travels to it and must remain nearby to advance construction; moving the builder away or losing it pauses progress. Right-click an unfinished friendly site with a collector selected to resume. Multiple wall sites queue on the assigned collector. Walls take 10 seconds each; other buildings take 30–65 seconds of on-site work. Incomplete buildings cannot train, research, attack, or block movement.
+
+Upgrades take 25, 35, or 45 seconds and apply only when finished. Duplicate research of the same upgrade is prevented. The left **Production & Work** panel lists every friendly construction site, training queue entry, active upgrade, and assigned gathering task with a progress bar and timer. Queued troops show their estimated waiting time. Construction without a nearby builder displays its paused state. Gathering timers estimate depletion at that collector's current rate; several collectors sharing a resource deplete it sooner.
+
+Double-left-click a friendly building to select every friendly building of that type, including offscreen buildings. Troop training commands are routed to the selected completed building with the shortest queue. Setting a rally point applies to all selected production buildings.
