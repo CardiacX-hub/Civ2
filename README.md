@@ -5,13 +5,13 @@ A dependency-free 2D browser RTS. Run `npm start`, then open the served game on 
 
 Choose the human **Dawnward** or the orc/troll **The Dominion**, customize banners, and play against one or two AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
 
-Click or drag to select friendly units. Shift-click adds to selection. After selecting units, click **Move / command** (or press **M**), then click ground to move, an enemy to attack, or lumber/gold to gather. Right-click also issues these orders. A destination ring and message confirm the order. Collectors construct buildings from the command panel. Buildings begin as construction sites and require a nearby collector until completed. Finished production buildings train units through timed queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
+Click or drag to select friendly units. Shift-click adds to selection. After selecting units, click **Move** (or press **M**), then **left-click** the map to move. This mode accepts only left-click destinations. Use **Attack / gather** to target an enemy, resource, or construction site. Right-click issues contextual orders outside Move mode. A destination ring and message confirm the order. Collectors construct buildings from the command panel. Buildings begin as construction sites and require a nearby collector until completed. Finished production buildings train units through timed queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
 
 - Stronghold: collectors.
 - Infantry Lodge: durable melee, balanced ranged, and fragile high-damage ranged infantry.
 - Siege Works: slow artillery with splash damage.
 - Sky Roost: fast flying units.
-- Hero Sanctum: one unique faction hero. Dawnward Sun Marshal grants 30% damage reduction within 190 units. Ashfang Stormcaller grants 30% attack damage within 190 units.
+- Hero Sanctum: one unique faction hero. Dawnward Sun Marshal grants 30% damage reduction within 190 units. Dominion Stormcaller grants 30% attack damage within 190 units.
 - Harvest Guild: three gathering-speed upgrades.
 - Infantry Armory: three infantry attack and armor upgrades.
 - Artillery Foundry: three artillery damage upgrades.
@@ -53,7 +53,7 @@ The battlefield features cached grass and soil textures, moss, pebbles, flowers,
 
 Troops are now polygon-based 3D models, projected into the 2D battlefield with directional lighting and depth-sorted faces. Their bodies rotate continuously, including all eight compass directions. Articulated limbs and equipment animate during movement, work, and attacks.
 
-With troops selected, click an enemy to attack, or use the Move / command button and click an enemy. Right-click also works. Hovered enemies and active attack targets show red rings; confirmed attack orders have a red destination marker. Targets remain marked while selected troops attack them and the enemy is visible.
+With troops selected, click an enemy to attack, or use the Attack / gather button and click an enemy. Right-click also works. Hovered enemies and active attack targets show red rings; confirmed attack orders have a red destination marker. Targets remain marked while selected troops attack them and the enemy is visible.
 
 Collectors can build **Wall** segments for 15 gold and 35 lumber each. Human walls have stone battlements; Dominion walls have spiked timber. Placement snaps to a 32-unit grid and stays active for consecutive segments; press Escape to finish. Each segment has 700 health and can be destroyed. Walls block ground troops of every faction; ground troops find paths around them, while flying troops pass over. Leave gaps for access—fully enclosed areas cannot be reached by ground troops until a wall is destroyed. Ranged weapons can fire over walls.
 
@@ -69,7 +69,7 @@ Double-left-click a friendly building to select every friendly building of that 
 
 ## Economy, sequential tasks, minimap orders, and fire arrows
 
-- Collectors take **20 seconds** to train. Each player has a **16-collector cap**, including collectors already queued at all Strongholds. Losses free capacity.
+- Collectors take **10 seconds** to train. Each player begins with a **16-collector cap**, including collectors already queued at all Strongholds. Harvest Guild capacity research adds four slots per tier, up to 28. Losses free capacity.
 - Base harvesting is **0.75 gold or lumber per second**, with the Harvest Guild's existing upgrades increasing the rate. A tree supports one active collector; additional collectors seek nearby free trees or wait. Gold supports multiple collectors.
 - **Shift-right-click**, or **Shift-left-click** on ground/resources/enemies with units selected, appends a task. Move waypoints finish on arrival, attacks finish when the target dies, gathering finishes when the resource runs out, and construction finishes when the site completes. Ordinary orders replace the sequence. Stop clears it. Shift placing a construction site queues it after current work.
 - Clicking the **minimap with troops selected** sends them to that map location. Shift adds the minimap destination to their sequence. Right-click works too. With no troops selected, left-click pans the camera; **Alt-left-click** always pans. Production-building rally points can also be placed through the minimap using Set rally point or right-click.
@@ -83,3 +83,16 @@ Every player now starts with **100 gold and 100 lumber**. Base gathering has bee
 The faction menu identifies your chosen allegiance in a banner. Dawnward's card shows an animated, attack-ready knight beneath a golden sun; the orc/troll faction is named **The Dominion** throughout the menu and opponent selectors, with an armored orc carrying an axe on its menu banner. Menu animation respects the browser's reduced-motion preference.
 
 The menu portraits use larger, layered artwork with armor plates, chainmail, rivets, engraved weapons, weathering, heraldry, and facial details. The knight braces behind his shield with his sword ready; the orc snarls and brandishes a raised axe. Both characters shift their weight and move their weapons continuously, with animated cloth and drifting particles. Reduced-motion settings preserve static combat poses.
+
+
+## Battlefields, progression, and production controls
+
+After faction selection, choose **Shattered Highlands**, **Frostbound Frontier**, or **Ember Canyon**. Each has different terrain colors and mountain positions. Players receive shuffled corner starting locations every match; the camera begins at your own Stronghold.
+
+Strongholds can be upgraded **three times**, from level 1 through level 4, gaining health and visible tower details. Tier 2 research requires a completed level 2 Stronghold; tier 3 requires level 3. These requirements also apply to Harvest Guild collector-capacity research.
+
+Use **Cancel** beside a training or research job in the Production & Work panel to stop it and receive its full gold and lumber cost back. Other queued units remain in order.
+
+Selecting a character displays damage, attack range, speed, armor, attack interval, and vision, plus gathering rates or researched fire-arrow effects where applicable. Collector construction buttons include small building illustrations. Buildings feature shaded side walls, roof depth, masonry, and equipment specific to their purpose. Construction sites progress through foundations, walls, scaffolds, and roof timbers with material piles, builder effects, and timers.
+
+The menu Dominion warrior actively swings a sharp spiked axe; the Dawnward knight holds a planted combat stance. Reduced-motion settings disable menu animation.
