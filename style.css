@@ -29,8 +29,8 @@
 /* Frontier's actual character artwork, rendered from its 3D models. */
 .dawnward-art .knight-march,.ashfang-art .orc-breathe{visibility:hidden}.ashfang-art svg>g>path{visibility:hidden}
 .frontier-menu-model{position:absolute;z-index:1;left:50%;top:-22px;margin-left:-96px;width:192px;height:256px;background-size:3072px 6144px;background-repeat:no-repeat;pointer-events:none;filter:drop-shadow(0 8px 5px #07151377)}
-.frontier-menu-knight{background-image:url('assets/frontier-knight.webp');background-position:0 -512px}
-.frontier-menu-orc{background-image:url('assets/frontier-orc.webp');background-position:0 -4608px;animation:frontierMenuChop 1.8s steps(16) infinite}
+.frontier-menu-knight{background-image:url('assets/frontier-knight.webp?v=20261005-battalion');background-position:0 -512px}
+.frontier-menu-orc{background-image:url('assets/frontier-orc.webp?v=20261005-battalion');background-position:0 -4608px;animation:frontierMenuChop 1.8s steps(16) infinite}
 @keyframes frontierMenuChop{from{background-position:0 -4608px}to{background-position:-3072px -4608px}}
 @media(prefers-reduced-motion:reduce){.frontier-menu-orc{animation:none}}
 
@@ -47,3 +47,7 @@
 #constructionPane[hidden]{display:none}.construction-heading strong{font-size:10px;letter-spacing:2px;color:#d9b873}.construction-heading small{display:block;font-size:10px;color:#a9b7a9;margin-top:5px}
 #actions,#buildActions{flex:1;min-height:0;max-height:none;overflow:auto;margin-top:12px}
 @media(max-width:950px){.orders{gap:12px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#constructionPane{padding-left:12px}}
+
+footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;min-height:0}#actions{margin-top:12px;flex:1;min-width:0}#formationPane{width:150px;flex-shrink:0;border-left:1px solid #58634d;padding-left:12px;margin-top:12px;overflow:auto}#formationPane[hidden],#groupRoster[hidden]{display:none}#formationPane>small{display:block;font-size:9px;color:#b4c3ad;margin:8px 0}#formationOptions{display:grid;gap:6px}#formationOptions button{font-size:11px;text-align:left;padding:8px}.active-formation{border-color:#e6c681;background:#48543b}#groupRoster{margin-top:10px;max-height:92px;overflow:auto;border-bottom:1px solid #526052;padding-bottom:8px}.roster-type{margin-bottom:6px}.roster-type>b{font-size:10px;color:#e0c78e}.roster-type>div{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}.roster-unit{display:grid;grid-template-columns:28px 1fr;gap:2px 5px;font-size:9px;background:#20352b;padding:5px;border:1px solid #48594a;border-radius:3px}.roster-unit progress{grid-column:1/3;width:76px;height:4px}#buildActions{overflow:auto}
+
+#formationOptions{gap:4px}#formationOptions button{padding:6px;font-size:10px;line-height:12px}#groupRoster,#formationPane,#buildActions,#actions{scrollbar-color:#8b9160 #1b2c22;scrollbar-width:thin}
