@@ -2,7 +2,7 @@
 const kawModels={};
 function kawMaterial(color,kind='stone',metal=0){const mat=F(color,metal,metal?.28:.78);mat.map=Ug(kind==='stone'?'cloth':kind);mat.bumpMap=mat.map;mat.bumpScale=kind==='wood'?.2:.09;return mat;}
 function kawCharacter(name){
- const orc=['orc','troll','shaman','peon','peon-pick','peon-hammer'].includes(name),cls=({knight:'paladin',orc:'berserker',ranger:'ranger',troll:'ranger',mage:'wizard',shaman:'necromancer',marksman:'ranger'})[name]||'monk';
+ const orc=['orc','troll','shaman','peon','peon-pick','peon-hammer','peon-carry'].includes(name),cls=({knight:'paladin',orc:'berserker',ranger:'ranger',troll:'ranger',mage:'wizard',shaman:'necromancer',marksman:'ranger'})[name]||'monk';
  const old={...pl[cls]};if(orc)pl[cls]={...old,skin:0x82a95c,cloth:0x655843,trim:0xc4aa70};
  const model=_l(cls,{});pl[cls]=old;const n=model.userData;n.weapon.position.set(0,-16,0);n.weapon.scale.setScalar(1);
  if(name.startsWith('worker')||name.startsWith('peon')){
@@ -12,6 +12,7 @@ function kawCharacter(name){
   else if(name.endsWith('hammer'))ot(n.weapon,16,8,9,metal,0,27,0);
   else{const blade=new Ce;blade.moveTo(0,29);blade.lineTo(13,34);blade.lineTo(16,21);blade.lineTo(0,19);blade.closePath();J(n.weapon,new Oe(blade,{depth:3,bevelEnabled:true,bevelSize:.5,bevelThickness:.5,bevelSegments:2}),metal,0,0,-1.5);}
  }
+ if(name.endsWith('carry')){n.weapon.clear();n.cls='monk';model.traverse(mesh=>{if(mesh.isMesh){mesh.material=mesh.material.clone();mesh.material.color.multiplyScalar(.72);}});const leather=kawMaterial(0x665039,'wood'),soot=kawMaterial(0x242925),ore=kawMaterial(0xe0b65c,'metal',.7),bag=Re(n.upperBody,0,-1,-12);V(bag,10,leather,0,0,0,.85,1.2,.65);J(bag,st('torus',5,1.5),leather,0,10,0).rotation.x=Math.PI/2;for(let i=0;i<7;i++)V(bag,2.2,ore,Math.sin(i*2.4)*4,11+i%2,Math.cos(i*2.4)*3);for(const x of [-6,6]){const strap=ot(n.torso,2.5,22,1,leather,x,1,11);strap.rotation.z=x*.025;}for(const [x,y,z] of [[-7,7,12],[8,-3,13],[-11,-7,9],[3,12,9]])V(n.head,2.5,soot,x,y,z,1,.55,.2);for(const x of [-6,5])V(n.torso,3,soot,x,-3,13,1,.6,.2);}
  if(name==='marksman'){
   n.weapon.clear();n.weapon.rotation.set(0,0,0);const metal=kawMaterial(0x77929e,'metal',.85),wood=kawMaterial(0x6f4630,'wood'),gold=kawMaterial(0xd3b771,'metal',.7);
   ot(n.weapon,5,7,17,wood,0,0,-6);const barrel=J(n.weapon,st('cylinder',2,2.6,34),metal,0,3,17);barrel.rotation.x=Math.PI/2;
@@ -66,6 +67,7 @@ function kawFlyer(name){
  V(root,14,body,0,20,0,1,.7,1.7);V(root,8,body,0,28,23,.8,1,1.3);J(root,st('cone',4,13),trim,0,27,34).rotation.x=Math.PI/2;
  for(const sign of [-1,1]){const wing=Re(root,sign*9,23,-2);wing.userData.sign=sign;root.userData.wings.push(wing);const shape=new Ce;shape.moveTo(0,0);shape.lineTo(sign*19,19);shape.lineTo(sign*49,9);shape.lineTo(sign*37,-10);shape.lineTo(sign*14,-6);shape.closePath();const mesh=J(wing,new Oe(shape,{depth:2,bevelEnabled:true,bevelSize:1,bevelThickness:1,bevelSegments:2}),body,0,0,0);mesh.rotation.x=Math.PI/2;for(let j=0;j<5;j++){const feather=J(wing,st('cone',3,20,5),trim,sign*(16+j*6),-1,-j*2);feather.rotation.x=Math.PI/2+.4;}J(root,st('cylinder',2,2,11),trim,sign*6,10,5);V(root,2,F(0x10222b),sign*4,31,30);}
  for(let j=0;j<4;j++){const tail=J(root,st('cone',4-j*.6,24,5),j%2?trim:body,(j-1.5)*3,18,-28-j*3);tail.rotation.x=-Math.PI/2-.3;}
+ if(name==='phoenix'){for(let i=0;i<32;i++){const a=i*2.4,z=-17+(i%8)*5,x=Math.sin(a)*11,y=23+Math.cos(a)*5;const feather=J(root,new ws(2.7,13,5),i%3?body:trim,x,y,z);feather.rotation.x=-.75;feather.rotation.z=Math.sin(a)*.4;}for(const wing of root.userData.wings)for(let j=0;j<18;j++){const feather=J(wing,new ws(2.7,17+(j%3)*3,5),j%3?body:trim,wing.userData.sign*(8+(j%9)*4),1,-5-Math.floor(j/9)*5);feather.rotation.x=Math.PI/2+.5;feather.rotation.z=wing.userData.sign*.2;}for(let j=0;j<7;j++){const feather=J(root,new ws(2,20,5),j%2?body:trim,(j-3)*2,36,18);feather.rotation.x=-.35;}}
  if(dragon){V(root,6,body,0,25,33,1,.6,1.5);for(const x of [-4,4]){const fang=J(root,st('cone',1.3,5),trim,x,22,37);fang.rotation.z=Math.PI;}for(let j=0;j<6;j++)J(root,st('cone',2,8,4),trim,0,32,-14+j*7);for(const x of [-6,6])J(root,st('cone',2,12,5),trim,x,37,21).rotation.z=-x*.06;}
  if(name==='gryphon'||name==='wyvern'){const rider=kawCharacter(name==='gryphon'?'knight':'orc');rider.scale.setScalar(.4);rider.position.set(0,29,-4);root.add(rider);}
  return root;

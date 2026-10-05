@@ -1,13 +1,13 @@
 'use strict';
 // All sprites use the same Frontier mesh renderer, PBR light rig, and painted material maps.
-const ART_VERSION='20261005-battalion';
+const ART_VERSION='20261005-frontier-tech';
 const frontierSheets={},frontierWorld={};
-for(const name of ['knight','orc','ranger','troll','mage','shaman','marksman','worker','peon','worker-pick','peon-pick','worker-hammer','peon-hammer','gryphon','wyvern','phoenix','dragon','bombard','hewer']){const img=new Image();img.src='assets/frontier-'+name+'.webp?v='+ART_VERSION;frontierSheets[name]=img;}
+for(const name of ['knight','orc','ranger','troll','mage','shaman','marksman','worker','peon','worker-carry','peon-carry','worker-pick','peon-pick','worker-hammer','peon-hammer','gryphon','wyvern','phoenix','dragon','bombard','hewer']){const img=new Image();img.src='assets/frontier-'+name+'.webp?v='+ART_VERSION;frontierSheets[name]=img;}
 for(const name of ['gold','tree','pine','mountain','construction1','construction2','construction3','wall','tower','bastion','base','barracks','forge','roost','altar','mill','armory','foundry'])for(const horde of ['gold','tree','pine','mountain','construction1','construction2','construction3'].includes(name)?[false]:[false,true]){const key=name+(horde?'-dominion':''),img=new Image();img.onload=()=>{if(typeof terrainLayer!=='undefined')terrainLayer=null;};img.src='assets/world-'+key+'.webp?v='+ART_VERSION;frontierWorld[key]=img;}
 function frontierAppearance(type,horde){return ({worker:horde?'peon':'worker',melee:horde?'orc':'knight',ranged:horde?'troll':'ranger',sniper:horde?'shaman':'marksman',hero:horde?'shaman':'mage',siege:horde?'hewer':'bombard',air:horde?'wyvern':'gryphon',air2:horde?'dragon':'phoenix'})[type]||null;}
 function drawFrontierUnit(e,p,horde){
  let name=frontierAppearance(e.type,horde);
- if(e.type==='worker'){if(['repair','build'].includes(e.order?.kind))name+='-hammer';else if(e.order?.target?.type==='gold')name+='-pick';}
+ if(e.type==='worker'){if(e.cargoGold>0)name+='-carry';else if(['repair','build'].includes(e.order?.kind))name+='-hammer';else if(e.order?.target?.type==='gold')name+='-pick';}
  const img=frontierSheets[name];if(!img?.complete||!img.naturalWidth)return false;
  const {action,progress,phase,dir,frame}=frontierFrame(e,state.time),width=e.type==='air2'?92:e.type==='air'?76:e.type==='siege'?68:e.type==='hero'?54:e.type==='melee'?48:44,height=width*4/3;
  ctx.save();if(e.type==='air2'&&!horde){ctx.shadowColor='#ff9846';ctx.shadowBlur=7;}
