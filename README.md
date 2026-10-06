@@ -153,7 +153,7 @@ Artwork regeneration is available through `tools/render-art.cjs` using Playwrigh
 
 The Hero Sanctum now offers Frontier-inspired Paladin powers for the Dawnward and Berserker powers for the Dominion. All 14 nodes have three research ranks, require Stronghold level 3, and show their prerequisites and effects. Select your hero to cast researched powers; powers have cooldowns.
 
-Gold miners enter the mine, load a 10-gold sack, emerge soot-covered, and deliver it to a friendly Stronghold before the treasury receives gold. Shift orders wait until delivery; Stop or an ordinary replacement order interrupts mining. Workers carrying gold have a Deliver gold command. Lumber retains its slow harvesting rate.
+Gold miners enter the mine, load a 25-gold sack, emerge soot-covered, and deliver it to a friendly Stronghold before the treasury receives gold. Shift orders wait until delivery; Stop or an ordinary replacement order interrupts mining. Workers carrying gold have a Deliver gold command. Lumber retains its slow harvesting rate.
 
 Melee infantry now move at 105 speed and have 20% base damage reduction, in addition to researched armor. Artillery damage increased from 65 to 95. Phoenix artwork has additional body, crest and wing feathers.
 
@@ -170,3 +170,5 @@ Build revision: `20261005-frontier-tech`.
 - Use **Orders**, **Build**, **Map**, and **Unit info** below the battlefield to switch panels. Tap the minimap to reposition the camera; select **Order** first to send units there.
 
 Touch controls support portrait and landscape layouts. Desktop mouse controls remain available. Build: `20261006-touch`.
+
+Phone panel scrolling is contained within the game, including when reaching the top or bottom of construction options. Gold carrying capacity is now 25 per trip; extraction remains 0.75 gold per second before Harvest Guild upgrades. Build: `20261006-touch-scroll`.

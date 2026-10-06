@@ -280,7 +280,7 @@ function drawUnit3D(e,p,horde){
  if(active&&['melee','hero','worker'].includes(e.type)){ctx.save();ctx.rotate(e.facing||0);ctx.strokeStyle=active.kind==='build'?'#efce85':'#e4ecc1';ctx.globalAlpha=1-progress;ctx.lineWidth=2;ctx.beginPath();ctx.arc(7,-10,23,-1+progress*2,1+progress*2);ctx.stroke();ctx.restore();}
 }
 
-const WORKER_CAP=16,GATHER_RATE=.75;
+const WORKER_CAP=16,GATHER_RATE=.75,GOLD_CARRY_CAPACITY=25;
 function workerCount(owner){return state.entities.filter(e=>e.owner===owner&&e.hp>0&&e.type==='worker').length+state.entities.filter(e=>e.owner===owner&&e.hp>0).reduce((n,e)=>n+e.queue.filter(q=>q.type==='worker').length,0);}
 function queueTask(e,task,append=false){e.tasks??=[];if(append&&e.order&&!['stop','hold'].includes(e.order.kind)){e.tasks.push(task);}else{leaveMine(e);e.manualPassive=false;e.tasks=[];e.jobs=[];e.action=null;e.order=task;}e.route=null;}
 function finishTask(e){e.action=null;e.route=null;e.jobs=(e.jobs||[]).filter(b=>b!==e.order?.target&&b.hp>0&&b.construction);e.order=null;while(e.tasks?.length){const next=e.tasks.shift();if(next.kind==='repair'&&(next.target.hp<=0||next.target.hp>=next.target.max)||next.kind==='attack'&&next.target.hp<=0||next.kind==='build'&&(!next.target.construction||next.target.hp<=0)||next.kind==='gather'&&next.target.amount<=0)continue;e.order=next;break;}}
@@ -493,7 +493,7 @@ function mineGold(e,mine,dt){
  if(mine.amount<=0){leaveMine(e);finishTask(e);return;}
  if(!e.hiddenInMine&&Math.hypot(e.x-mine.x,e.y-mine.y)>23){move(e,mine.x,mine.y,dt);return;}
  e.hiddenInMine=true;e.action=null;e.shot=null;e.mining??={loaded:0};e.mining.loaded+=dt*GATHER_RATE*(1+state.players[e.owner].gather*.4);
- if(e.mining.loaded>=Math.min(10,mine.amount)){e.cargoGold=Math.min(10,mine.amount);mine.amount-=e.cargoGold;e.mineResume=mine;leaveMine(e);e.order={kind:'deliver',mine};burst(e.x,e.y,'dust',e.owner);}
+ if(e.mining.loaded>=Math.min(GOLD_CARRY_CAPACITY,mine.amount)){e.cargoGold=Math.min(GOLD_CARRY_CAPACITY,mine.amount);mine.amount-=e.cargoGold;e.mineResume=mine;leaveMine(e);e.order={kind:'deliver',mine};burst(e.x,e.y,'dust',e.owner);}
 }
 function deliverGold(e,dt){
  const base=state.entities.filter(b=>b.owner===e.owner&&b.type==='base'&&b.hp>0&&!b.construction).sort((a,b)=>Math.hypot(a.x-e.x,a.y-e.y)-Math.hypot(b.x-e.x,b.y-e.y))[0];if(!base)return;
