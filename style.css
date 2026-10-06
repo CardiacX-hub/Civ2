@@ -77,3 +77,5 @@ footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;m
  #game[data-mobile-panel=build] #buildActions{flex:1;min-height:0;overflow-y:auto!important;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
  #game[data-mobile-panel=info] .selection{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
 }
+
+.admin-controls{padding:12px 0;border-bottom:1px solid #756542;margin-bottom:12px}.admin-controls label{flex-wrap:wrap}.admin-controls input{max-width:100%;min-height:40px;background:#132725;color:#f0dfbd;border:1px solid #756542;padding:8px}.admin-controls button{margin-top:8px}

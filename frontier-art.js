@@ -1,17 +1,17 @@
 'use strict';
 // All sprites use the same Frontier mesh renderer, PBR light rig, and painted material maps.
-const ART_VERSION='20261006-touch-scroll';
+const ART_VERSION='20261006-highlands';
 const frontierSheets={},frontierWorld={};
-for(const name of ['knight','orc','ranger','troll','mage','shaman','marksman','worker','peon','worker-carry','peon-carry','worker-pick','peon-pick','worker-hammer','peon-hammer','gryphon','wyvern','phoenix','dragon','bombard','hewer']){const img=new Image();img.src='assets/frontier-'+name+'.webp?v='+ART_VERSION;frontierSheets[name]=img;}
-for(const name of ['gold','tree','pine','mountain','construction1','construction2','construction3','wall','tower','bastion','base','barracks','forge','roost','altar','mill','armory','foundry'])for(const horde of ['gold','tree','pine','mountain','construction1','construction2','construction3'].includes(name)?[false]:[false,true]){const key=name+(horde?'-dominion':''),img=new Image();img.onload=()=>{if(typeof terrainLayer!=='undefined')terrainLayer=null;};img.src='assets/world-'+key+'.webp?v='+ART_VERSION;frontierWorld[key]=img;}
-function frontierAppearance(type,horde){return ({worker:horde?'peon':'worker',melee:horde?'orc':'knight',ranged:horde?'troll':'ranger',sniper:horde?'shaman':'marksman',hero:horde?'shaman':'mage',siege:horde?'hewer':'bombard',air:horde?'wyvern':'gryphon',air2:horde?'dragon':'phoenix'})[type]||null;}
+for(const name of ['knight','orc','ranger','troll','mage','shaman','marksman','worker','peon','worker-carry','peon-carry','worker-logs','peon-logs','hunter','worker-pick','peon-pick','worker-hammer','peon-hammer','gryphon','wyvern','phoenix','dragon','bombard','hewer']){const img=new Image();img.src='assets/frontier-'+name+'.webp?v='+ART_VERSION;frontierSheets[name]=img;}
+for(const name of ['gold','tree','pine','mountain','construction1','construction2','construction3','wall','tower','bastion','base','barracks','forge','roost','altar','mill','armory','foundry','depot'])for(const horde of ['gold','tree','pine','mountain','construction1','construction2','construction3'].includes(name)?[false]:[false,true]){const key=name+(horde?'-dominion':''),img=new Image();img.onload=()=>{if(typeof terrainLayer!=='undefined')terrainLayer=null;};img.src='assets/world-'+key+'.webp?v='+ART_VERSION;frontierWorld[key]=img;}
+function frontierAppearance(type,horde){return ({worker:horde?'peon':'worker',melee:horde?'orc':'knight',ranged:horde?'troll':'ranger',sniper:horde?'hunter':'marksman',hero:horde?'shaman':'mage',siege:horde?'hewer':'bombard',air:horde?'wyvern':'gryphon',air2:horde?'dragon':'phoenix'})[type]||null;}
 function drawFrontierUnit(e,p,horde){
  let name=frontierAppearance(e.type,horde);
- if(e.type==='worker'){if(e.cargoGold>0)name+='-carry';else if(['repair','build'].includes(e.order?.kind))name+='-hammer';else if(e.order?.target?.type==='gold')name+='-pick';}
+ if(e.type==='worker'){if(e.cargoGold>0)name+='-carry';else if(e.cargoWood>0&&e.order?.kind==='deliver')name+='-logs';else if(['repair','build'].includes(e.order?.kind))name+='-hammer';else if(e.order?.target?.type==='gold')name+='-pick';}
  const img=frontierSheets[name];if(!img?.complete||!img.naturalWidth)return false;
- const {action,progress,phase,dir,frame}=frontierFrame(e,state.time),width=e.type==='air2'?92:e.type==='air'?76:e.type==='siege'?68:e.type==='hero'?54:e.type==='melee'?48:44,height=width*4/3;
+ const {action,progress,phase,dir,frame}=frontierFrame(e,state.time),width=e.type==='air2'?92:e.type==='air'?76:e.type==='siege'?68:e.type==='hero'?54:e.type==='ranged'&&horde?54:e.type==='melee'?48:44,height=width*4/3;
  ctx.save();if(e.type==='air2'&&!horde){ctx.shadowColor='#ff9846';ctx.shadowBlur=7;}
- ctx.drawImage(img,frame*144,(phase*8+dir)*192,144,192,-width/2,-height+13,width,height);ctx.restore();
+ if(e.type==='air2'&&!horde){for(let i=0;i<8;i++){const a=state.time*7+i;ctx.fillStyle=i%2?'#e93624':'#ff6b32';ctx.beginPath();ctx.moveTo(Math.sin(a)*22,6);ctx.lineTo(Math.sin(a)*22+4,-12-Math.sin(a*1.2)*8);ctx.lineTo(Math.sin(a)*22+8,6);ctx.fill();}}ctx.drawImage(img,frame*144,(phase*8+dir)*192,144,192,-width/2,-height+13,width,height);ctx.restore();
  // Equipment is part of the hand hierarchy in every frame, with no flat tool/weapon overlays.
  ctx.fillStyle=p.color;ctx.strokeStyle='#10212a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-5,-height+11);ctx.lineTo(5,-height+11);ctx.lineTo(0,-height+18);ctx.closePath();ctx.fill();ctx.stroke();
  if(e.hitUntil>state.time){ctx.strokeStyle='#fff0b1';ctx.beginPath();ctx.ellipse(0,-height*.48,13,height*.3,0,0,Math.PI*2);ctx.stroke();}
@@ -24,7 +24,7 @@ function drawFrontierBuilding(e,p,horde){const width=e.type==='base'?210:e.type=
  ctx.fillStyle=p.color;ctx.strokeStyle='#163039';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-6,-width*.65);ctx.lineTo(8,-width*.65+4);ctx.lineTo(-6,-width*.65+10);ctx.closePath();ctx.fill();ctx.stroke();
  if(['forge','foundry'].includes(e.type)){ctx.save();for(let i=0;i<3;i++){const t=(state.time*.25+i/3)%1;ctx.globalAlpha=(1-t)*.25;ctx.fillStyle='#d2d7cb';ctx.beginPath();ctx.ellipse(-22+t*12,-width*.48-t*30,5+t*9,5+t*7,0,0,Math.PI*2);ctx.fill();}ctx.restore();}return true;
 }
-function drawFrontierResource(r){ctx.save();ctx.translate(r.x,r.y);ctx.fillStyle='#13271e55';ctx.beginPath();ctx.ellipse(4,8,r.type==='gold'?27:17,9,0,0,Math.PI*2);ctx.fill();const result=worldSprite(r.type==='gold'?'gold':Math.floor(r.x+r.y)%3?'pine':'tree',r.type==='gold'?114:104);ctx.restore();return result;}
+function drawFrontierResource(r){ctx.save();ctx.translate(r.x,r.y);ctx.fillStyle='#13271e55';ctx.beginPath();ctx.ellipse(4,8,r.type==='gold'?27:17,9,0,0,Math.PI*2);ctx.fill();const result=worldSprite(r.type==='gold'?'gold':Math.floor(r.x+r.y)%3?'pine':'tree',r.type==='gold'?114:104);if(r.type==='gold'&&result){const miners=state.entities.filter(w=>w.hp>0&&w.hiddenInMine&&w.order?.target===r).length;ctx.fillStyle='#17281de8';ctx.fillRect(-27,14,54,14);ctx.fillStyle=miners>=5?'#ffd487':'#d8e1c7';ctx.font='9px system-ui';ctx.textAlign='center';ctx.fillText(miners+'/5 miners',0,24);}ctx.restore();return result;}
 function drawFrontierMountain(g,m){g.save();g.translate(m.x,m.y);const result=worldSprite('mountain',m.half*4,m.half*4,g);g.restore();return result;}
 function drawFrontierConstruction(e){const progress=1-e.construction.left/e.construction.total,horde=state.players[e.owner].faction==='horde',width=e.type==='base'?210:e.type==='wall'?58:135;if(!frontierWorld['construction1']?.naturalWidth)return false;
  ctx.save();ctx.globalAlpha=.18+progress*.65;worldSprite(e.type+(horde?'-dominion':''),width);ctx.restore();worldSprite('construction'+(progress<.33?1:progress<.7?2:3),width);

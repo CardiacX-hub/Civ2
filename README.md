@@ -172,3 +172,17 @@ Build revision: `20261005-frontier-tech`.
 Touch controls support portrait and landscape layouts. Desktop mouse controls remain available. Build: `20261006-touch`.
 
 Phone panel scrolling is contained within the game, including when reaching the top or bottom of construction options. Gold carrying capacity is now 25 per trip; extraction remains 0.75 gold per second before Harvest Guild upgrades. Build: `20261006-touch-scroll`.
+
+### Highlands update — 20261006-highlands
+
+Each map now has buildable plateaus at two heights. Ground troops reach them through marked ramps and route around cliff edges; flying troops cross cliffs and adjust flight height. More trees and denser painted grass detail fill the map. Tree trunks block ground movement, and depleted trees open paths.
+
+Collectors carry up to 25 lumber or gold and deliver it to the nearest completed friendly Stronghold or **Resource Outpost** (90 gold, 70 lumber, 25-second construction). Lumber is credited only after delivery. Mines admit at most five workers across all factions, and mining is now 2.5 gold per second before Harvest Guild upgrades: a full gold load takes 10 seconds rather than about 33 seconds. Lumber retains its existing slower rate.
+
+All buildings have 50% more base health. Strongholds at level 3 and above gain two independently firing defenses. Selecting a worker and tapping or left-clicking an unfinished friendly site resumes construction; Order mode and right-click remain available for explicit orders.
+
+Dominion architecture uses tusks, timber defenses, skull ornaments and distinct facility silhouettes. Roofs have separate shingle meshes. Peons have square heads and pointed ears. Troll Spearthrowers have light blue skin, long ears, taller hunched proportions and animated spears; Shadow Hunters have purple skin, black hoods and purple projectiles with trails. Phoenixes have red fire effects; dragons have dark red hides and additional modeled scales.
+
+Hard AI reacts faster and develops its economy; **Extreme** raids earlier, prioritizes economic targets, researches hero powers and receives a stated economy boost of 10 gold and 8 lumber per decision.
+
+In **Settings**, enter `RYANISKING` and press **Apply code** to enable unlimited player resources for this browser session, including subsequent matches. The code affects the player's economy only.
