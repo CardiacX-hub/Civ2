@@ -234,3 +234,10 @@ Lobbies now have four total slots. Play with four people, two people and two AI 
 All human players must be connected and ready before the host starts; AI slots are always ready. Each participant gets a separate Stronghold, four collectors, randomized starting corner, and 100 gold/100 lumber. Server-controlled AI gathers, builds, recruits, researches and attacks using its own difficulty. AI never issues orders for human slots. Normal free-for-all victory requires being the final surviving Stronghold.
 
 Deploy the latest `main` commit to the Render service as well as GitHub Pages. Render can do this automatically when **Auto-Deploy** is enabled; otherwise choose **Manual Deploy → Deploy latest commit**. `/healthz` now also reports `maxPlayers: 4` and `aiOpponents: true`. The updated client detects an older server and displays a deployment reminder instead of attempting unsupported lobby options.
+
+
+### Steel and scales artwork / research queues (20261006)
+
+The menu Dominion orc uses a dedicated high-resolution 16-frame model: planted, hunched, holding a silver spiked axe with both hands, with blood droplets falling from its edge. Dragon and wyvern models now have overlapping scales, belly plates and wing ribs. World materials have stronger surface detail and roughness variation while retaining the shared Frontier lighting.
+
+Each research building can queue **three upgrades total**, including the active upgrade. Ranks run in order; completed Stronghold tiers still unlock higher research ranks. Every queued upgrade has its own progress/timer and Cancel button. Canceling a prerequisite rank also cancels and refunds dependent waiting ranks. Gold cargo is now **10.5 per trip**, exactly 30% below the previous 15, requiring 4.2 seconds inside the mine before upgrades. Treasury balances retain fractional gold.

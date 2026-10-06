@@ -29,8 +29,8 @@
 /* Frontier's actual character artwork, rendered from its 3D models. */
 .dawnward-art .knight-march,.ashfang-art .orc-breathe{visibility:hidden}.ashfang-art svg>g>path{visibility:hidden}
 .frontier-menu-model{position:absolute;z-index:1;left:50%;top:-22px;margin-left:-96px;width:192px;height:256px;background-size:3072px 6144px;background-repeat:no-repeat;pointer-events:none;filter:drop-shadow(0 8px 5px #07151377)}
-.frontier-menu-knight{background-image:url('assets/frontier-knight.webp?v=20261005-battalion');background-position:0 -512px}
-.frontier-menu-orc{background-image:url('assets/frontier-orc.webp?v=20261005-battalion');background-position:0 -4608px;animation:frontierMenuChop 1.8s steps(16) infinite}
+.frontier-menu-knight{background-image:url('assets/frontier-knight.webp?v=20261006-steel-and-scales');background-position:0 -512px}
+.frontier-menu-orc{background-image:url('assets/frontier-menu-orc.webp?v=20261006-steel-and-scales');background-size:3072px 256px;background-position:0 0;animation:frontierMenuGuard 2s steps(16) infinite;}@keyframes frontierMenuGuard{from{background-position:0 0;}to{background-position:-3072px 0;}}
 @keyframes frontierMenuChop{from{background-position:0 -4608px}to{background-position:-3072px -4608px}}
 @media(prefers-reduced-motion:reduce){.frontier-menu-orc{animation:none}}
 
