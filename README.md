@@ -198,3 +198,7 @@ Lumber gathering is twice as fast (1.5 per second), with 25 lumber carried per d
 Each faction can recruit one of each of its three heroes: Dawnward's Sun Marshal (Paladin), Frontier Wizard and Frontier Ranger; The Dominion's Stormcaller (Berserker), Frontier Witch and Dragon Sovereign. Their selection panels describe nearby troop auras and unique active powers. Shared hero training benefits all three; Paladin and Berserker powers remain in the stronghold-level-3 hero research tree. Stormcaller emits small lightning sparks. Dominion infantry can research Fire Spears, applying damage over time with Troll Spearthrower attacks.
 
 Winding rivers divide each battlefield. Ground troops cross at wooden bridges; flying units cross freely. Riverbanks, contrasting grass, stones and flowers add terrain detail. Roof shingles cover both complete slopes, and Dominion horns use smaller curved shapes with visible mounting collars.
+
+### Rainbow Laser Pig — 20261006-rainbow-pig
+
+In Settings → Administrative code, enter `WHOLETTHEPIGSOUT` and press Apply code. A pink winged pig appears near your completed Stronghold. Select it and issue normal movement or attack orders: it flies across obstacles, leaves a fading seven-color rainbow trail while moving, and fires twin pink laser beams. It has 650 health, 60 base damage, 240 attack range and 150 movement speed. The code works for both factions and costs no resources. Entering it before a match enables one pig at the start of subsequent battles in this browser session; applying it during a match summons another pig.
