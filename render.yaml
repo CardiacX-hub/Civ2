@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: kingdoms-at-war-multiplayer
+    runtime: node
+    plan: free
+    buildCommand: node --check server.js
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: '24'

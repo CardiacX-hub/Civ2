@@ -11,14 +11,14 @@ Click or drag to select friendly units. Shift-click adds to selection. **Right-c
 - Infantry Lodge: durable melee, balanced ranged, and fragile high-damage ranged infantry.
 - Siege Works: slow artillery with splash damage.
 - Sky Roost: fast flying units.
-- Hero Sanctum: one unique faction hero. Dawnward Sun Marshal grants 30% damage reduction within 190 units. Dominion Stormcaller grants 30% attack damage within 190 units.
-- Harvest Guild: three gathering-speed upgrades.
+- Hero Sanctum: three unique faction heroes. Dawnward Sun Marshal grants 30% damage reduction within 190 units. Dominion Stormcaller grants 30% attack damage within 190 units.
+- Harvest Guild: separate lumber and gold gathering upgrades, each with three levels.
 - Infantry Armory: three infantry attack and armor upgrades.
 - Artillery Foundry: three artillery damage upgrades.
 
-The unexplored map stays hidden. Explored areas dim outside friendly sight; enemies only appear when currently visible, with red dots on the minimap. AI collects, constructs, trains, upgrades, and attacks after building an army. Ground units route around walls; other scenery uses direct movement; flying units have distinctive visuals and faster movement, and all combat units can attack air targets. Resources are credited while collectors gather rather than transported to base.
+The unexplored map stays hidden. Explored areas dim outside friendly sight; enemies only appear when currently visible, with red dots on the minimap. AI collects, constructs, trains, upgrades, and attacks after building an army. Ground units route around walls, cliffs, trees and rivers; flying units have distinctive visuals and faster movement, and all combat units can attack air targets. Collectors transport resources to a completed Stronghold or Resource Outpost before they are credited.
 
-No accounts, secrets, external services, or build step are required.
+Single-player games require no accounts, secrets, external services, or build step. Online multiplayer requires the shared Node.js lobby server described below.
 
 ## Publish and play on GitHub Pages
 
@@ -202,3 +202,27 @@ Winding rivers divide each battlefield. Ground troops cross at wooden bridges; f
 ### Rainbow Laser Pig — 20261006-rainbow-pig
 
 In Settings → Administrative code, enter `WHOLETTHEPIGSOUT` and press Apply code. A pink winged pig appears near your completed Stronghold. Select it and issue normal movement or attack orders: it flies across obstacles, leaves a fading seven-color rainbow trail while moving, and fires twin pink laser beams. It has 650 health, 60 base damage, 240 attack range and 150 movement speed. The code works for both factions and costs no resources. Entering it before a match enables one pig at the start of subsequent battles in this browser session; applying it during a match summons another pig.
+
+## Multiplayer lobbies — 20261006-multiplayer
+
+Choose **MULTIPLAYER · HOST / JOIN** from the main menu. Online battles support 2–3 human players, each choosing a name, faction and unique banner color. The host chooses a map and can add a **4–64 character passcode**. Share the invitation link or seven-character lobby code; share the passcode separately. Guests mark themselves **Ready**, then the host starts the shared countdown. Normal mouse, keybinding and touch orders work during multiplayer, including gathering, construction, rally points, formations, research, training and cancellation.
+
+The server runs the authoritative simulation, checks ownership and costs, and sends each player their own fog-of-war view. Passcodes are salted and hashed, never included in room listings or invitations. Sessions use randomly generated bearer tokens and reconnect after a page refresh. Administrative codes and global pause are disabled for multiplayer. Opening settings pauses your local controls while the online match continues.
+
+### Host the multiplayer server
+
+**GitHub Pages serves static files and cannot run lobbies.** Publishing the new menu does not create an online server. The included `server.js` serves both the game and multiplayer API; no extra dependencies or database are needed.
+
+1. Open [Deploy on Render](https://render.com/deploy?repo=https://github.com/CardiacX-hub/Civ2), sign in or create an account, and deploy the included `render.yaml` blueprint. It selects the free Node web-service plan. Review the plan in Render before creating the service.
+2. Wait for the service to become live. Copy its HTTPS service address, such as `https://your-service.onrender.com`. Its `/healthz` endpoint should report `kingdoms-multiplayer` and `ok: true`.
+3. Open the GitHub Pages game, choose **Multiplayer**, and paste that address into **Multiplayer server**. Host a lobby and copy the invitation link. The invitation includes the server address, so guests can connect to the same service. The browser remembers the server address.
+
+Render's free service may sleep when idle and take about a minute to wake; retry connecting once the service is awake. Rooms and matches are held in memory, so restarting or redeploying the server ends them. Run one server instance: lobbies are not shared across replicas. For sustained games, use an always-on service if your hosting provider supports one.
+
+To host on another Node service or your own machine, use Node 22 or newer and run `npm start`. The server listens on the provider's `PORT` variable, or port 3000, on all network interfaces. Use an HTTPS reverse proxy when connecting from GitHub Pages. On a local network, guests can open the game directly at the host machine's reachable address and port; the server address fills automatically.
+
+### Development and checks
+
+Run `npm start`, then check `/healthz`, host a lobby in one browser and join it from another independent browser session. Use `npm test` for gameplay, lobby access-control, authoritative commands, fog-of-war, HTTP and three-player victory tests. Multiplayer has no install step or external credentials for local development.
+
+Rooms expire after three hours. Disconnected players have a 90-second reconnection window; after that their army is removed. Leaving an active battle eliminates that player. A host who leaves a waiting lobby passes hosting to the next player. Only the last remaining Stronghold wins. Server limits cap rooms, concurrent matches and request rates.

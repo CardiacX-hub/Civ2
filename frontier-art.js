@@ -1,6 +1,6 @@
 'use strict';
 // All sprites use the same Frontier mesh renderer, PBR light rig, and painted material maps.
-const ART_VERSION='20261006-rainbow-pig';
+const ART_VERSION='20261006-multiplayer';
 const frontierSheets={},frontierWorld={};
 for(const name of ['knight','orc','ranger','troll','mage','shaman','marksman','worker','peon','worker-carry','peon-carry','worker-logs','peon-logs','hunter','witch','pig','worker-pick','peon-pick','worker-hammer','peon-hammer','gryphon','wyvern','phoenix','dragon','bombard','hewer']){const img=new Image();img.src='assets/frontier-'+name+'.webp?v='+ART_VERSION;frontierSheets[name]=img;}
 for(const name of ['gold','tree','pine','mountain','construction1','construction2','construction3','wall','tower','bastion','base','barracks','forge','roost','altar','mill','armory','foundry','depot'])for(const horde of ['gold','tree','pine','mountain','construction1','construction2','construction3'].includes(name)?[false]:[false,true]){const key=name+(horde?'-dominion':''),img=new Image();img.onload=()=>{if(typeof terrainLayer!=='undefined')terrainLayer=null;};img.src='assets/world-'+key+'.webp?v='+ART_VERSION;frontierWorld[key]=img;}
