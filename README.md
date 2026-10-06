@@ -205,7 +205,7 @@ In Settings → Administrative code, enter `WHOLETTHEPIGSOUT` and press Apply co
 
 ## Multiplayer lobbies — 20261006-multiplayer
 
-Choose **MULTIPLAYER · HOST / JOIN** from the main menu. Online battles support 2–3 human players, each choosing a name, faction and unique banner color. The host chooses a map and can add a **4–64 character passcode**. Share the invitation link or seven-character lobby code; share the passcode separately. Guests mark themselves **Ready**, then the host starts the shared countdown. Normal mouse, keybinding and touch orders work during multiplayer, including gathering, construction, rally points, formations, research, training and cancellation.
+Choose **MULTIPLAYER · HOST / JOIN** from the main menu. Online battles support up to four total human and AI players, with at least one human. Each player has a unique banner color. The host chooses a map and can add a **4–64 character passcode**. Share the invitation link or seven-character lobby code; share the passcode separately. Guests mark themselves **Ready**, then the host starts the shared countdown. Normal mouse, keybinding and touch orders work during multiplayer, including gathering, construction, rally points, formations, research, training and cancellation.
 
 The server runs the authoritative simulation, checks ownership and costs, and sends each player their own fog-of-war view. Passcodes are salted and hashed, never included in room listings or invitations. Sessions use randomly generated bearer tokens and reconnect after a page refresh. Administrative codes and global pause are disabled for multiplayer. Opening settings pauses your local controls while the online match continues.
 
@@ -223,6 +223,14 @@ To host on another Node service or your own machine, use Node 22 or newer and ru
 
 ### Development and checks
 
-Run `npm start`, then check `/healthz`, host a lobby in one browser and join it from another independent browser session. Use `npm test` for gameplay, lobby access-control, authoritative commands, fog-of-war, HTTP and three-player victory tests. Multiplayer has no install step or external credentials for local development.
+Run `npm start`, then check `/healthz`, host a lobby in one browser and join it from another independent browser session. Use `npm test` for gameplay, lobby access-control, authoritative commands, fog-of-war, HTTP and multi-player victory tests. Multiplayer has no install step or external credentials for local development.
 
 Rooms expire after three hours. Disconnected players have a 90-second reconnection window; after that their army is removed. Leaving an active battle eliminates that player. A host who leaves a waiting lobby passes hosting to the next player. Only the last remaining Stronghold wins. Server limits cap rooms, concurrent matches and request rates.
+
+### Four-player mixed lobbies — 20261006-four-player-ai
+
+Lobbies now have four total slots. Play with four people, two people and two AI opponents, three people and one AI, or one person and up to three AI opponents. In the waiting lobby, the host uses **AI opponents · Host controls** to add, edit or remove computer players. Choose each AI's Dawnward/Dominion faction, banner color and Easy/Normal/Hard/Extreme difficulty. Select an existing AI in **AI slot** to edit or remove it. Remove an AI to free a slot for another human.
+
+All human players must be connected and ready before the host starts; AI slots are always ready. Each participant gets a separate Stronghold, four collectors, randomized starting corner, and 100 gold/100 lumber. Server-controlled AI gathers, builds, recruits, researches and attacks using its own difficulty. AI never issues orders for human slots. Normal free-for-all victory requires being the final surviving Stronghold.
+
+Deploy the latest `main` commit to the Render service as well as GitHub Pages. Render can do this automatically when **Auto-Deploy** is enabled; otherwise choose **Manual Deploy → Deploy latest commit**. `/healthz` now also reports `maxPlayers: 4` and `aiOpponents: true`. The updated client detects an older server and displays a deployment reminder instead of attempting unsupported lobby options.

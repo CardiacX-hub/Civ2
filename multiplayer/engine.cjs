@@ -4,7 +4,7 @@ const source=fs.readFileSync(require.resolve('../game.js'),'utf8');
 const bridge=`
 globalThis.matchEngine={
  get state(){return state;},
- init(members,map){$('color').value=members[0].color;$('c1').value=members[1].color;$('c2').value=members[2]?.color||'#b88af0';$('ai1').value=members[1].faction;$('ai2').value=members[2]?.faction||'off';faction=members[0].faction;mapChoice=map;start();state.players.forEach((p,i)=>{p.name=members[i].name;});state.resources.forEach((r,i)=>r.resourceId=i);state.adminResources=false;this.visions=members.map(()=>({seen:new Uint8Array(N*N),visible:new Uint8Array(N*N),enemyBuildings:{}}));},
+ init(members,map){mapChoice=map;start({players:members});state.players.forEach((p,i)=>{p.name=members[i].name;});state.resources.forEach((r,i)=>r.resourceId=i);state.adminResources=false;this.visions=members.map(()=>({seen:new Uint8Array(N*N),visible:new Uint8Array(N*N),enemyBuildings:{}}));},
  perspective(slot,fn){const oldPlayers=state.players,oldSpawns=state.spawns,oldSight=state.networkSight,oldVision={seen:state.seen,visible:state.visible,enemyBuildings:state.enemyBuildings};const swap=n=>n===0?slot:n===slot?0:n;
  if(slot){state.players=oldPlayers.slice();[state.players[0],state.players[slot]]=[state.players[slot],state.players[0]];if(oldSight){state.networkSight=oldSight.slice();[state.networkSight[0],state.networkSight[slot]]=[state.networkSight[slot],state.networkSight[0]];}state.spawns=oldSpawns.slice();[state.spawns[0],state.spawns[slot]]=[state.spawns[slot],state.spawns[0]];for(const e of state.entities)e.owner=swap(e.owner);for(const e of state.effects)e.owner=swap(e.owner);}
  Object.assign(state,this.visions[slot]);try{fog();return fn();}finally{Object.assign(this.visions[slot],{seen:state.seen,visible:state.visible,enemyBuildings:state.enemyBuildings});if(slot){for(const e of state.entities)e.owner=swap(e.owner);for(const e of state.effects)e.owner=swap(e.owner);}state.players=oldPlayers;state.spawns=oldSpawns;state.networkSight=oldSight;Object.assign(state,oldVision);selected=[];}},
@@ -30,6 +30,6 @@ globalThis.matchEngine={
 function createEngine(members,map='highlands'){
  const elements={},element=id=>elements[id]??={value:({color:'#53c9eb',c1:'#ef685a',c2:'#b88af0',ai1:'horde',ai2:'off'})[id],style:{},dataset:{},classList:{toggle(){}},clientWidth:1200,clientHeight:650,getContext(){return{};},appendChild(){},getBoundingClientRect(){return{left:0,top:0,width:210,height:150};}};
  const context=vm.createContext({document:{getElementById:element,querySelectorAll(){return[];},createElement(){return element(Math.random());}},window:{addEventListener(){}},requestAnimationFrame(){},alert(){},console});
- vm.runInContext(source+'\nupdateUI=()=>{};toast=message=>{globalThis.lastMatchMessage=message;};resize=()=>{};ai=()=>{};\n'+bridge,context);context.matchEngine.init(members,map);return context.matchEngine;
+ vm.runInContext(source+'\nupdateUI=()=>{};toast=message=>{globalThis.lastMatchMessage=message;};resize=()=>{};\n'+bridge,context);context.matchEngine.init(members,map);return context.matchEngine;
 }
 module.exports={createEngine};
