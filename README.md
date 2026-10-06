@@ -190,3 +190,11 @@ In **Settings**, enter `RYANISKING` and press **Apply code** to enable unlimited
 ### Lumber gathering fix — 20261006-lumber-fix
 
 Collectors now approach trees precisely enough to reach chopping range at normal frame rates. Resource orders recognize visible tree canopies and mine artwork, including on high ground. Full lumber loads are normalized to 25 before delivery. Mouse and touch gathering were checked for both factions.
+
+### Rivers and heroes — 20261006-rivers-heroes
+
+Lumber gathering is twice as fast (1.5 per second), with 25 lumber carried per delivery. Gold loads are reduced to 15, taking six seconds at the base mining rate. The Harvest Guild now researches lumber harvesting and gold mining separately, with independent three-level upgrades.
+
+Each faction can recruit one of each of its three heroes: Dawnward's Sun Marshal (Paladin), Frontier Wizard and Frontier Ranger; The Dominion's Stormcaller (Berserker), Frontier Witch and Dragon Sovereign. Their selection panels describe nearby troop auras and unique active powers. Shared hero training benefits all three; Paladin and Berserker powers remain in the stronghold-level-3 hero research tree. Stormcaller emits small lightning sparks. Dominion infantry can research Fire Spears, applying damage over time with Troll Spearthrower attacks.
+
+Winding rivers divide each battlefield. Ground troops cross at wooden bridges; flying units cross freely. Riverbanks, contrasting grass, stones and flowers add terrain detail. Roof shingles cover both complete slopes, and Dominion horns use smaller curved shapes with visible mounting collars.

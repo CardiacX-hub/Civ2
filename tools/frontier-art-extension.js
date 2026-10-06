@@ -2,7 +2,7 @@
 const kawModels={};
 function kawMaterial(color,kind='stone',metal=0){const mat=F(color,metal,metal?.28:.78);mat.map=Ug(kind==='stone'?'cloth':kind);mat.bumpMap=mat.map;mat.bumpScale=kind==='wood'?.2:.09;return mat;}
 function kawCharacter(name){
- const orc=['orc','troll','shaman','peon','peon-pick','peon-hammer','peon-carry','peon-logs','hunter'].includes(name),cls=({knight:'paladin',orc:'berserker',ranger:'ranger',troll:'ranger',mage:'wizard',shaman:'necromancer',hunter:'necromancer',marksman:'ranger'})[name]||'monk';
+ const orc=['orc','troll','shaman','peon','peon-pick','peon-hammer','peon-carry','peon-logs','hunter'].includes(name),cls=({knight:'paladin',orc:'berserker',ranger:'ranger',troll:'ranger',mage:'wizard',shaman:'necromancer',hunter:'necromancer',witch:'witch',marksman:'ranger'})[name]||'monk';
  const old={...pl[cls]};if(orc)pl[cls]={...old,skin:name==='troll'?0x93cadc:name==='hunter'?0x9e65bb:0x82a95c,cloth:name==='hunter'?0x11141d:0x655843,trim:0xc4aa70};
  const model=_l(cls,{});pl[cls]=old;const n=model.userData;n.weapon.position.set(0,-16,0);n.weapon.scale.setScalar(1);
  if(name.startsWith('worker')||name.startsWith('peon')){
@@ -31,7 +31,7 @@ function kawWorld(name,horde){
  const box=(w,h,d,m,x=0,y=h/2,z=0)=>ot(root,w,h,d,m,x,y,z);
  const sphere=(r,m,x,y,z,sx=1,sy=1,sz=1)=>V(root,r,m,x,y,z,sx,sy,sz);
  function tower(x,z,height=55){box(18,height,18,horde?wood:stone,x,height/2,z);for(let y=8;y<height;y+=10){box(19,1,19,dark,x,y,z);box(1,8,1,dark,x+4,y+4,z+9.6);}for(const dx of [-7,0,7])for(const dz of [-7,7])box(5,7,5,stone,x+dx,height+3,z+dz);box(5,11,1,dark,x,height*.6,z+9.5);}
- function gable(x,z,w,d,y){const r=J(root,new ws(w*.72,20,4),roof,x,y,z);r.rotation.y=Math.PI/4;r.scale.z=d/w;for(let row=1;row<=4;row++)for(let col=-row;col<=row;col++)for(const side of [-1,1]){const tile=box(w/10,1.3,d/11,roof,x+col*w/11,y+10-row*4+.8,z+side*row*d/10);tile.rotation.x=side*.65;}}
+ function gable(x,z,w,d,y){const profile=new Ce;profile.moveTo(-w/2,-10);profile.lineTo(0,10);profile.lineTo(w/2,-10);profile.closePath();J(root,new Oe(profile,{depth:d,bevelEnabled:false}),roof,x,y,z-d/2);const tiles=[.9,1,1.08].map(v=>{const m=kawMaterial(horde?0x804239:0x35596e,'wood');m.color.multiplyScalar(v);return m;});const slope=Math.atan(40/w),pitch=w/14;for(const side of [-1,1])for(let row=0;row<7;row++)for(let col=0;col<12;col++){const xx=side*(row+.5)*pitch,zz=-d/2+(col+.5)*d/12;const tile=box(pitch/Math.cos(slope)+.8,1.2,d/12+.4,tiles[(row+col)%3],x+xx,y+10-Math.abs(xx)*40/w+1,z+zz);tile.rotation.z=-side*slope;}for(let col=0;col<12;col++)box(3,2,d/12+.6,tiles[col%3],x,y+11.2,z-d/2+(col+.5)*d/12);}
 
  function banner(x,y,z){box(1,25,1,gold,x,y,z);box(11,15,1,horde?red:roof,x+5,y+3,z);box(2,8,1,gold,x+5,y+3,z+1);}
  function chimney(x,z,height=55){box(10,height,10,stone,x,height/2,z);box(14,3,14,steel,x,height,z);}
@@ -61,12 +61,12 @@ function kawWorld(name,horde){
   if(name==='barracks'){tower(-31,-6,39);sphere(7,steel,18,27,25,1,1.3,.3);box(2,15,1,gold,18,27,28);for(const x of [-8,8])box(2,25,2,wood,x,18,28);}
   if(name==='forge'||name==='foundry'){chimney(-20,-12,58);chimney(19,-12,name==='foundry'?66:46);cannon(8,13,34);box(20,6,13,steel,-18,10,29);if(name==='foundry'){box(25,8,18,dark,0,8,30);box(20,1,13,kawMaterial(0xeb873d,'metal'),0,13,30);}}
   if(name==='roost'){tower(0,-3,65);gable(0,-3,35,35,77);box(65,4,14,wood,0,63,14);for(const x of [-22,22]){sphere(8,gold,x,69,14,.6,.6,1.6);const wing=J(root,st('cone',5,17,3),gold,x,73,14);wing.rotation.z=x>0?-.7:.7;}}
-  if(name==='altar'){for(const x of [-25,25]){tower(x,-10,48);J(root,st('cone',12,22,6),roof,x,64,-10);}sphere(9,kawMaterial(horde?0xac729d:0x8bd6d6,'metal',.35),0,53,0,.7,1.5,.7);box(22,5,30,stone,0,3,34);}
+  if(name==='altar'){for(const x of [-25,25]){tower(x,-10,48);gable(x,-10,27,27,64);}sphere(9,kawMaterial(horde?0xac729d:0x8bd6d6,'metal',.35),0,53,0,.7,1.5,.7);box(22,5,30,stone,0,3,34);}
   if(name==='depot'){box(30,6,24,wood,0,4,35);for(let i=0;i<5;i++)box(30,4,5,wood,-20,7+i*4,27);sphere(7,gold,20,15,27);box(17,12,12,wood,20,7,27);}
   if(name==='mill'){const wheel=J(root,st('torus',16,3),wood,-32,18,0);wheel.rotation.y=Math.PI/2;for(let i=0;i<8;i++){const a=i*Math.PI/4;box(7,3,9,wood,-33,18+Math.sin(a)*16,Math.cos(a)*16);}for(let i=0;i<4;i++)box(24,5,7,wood,20,4+i*5,29);}
   if(name==='armory'){box(40,3,7,wood,0,20,31);for(const x of [-15,0,15]){sphere(6,steel,x,28,29,1,1,.8);box(10,13,2,steel,x,11,31);box(2,13,2,gold,x,11,33);}}
  }
- if(horde&&!['gold','tree','pine','mountain'].includes(name)&&!name.startsWith('construction')){const ivory=kawMaterial(0xe5d6b3),iron=kawMaterial(0x443b38,'metal',.5);for(const x of [-29,29]){box(6,34,6,wood,x,17,24);for(let j=0;j<3;j++){const tusk=J(root,st('cone',4-j,13,6),ivory,x+Math.sign(x)*j*2,34+j*10,24-j*3);tusk.rotation.z=-Math.sign(x)*.25;}}for(const x of [-18,-6,6,18]){box(4,30,3,wood,x,16,-24);J(root,st('cone',3,9,4),iron,x,34,-24);}sphere(5,ivory,0,32,29,1,.9,.5);for(const x of [-2,2])sphere(1.5,dark,x,33,32);if(name==='base'){for(const x of [-40,40])for(let j=0;j<5;j++){const tusk=J(root,st('cone',6-j*.8,17,6),ivory,x+Math.sign(x)*j*2,51+j*12,26-j*3);tusk.rotation.z=-Math.sign(x)*.3;}box(48,7,10,iron,0,40,29);}}
+ if(horde&&!['gold','tree','pine','mountain'].includes(name)&&!name.startsWith('construction')){const ivory=kawMaterial(0xe5d6b3),iron=kawMaterial(0x443b38,'metal',.5);function tusk(x,y,z,height,side){box(8,6,5,iron,x,y,z-2);const collar=J(root,st('torus',4,1.1),iron,x,y+1,z);collar.rotation.x=Math.PI/2;for(let j=0;j<7;j++){const t=j/7,u=(j+1)/7,a={x:x+side*t*t*6,y:y+t*height,z:z-t*t*5},b={x:x+side*u*u*6,y:y+u*height,z:z-u*u*5},dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z,len=Math.hypot(dx,dy,dz);const horn=J(root,st('cylinder',Math.max(.12,3.2*(1-u)),Math.max(.15,3.2*(1-t)),len+.4,8),ivory,(a.x+b.x)/2,(a.y+b.y)/2,(a.z+b.z)/2);horn.rotation.z=-Math.atan2(dx,dy);horn.rotation.x=Math.atan2(dz,dy);}}for(const side of [-1,1]){const x=side*(name==='tower'?12:name==='wall'?18:name==='bastion'?22:29);box(6,24,6,wood,x,12,24);tusk(x,24,26,18,side);}for(const x of [-18,-6,6,18]){box(4,30,3,wood,x,16,-24);J(root,st('cone',3,9,4),iron,x,34,-24);}sphere(5,ivory,0,32,29,1,.9,.5);for(const x of [-2,2])sphere(1.5,dark,x,33,32);if(name==='base'){for(const side of [-1,1])tusk(side*35,48,35,27,side);box(48,7,10,iron,0,40,29);}}
 
  return root;
 }
