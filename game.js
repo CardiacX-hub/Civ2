@@ -563,7 +563,7 @@ let touchMode='select',touchQueue=false,touchGesture=null,lastTouchTap=null;
 const mouseDown=canvas.onpointerdown,mouseMove=canvas.onpointermove,mouseUp=canvas.onpointerup;
 function touchWorldPoint(ev){return point(ev);}
 function touchAllowed(){return state&&state.count<=0&&!state.ended;}
-function setTouchMode(mode){touchMode=mode;drag=null;for(const id of ['select','group','pan','order'])$('touch-'+id)?.classList.toggle('active-touch',mode===id);}
+function setTouchMode(mode){touchMode=mode;drag=null;if(mode!=='order'){commandMode=null;placement=null;}for(const id of ['select','group','pan','order'])$('touch-'+id)?.classList.toggle('active-touch',mode===id);}
 canvas.onpointerdown=ev=>{
  if(ev.pointerType!=='touch'){mouseDown(ev);return;}
  ev.preventDefault();if(!touchAllowed())return;
