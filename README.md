@@ -186,3 +186,7 @@ Dominion architecture uses tusks, timber defenses, skull ornaments and distinct 
 Hard AI reacts faster and develops its economy; **Extreme** raids earlier, prioritizes economic targets, researches hero powers and receives a stated economy boost of 10 gold and 8 lumber per decision.
 
 In **Settings**, enter `RYANISKING` and press **Apply code** to enable unlimited player resources for this browser session, including subsequent matches. The code affects the player's economy only.
+
+### Lumber gathering fix — 20261006-lumber-fix
+
+Collectors now approach trees precisely enough to reach chopping range at normal frame rates. Resource orders recognize visible tree canopies and mine artwork, including on high ground. Full lumber loads are normalized to 25 before delivery. Mouse and touch gathering were checked for both factions.
