@@ -241,3 +241,10 @@ Deploy the latest `main` commit to the Render service as well as GitHub Pages. R
 The menu Dominion orc uses a dedicated high-resolution 16-frame model: planted, hunched, holding a silver spiked axe with both hands, with blood droplets falling from its edge. Dragon and wyvern models now have overlapping scales, belly plates and wing ribs. World materials have stronger surface detail and roughness variation while retaining the shared Frontier lighting.
 
 Each research building can queue **three upgrades total**, including the active upgrade. Ranks run in order; completed Stronghold tiers still unlock higher research ranks. Every queued upgrade has its own progress/timer and Cancel button. Canceling a prerequisite rank also cancels and refunds dependent waiting ranks. Gold cargo is now **10.5 per trip**, exactly 30% below the previous 15, requiring 4.2 seconds inside the mine before upgrades. Treasury balances retain fractional gold.
+
+
+### Guided tutorial and commercial review
+
+Use **GUIDED TUTORIAL · LEARN TO PLAY** to practice either faction. Ten lessons advance after actual actions; each can be skipped. Tutorial-only funding, passive opponents and faster construction do not change campaigns or multiplayer. Settings includes credits, license links and a privacy summary. Fonts are now self-hosted.
+
+See [RELEASE-REVIEW.md](RELEASE-REVIEW.md) for the commercial readiness findings and remaining work, and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for asset/dependency notices. Build `20261006-tutorial-review`.
