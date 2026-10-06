@@ -6,7 +6,8 @@ const buildings={wall:{name:"Wall",gold:15,wood:35,hp:700,size:16},tower:{name:'
 const units={worker:{gold:50,wood:0,hp:75,damage:4,range:22,speed:85,time:10},melee:{gold:70,wood:25,hp:180,damage:18,range:25,speed:105,time:6},ranged:{gold:90,wood:40,hp:105,damage:15,range:160,speed:80,time:7},sniper:{gold:140,wood:60,hp:65,damage:38,range:215,speed:70,time:9},siege:{gold:180,wood:110,hp:210,damage:95,range:260,speed:45,time:12},air:{gold:170,wood:100,hp:150,damage:23,range:140,speed:130,time:11,flying:true},air2:{gold:280,wood:180,hp:340,damage:42,range:175,speed:110,time:20,flying:true},hero:{gold:250,wood:150,hp:500,damage:32,range:100,speed:85,time:15}};
 const names={human:{worker:'Peasant',melee:'Dawn Knight',ranged:'Longbow Ranger',sniper:'Royal Marksman',siege:'Bombard',air:'Gryphon Rider',air2:'Fire Phoenix',hero:'Sun Marshal'},horde:{worker:'Peon',melee:'Orc Ravager',ranged:'Troll Spearthrower',sniper:'Shadow Hunter',siege:'Rock Hewer',air:'Wyvern Rider',air2:'Dominion Dragon',hero:'Stormcaller'}};
 let faction='human',state=null,cam={x:0,y:0},keys={},selected=[],placement=null,commandMode=null,orderMarker=null,drag=null,mouse={x:0,y:0},last=0,paused=false,toastTimer=0,uid=0;
-function toast(s){$('toast').textContent=s;$('toast').style.display='block';toastTimer=3;}
+function touchText(s){return typeof window.matchMedia==='function'&&window.matchMedia('(pointer:coarse)').matches?s.replace(/Right-click|Left-click|Click/g,'Tap').replace(/right click|left click/g,'tap'):s;}
+function toast(s){$('toast').textContent=touchText(s);$('toast').style.display='block';toastTimer=3;}
 function entity(type,owner,x,y,building=false){const def=(building?buildings:units)[type];const e={id:++uid,type,owner,x,y,hp:def.hp,max:def.hp,building,size:building?def.size:type==='siege'?14:type==='hero'?13:type==='air2'?22:type==='air'?17:9,level:1,cool:0,queue:[],order:null,facing:0,walkUntil:0,action:null,rally:null};if(type==='hero')applyHeroHealth(e);state.entities.push(e);return e;}
 function start(){const colors=[$('color').value,$('c1').value,$('c2').value];const count=$('ai2').value==='off'?2:3;if(new Set(colors.slice(0,count)).size!==count){toast('Choose different banner colors.');alert('Each player needs a different banner color.');return;}state={difficulty:['easy','normal','hard'].includes($('difficulty').value)?$('difficulty').value:'normal',map:mapChoice,mountains:makeMountains(mapChoice),wallVersion:0,blockCache:{},effects:[],entities:[],resources:[],players:[],enemyBuildings:{},formation:'box',seen:new Uint8Array(N*N),visible:new Uint8Array(N*N),time:0,count:3.6,ended:false,ai:0};selected=[];placement=null;commandMode=null;orderMarker=null;terrainLayer=null;paused=false;cam={x:0,y:0};$('pause').textContent='Ⅱ Pause';$('end').hidden=true;
 const spots=spawnLocations();state.spawns=spots;for(let i=0;i<count;i++){state.players.push({faction:i===0?faction:$(i===1?'ai1':'ai2').value,color:colors[i],gold:100,wood:100,gather:0,infantry:0,artillery:0,fire:0,capacity:0});const [x,y]=spots[i];entity('base',i,x,y,true);for(let w=0;w<4;w++)entity('worker',i,x-60+w*30,y+85);}
@@ -30,7 +31,7 @@ function updateUI(){
  $('gameTimer').textContent=formatGameTime(state.time);
  $('resources').innerHTML=`<span>◆ <b>${Math.floor(p.gold)}</b> gold</span><span>♣ <b>${Math.floor(p.wood)}</b> lumber</span><span>⚑ ${state.entities.filter(e=>e.owner===0&&!e.building).length} troops</span><span>♟ ${state.entities.filter(e=>e.owner===0&&e.type==='worker').length}/${workerLimit(0)} collectors</span>`;
  $('selectionTitle').textContent=e?(selected.length>1?selected.length+(selected.every(s=>s.building)?' buildings':' units'):e.building?buildings[e.type].name:names[p.faction][e.type]):'Your command awaits';
- $('selectionInfo').textContent=e?`${Math.ceil(e.hp)} / ${e.max} health${e.type==='base'?' · Stronghold level '+(e.level||1):''}${e.construction?' · Under construction':''}`:'Left-click to select. Right-click to move, attack or gather.';
+ $('selectionInfo').textContent=e?`${Math.ceil(e.hp)} / ${e.max} health${e.type==='base'?' · Stronghold level '+(e.level||1):''}${e.construction?' · Under construction':''}`:touchText('Left-click to select. Right-click to move, attack or gather.');
  const stats=e?(e.building?[...(buildings[e.type].damage?[['Damage',buildings[e.type].damage],['Range',buildings[e.type].range]]:[]),['Vision',260]]:characterStats(e)):[];
  $('heroAura').textContent=e?.type==='hero'?heroAuraDescription(state.players[e.owner].faction):'';
  $('selectionStats').innerHTML=stats.map(([name,value])=>`<div><span>${name}</span><b>${value}</b></div>`).join('');
@@ -41,7 +42,7 @@ function updateUI(){
  const signature=JSON.stringify([selected.map(e=>e.id),e?.construction?1:0,e?.level,e?.research?.key,e?.rally?1:0,p.gather,p.infantry,p.artillery,p.fire,p.capacity,strongholdLevel(0),workerCount(0)>=workerLimit(0),cooldown>0,state.formation,p.heroTech,keyRevision,e?.type==='hero'?heroTree(p.faction).filter(n=>n.active).map(n=>(e.powerReady?.[n.id]||0)>state.time):null]);
  if(signature===actionUISignature)return;actionUISignature=signature;
  commandHandlers={};const a=$('actions'),construction=$('buildActions');a.innerHTML='';construction.innerHTML='';$('constructionPane').hidden=!selected.some(unit=>unit.type==='worker'&&unit.owner===0);let actionGroup=a;function group(label){const section=document.createElement('section');section.className='action-section';const title=document.createElement('h3');title.textContent=label;section.appendChild(title);(label.startsWith('CONSTRUCTION')?construction:a).appendChild(section);actionGroup=section;}group(e?.building?'BUILDING COMMANDS':'UNIT COMMANDS');
- function button(label,cost,fn,opts={}){const b=document.createElement('button');b.innerHTML=(opts.picture?buildingPicture(opts.picture,p.faction==='horde'):'')+`<span>${label}<small>${cost}</small></span>`;b.onclick=fn;registerCommand(b,label,fn,opts);if(label==='Aegis Shield'||label==='Dominion Cleave')b.dataset.heroAbility='true';if(label==='Stop'){b.className='stop-command';b.onpointerdown=ev=>{ev.preventDefault();fn();};}b.disabled=!!opts.disabled;if(opts.picture)b.className='build-action';actionGroup.appendChild(b);}
+ function button(label,cost,fn,opts={}){const b=document.createElement('button');b.innerHTML=(opts.picture?buildingPicture(opts.picture,p.faction==='horde'):'')+`<span>${label}<small>${touchText(cost)}</small></span>`;b.onclick=fn;registerCommand(b,label,fn,opts);if(label==='Aegis Shield'||label==='Dominion Cleave')b.dataset.heroAbility='true';if(label==='Stop'){b.className='stop-command';b.onpointerdown=ev=>{ev.preventDefault();fn();};}b.disabled=!!opts.disabled;if(opts.picture)b.className='build-action';actionGroup.appendChild(b);}
  $('formationPane').hidden=selected.filter(e=>!e.building&&e.owner===0).length<2;if(!$('formationPane').hidden)renderFormations();if(!e||e.construction)return;
  if(e.building&&['base','barracks','forge','roost','altar'].includes(e.type)){button('Set rally point','Left-click destination',()=>{placement=null;commandMode='rally';toast('Left-click the rally destination.');});if(e.rally)button('Clear rally point','Spawn beside building',()=>{selected.filter(b=>b.building&&b.type===e.type).forEach(b=>b.rally=null);updateUI();});}
  if(!e.building){button('Move','Right-click destination · M',()=>{placement=null;commandMode='move';toast('Right-click a destination to move selected units.');});button('Attack / gather','Click enemy, site or resource',()=>{placement=null;commandMode='command';toast('Left-click a target to attack, gather or construct.');});button('Stop','Clear task sequence',stopSelected);button('Hold position','Attack enemies in range',()=>{commandMode=null;selected.forEach(s=>queueTask(s,{kind:'hold'}));});}
@@ -556,3 +557,50 @@ $('menuSettings').onclick=openKeySettings;$('gameSettings').onclick=openKeySetti
 $('closeKeySettings').onclick=()=>{$('keySettings').close?.();};
 $('keySettings').onclose=()=>{paused=settingsWasPaused;keys={};};
 $('resetKeySettings').onclick=()=>{keyBindings={};saveKeyBindings();const was=settingsWasPaused;openKeySettings();settingsWasPaused=was;};
+
+// Touch input uses its own gestures so mouse selection and right-click orders stay intact.
+let touchMode='select',touchQueue=false,touchGesture=null,lastTouchTap=null;
+const mouseDown=canvas.onpointerdown,mouseMove=canvas.onpointermove,mouseUp=canvas.onpointerup;
+function touchWorldPoint(ev){return point(ev);}
+function touchAllowed(){return state&&state.count<=0&&!state.ended;}
+function setTouchMode(mode){touchMode=mode;drag=null;for(const id of ['select','group','pan','order'])$('touch-'+id)?.classList.toggle('active-touch',mode===id);}
+canvas.onpointerdown=ev=>{
+ if(ev.pointerType!=='touch'){mouseDown(ev);return;}
+ ev.preventDefault();if(!touchAllowed())return;
+ if(touchGesture){touchGesture=null;drag=null;return;}
+ canvas.setPointerCapture?.(ev.pointerId);const p=touchWorldPoint(ev);mouse=p;
+ touchGesture={id:ev.pointerId,x:ev.clientX,y:ev.clientY,start:p,cam:{...cam},moved:false,mode:touchMode};
+ if(touchMode==='group'&&!placement&&!commandMode&&!paused)drag={x:p.x,y:p.y,shift:touchQueue};
+};
+canvas.onpointermove=ev=>{
+ if(ev.pointerType!=='touch'){mouseMove(ev);return;}
+ const g=touchGesture;if(!g||g.id!==ev.pointerId)return;ev.preventDefault();
+ const dx=ev.clientX-g.x,dy=ev.clientY-g.y;if(Math.hypot(dx,dy)>10)g.moved=true;
+ if(g.moved&&g.mode!=='group'){cam.x=g.cam.x-dx;cam.y=g.cam.y-dy;clampCam();}
+ mouse=touchWorldPoint(ev);
+};
+canvas.onpointerup=ev=>{
+ if(ev.pointerType!=='touch'){mouseUp(ev);return;}
+ const g=touchGesture;touchGesture=null;if(!g||g.id!==ev.pointerId||!touchAllowed())return;ev.preventDefault();
+ const p=touchWorldPoint(ev);mouse=p;
+ if(g.mode==='group'&&g.moved&&drag){mouseUp({button:0,clientX:ev.clientX,clientY:ev.clientY});setTouchMode('select');return;}
+ drag=null;if(g.moved)return;
+ if(paused){toast('Resume the game to issue orders.');return;}
+ if(placement){if(build(placement,p.x,p.y,0,touchQueue)&&placement!=='wall')placement=null;updateUI();return;}
+ if(commandMode||g.mode==='order'){issueCommand(p,touchQueue,true);updateUI();return;}
+ if(g.mode==='pan'){cam.x=p.x-viewport.width/2;cam.y=p.y-viewport.height/2;clampCam();return;}
+ const friendly=state.entities.filter(e=>e.owner===0&&e.hp>0&&hitFriendly(e,p)).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
+ if(friendly){const now=Date.now();if(lastTouchTap?.id===friendly.id&&now-lastTouchTap.time<350){selected=state.entities.filter(e=>e.owner===0&&e.hp>0&&!e.hiddenInMine&&e.type===friendly.type&&e.building===friendly.building&&e.x>=cam.x&&e.x<=cam.x+viewport.width&&e.y>=cam.y&&e.y<=cam.y+viewport.height);lastTouchTap=null;}else{selected=touchQueue?[...new Set([...selected,friendly])]:[friendly];lastTouchTap={id:friendly.id,time:now};}updateUI();return;}
+ lastTouchTap=null;if(selected.length){issueCommand(p,touchQueue,true);updateUI();}
+};
+canvas.onpointercancel=ev=>{if(ev.pointerType==='touch'){touchGesture=null;drag=null;}};
+canvas.onlostpointercapture=()=>{touchGesture=null;drag=null;};
+// Prevent a synthesized mouse event from turning a minimap order into a camera jump.
+const miniMouseDown=mini.onmousedown;let lastMiniTouch=0;
+mini.onmousedown=ev=>{if(Date.now()-lastMiniTouch>700)miniMouseDown(ev);};
+mini.onpointerdown=ev=>{if(ev.pointerType!=='touch')return;ev.preventDefault();lastMiniTouch=Date.now();if(!touchAllowed())return;const r=mini.getBoundingClientRect(),p={x:(ev.clientX-r.left)/r.width*SIZE,y:(ev.clientY-r.top)/r.height*SIZE};if(!paused&&selected.length&&(touchMode==='order'||commandMode)){issueCommand(p,touchQueue,true);updateUI();}else{cam.x=p.x-viewport.width/2;cam.y=p.y-viewport.height/2;clampCam();}};
+for(const mode of ['select','group','pan','order'])$('touch-'+mode).onclick=()=>{setTouchMode(mode);if(mode==='order')toast('Tap the battlefield or minimap to give an order.');};
+$('touch-queue').onclick=()=>{touchQueue=!touchQueue;$('touch-queue').classList.toggle('active-touch',touchQueue);$('touch-queue').setAttribute?.('aria-pressed',String(touchQueue));toast(touchQueue?'Queue on: new orders follow existing tasks.':'Queue off: new orders replace existing tasks.');};
+$('touch-stop').onclick=stopSelected;
+function setMobilePanel(panel){$('game').dataset.mobilePanel=panel;for(const name of ['orders','build','map','info'])$('mobile-'+name).classList.toggle('active-touch',panel===name);resize();}
+for(const panel of ['orders','build','map','info'])$('mobile-'+panel).onclick=()=>setMobilePanel(panel);

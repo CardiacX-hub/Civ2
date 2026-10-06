@@ -160,3 +160,13 @@ Melee infantry now move at 105 speed and have 20% base damage reduction, in addi
 Open **Settings · Keybindings** from the main menu, or **Settings** during play. Click a shortcut and press its replacement; settings persist in this browser. Settings pause the match and restore its previous pause state when closed. WASD and arrow keys remain reserved for camera movement. Building-specific shortcuts are contextual.
 
 Build revision: `20261005-frontier-tech`.
+
+### Phone and tablet controls
+
+- Tap a friendly unit or building to select it. Double-tap to select the same type on screen.
+- With units selected, tap ground, enemies, resources or construction sites to move, attack, gather or build. Use **Order** to target friendly sites or give a minimap order.
+- Drag the battlefield to pan the camera. Use **Group**, then drag a selection box, to select multiple units. **Pan** lets you explore without issuing orders.
+- **Queue** makes new orders follow existing tasks and lets you add units to your selection. **Stop** cancels selected units' tasks.
+- Use **Orders**, **Build**, **Map**, and **Unit info** below the battlefield to switch panels. Tap the minimap to reposition the camera; select **Order** first to send units there.
+
+Touch controls support portrait and landscape layouts. Desktop mouse controls remain available. Build: `20261006-touch`.
