@@ -33,7 +33,7 @@ const localChooseFormation=chooseFormation;chooseFormation=function(kind){if(mul
 const localRally=setRally;setRally=function(e,rally){if(!multiplayerCommand({kind:'rally',id:e.id,clear:!rally,x:rally?.x,y:rally?.y,resourceId:rally?.resource?.resourceId}))return localRally(e,rally);};
 const originalDrawEntity=drawEntity;drawEntity=function(e){if(e.networkFrom&&!e.building){const t=Math.min(1,(performance.now()-e.networkAt)/150);ctx.save();ctx.translate((e.networkFrom.x-e.x)*(1-t),(e.networkFrom.y-e.y)*(1-t));originalDrawEntity(e);ctx.restore();}else originalDrawEntity(e);};
 const originalAdmin=$('adminUnlock').onclick;$('adminUnlock').onclick=()=>{if(multiplayer.session){$('adminStatus').textContent='Administrative codes are available in single-player games only.';return;}originalAdmin();};
-const originalExit=$('exit').onclick;$('exit').onclick=()=>{leaveMultiplayer();originalExit();};
+const originalExit=$('exit').onclick;$('exit').onclick=()=>{if(originalExit())leaveMultiplayer();};
 const originalPause=$('pause').onclick;$('pause').onclick=()=>{if(!multiplayer.active)originalPause();};
 mp('multiplayerMenu').onclick=()=>{mp('multiplayerLobby').showModal();if(!multiplayer.session){mp('mpFaction').value=faction;mp('mpColor').value=$('color').value;}};
 mp('mpHost').onclick=()=>enterMultiplayer('host');mp('mpJoin').onclick=()=>enterMultiplayer('join');

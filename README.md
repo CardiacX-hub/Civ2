@@ -302,3 +302,5 @@ Stronghold progression: level 2 unlocks Siege Works, Artillery Foundry, Siege Ba
 
 The Dominion can train The Devoured at the Infantry Lodge: a heavy axe infantry unit (130 gold, 70 lumber, 320 health, 32 damage, 35% base armor, 12-second training) with spiked armor, skull trophies and its own Infantry Armory upgrades. It has eight facing directions and 16 frames for each idle, walking and axe-attack sequence.
 River-safe starts now check the entire starting clearing against the river, including bends. Ground-unit production also checks the spawn footprint and an unobstructed exit on the building's terrain level; if every exit is blocked, the completed unit waits in its queue until there is safe ground.
+
+Leaving an active match for the main menu asks for confirmation before clearing progress or leaving a multiplayer lobby. Rendering uses display-aware canvas resolution, cached viewport terrain, shadows and minimap terrain, and skips off-screen scene objects. Unit spacing checks use nearby spatial buckets instead of comparing every unit pair.
