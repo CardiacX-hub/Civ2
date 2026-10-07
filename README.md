@@ -261,7 +261,7 @@ PC command panels are compact and independently scrollable, giving the map more 
 
 ### Hero progression, forests and rivers — 20261007-heroes-forests
 
-- Every map has **10 gold mines**: one within reach of each of the four possible starting corners, plus six neutral mines. Trees grow in larger irregular groves with near-base patches; ramps and riverbanks remain clear.
+- Every map now has **13 gold mines** (the requested 25% increase from 10, rounded up): one within reach of each of the four possible starting corners, plus nine neutral mines. Trees grow in larger irregular groves with near-base patches; ramps and riverbanks remain clear.
 - The Infantry Armory trains **Dawn Knights / Orc Ravagers**, **Longbow Rangers / Troll Spearthrowers**, and **Royal Marksmen / Shadow Hunters** independently. Each rank gives only that unit type +20% attack damage and +8 percentage points of armor. Rank 2 needs Stronghold 2; rank 3 needs Stronghold 3. Fire arrows/spears remain a separate ranged-unit upgrade. Three upgrades can be queued.
 - The first successfully paid hero training order permanently locks that player's hero choice for the match, even if canceled. Only one living or queued hero is allowed across all Sanctums. After death, only that same hero can be recruited again. Starting a new match resets the choice.
 - Heroes start at level 1 with **one skill point** and gain experience from their army's kills within **600 map units**. Workers give 15 XP; normal troops 45; artillery and large flyers 70; heroes 100; buildings 90; Strongholds 180. Each level requires `100 × current level` XP, grants one skill point, and is capped at level 10. Select the hero to view its XP bar and spend points in **Frontier Hero Tree**.
@@ -270,3 +270,14 @@ PC command panels are compact and independently scrollable, giving the map more 
 - Unit selection and troop training buttons show small portraits cropped from the same faction-specific 3D sprite atlases used on the battlefield.
 - Rivers have layered depth colors, surface texture, downstream currents, moving sun glints, and occasional fish leaps with landing splashes. Bridges and elevation ramps use shaded round logs with bark grain, knots, end rings, supports, and contact shadows.
 - Hero progression, choice locks, and unit-specific upgrades run on the authoritative multiplayer server as well as in single-player. Desktop and phone browser checks verify the controls and portraits; `npm test` covers progression, death/retraining, resource placement, research isolation, multiplayer ownership, and existing RTS behavior.
+
+
+### Facing, worker controls, phone rotation and results — 20261007-controls-results
+
+- Both factions' buildings and construction stages now face straight toward the bottom of the battlefield from the elevated camera.
+- Maps have 13 mines: four starting-corner mines and nine neutral mines. This rounds the requested 25% increase from 10 mines up to a whole mine.
+- Selecting another friendly worker takes priority over overlapping tree artwork and pending commands. Selection uses the closest unit silhouette; phone taps on a friendly unit leave Order mode and select that unit.
+- Group lumber orders assign individual accessible trees immediately. Walking, delivering and shift-queued workers reserve their trees. Workers wait rather than pile onto an occupied tree, and gathering approaches avoid other active collectors.
+- Canvas size and touch coordinates follow actual layout changes using resize/orientation events and a ResizeObserver. Rotating cancels interrupted gestures; portrait/landscape layouts can be switched repeatedly. Phone **Hide panel / Show panel** controls collapse the lower selection/command area; choosing a panel opens it again.
+- Victory and defeat show a scrollable statistics table: delivered gold and lumber, total resources gained, cumulative worker idle time, completed fighters, completed buildings, and enemy buildings destroyed. Starting resources, initial units/buildings, refunds and administrative resources do not count as production or gathering. Idle time sums seconds across all living workers without a task or on Stop/Hold.
+- Multiplayer statistics are recorded by the server. Only your own statistics are sent while opponents are still playing; the full scoreboard is revealed when the match finishes.

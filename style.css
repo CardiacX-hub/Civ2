@@ -101,3 +101,8 @@ footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;m
 #heroProgress{clear:both;display:grid;gap:3px;margin:5px 0;font-size:11px;color:#e5d6a6}#heroProgress progress{width:100%;height:7px;accent-color:#d7b969}#heroProgress small{font-size:10px;color:#adbda9}
 #heroProgress[hidden],#selectionPortrait[hidden]{display:none}
 #actions .build-action{display:flex;align-items:center;gap:5px;padding:4px 7px;min-height:70px}
+
+@media(pointer:coarse),(max-width:700px){#game.mobile-panels-minimized footer{display:none!important}#mobileMinimize{flex:1.3}#game header{flex-shrink:0}#game main{min-height:0}#game footer{height:clamp(110px,26dvh,210px)}}
+#end:not([hidden]){display:flex;align-items:center;justify-content:center;overflow:auto;padding:12px;touch-action:pan-y}#end .match-results{width:min(1080px,100%);max-height:100%;overflow:auto;background:#142b27f5;border:1px solid #b49962;padding:18px;border-radius:8px;font:13px Inter,system-ui;color:#e8e3cb;text-align:left}#end h2{text-align:center;font-size:30px;color:#e9ca83}#end p{text-align:center}.results-scroll{overflow:auto;overscroll-behavior:contain}#end table{width:100%;border-collapse:collapse;min-width:650px}#end th,#end td{padding:10px 8px;border-bottom:1px solid #466052;text-align:right}#end th:first-child{text-align:left}#end th small{display:block;font-size:10px;color:#a6bfae}#end .match-results>small{display:block;margin:12px 0;font-size:11px;line-height:1.5;color:#aebca8}#resultsMenu{display:block;margin:12px auto 0}
+
+.results-hint{display:none}@media(pointer:coarse),(max-width:700px){#end .results-hint{display:block;font-size:11px;color:#d1bf88}}

@@ -1,9 +1,9 @@
 'use strict';
 // All sprites use the same Frontier mesh renderer, PBR light rig, and painted material maps.
-const ART_VERSION='20261007-realism-routes';
+const ART_VERSION='20261007-realism-routes',WORLD_ART_VERSION='20261007-controls-results';
 const frontierSheets={},frontierWorld={};
 for(const name of ['knight','orc','ranger','troll','mage','shaman','marksman','worker','peon','worker-carry','peon-carry','worker-logs','peon-logs','hunter','witch','pig','worker-pick','peon-pick','worker-hammer','peon-hammer','gryphon','wyvern','phoenix','dragon','bombard','hewer']){const img=new Image();img.src='assets/frontier-'+name+'.webp?v='+ART_VERSION;frontierSheets[name]=img;}
-for(const name of ['gold','tree','pine','mountain','construction1','construction2','construction3','wall','tower','bastion','base','barracks','forge','roost','altar','mill','armory','foundry','depot'])for(const horde of ['gold','tree','pine','mountain','construction1','construction2','construction3'].includes(name)?[false]:[false,true]){const key=name+(horde?'-dominion':''),img=new Image();img.onload=()=>{if(typeof terrainLayer!=='undefined')terrainLayer=null;};img.src='assets/world-'+key+'.webp?v='+ART_VERSION;frontierWorld[key]=img;}
+for(const name of ['gold','tree','pine','mountain','construction1','construction2','construction3','wall','tower','bastion','base','barracks','forge','roost','altar','mill','armory','foundry','depot'])for(const horde of ['gold','tree','pine','mountain','construction1','construction2','construction3'].includes(name)?[false]:[false,true]){const key=name+(horde?'-dominion':''),img=new Image();img.onload=()=>{if(typeof terrainLayer!=='undefined')terrainLayer=null;};img.src='assets/world-'+key+'.webp?v='+WORLD_ART_VERSION;frontierWorld[key]=img;}
 function frontierAppearance(type,horde){return ({pig:'pig',worker:horde?'peon':'worker',melee:horde?'orc':'knight',ranged:horde?'troll':'ranger',sniper:horde?'hunter':'marksman',hero:horde?'orc':'knight',hero2:horde?'witch':'mage',hero3:horde?'dragon':'ranger',siege:horde?'hewer':'bombard',air:horde?'wyvern':'gryphon',air2:horde?'dragon':'phoenix'})[type]||null;}
 function drawFrontierUnit(e,p,horde){
  let name=frontierAppearance(e.type,horde);
