@@ -293,3 +293,5 @@ PC command panels are compact and independently scrollable, giving the map more 
 - **Hard** scouts after 20 seconds, raids from 40 seconds, evaluates tactics every 0.75 seconds, develops toward 24 collectors, targets known exposed resource buildings and researches flaming ammunition. It gets no free-resource bonus. **Extreme** remains harder, deciding every 0.5 seconds and raiding from 25 seconds with its advertised economy boost.
 
 Forest movement: ground units route around closely spaced tree trunks instead of squeezing through narrow gaps. Workers can still harvest exposed forest edges, felled trees reopen paths, and flying units pass overhead.
+
+Movement performance: spatial obstacle lookup and a priority queue keep forest routing responsive. Valid detours are reused until orders or obstacles change instead of being rebuilt every two seconds.
