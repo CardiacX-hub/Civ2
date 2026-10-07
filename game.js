@@ -319,7 +319,16 @@ const mapDefinitions={
 };
 let mapChoice='highlands';
 function chooseMap(key){mapChoice=key;document.querySelectorAll('[data-map]').forEach(el=>el.classList.toggle('selected',el.dataset.map===key));$('mapName').textContent=mapDefinitions[key].name;}
-function spawnLocations(random=Math.random){const spots=[[250,300],[SIZE-250,SIZE-300],[SIZE-250,300],[300,SIZE-300],[SIZE/2,250],[SIZE/2,SIZE-250]];for(let i=spots.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[spots[i],spots[j]]=[spots[j],spots[i]];}return spots;}
+function safeSpawnSite(x,y,obstacles){
+ const clearance=180;if(x<clearance+40||y<clearance+40||x>SIZE-clearance-40||y>SIZE-clearance-40)return false;
+ if(riverAt(x,y,clearance+40)||terrainHeight(x,y)!==0||onRamp(x,y))return false;
+ return !obstacles.some(o=>Math.abs(x-o.x)<o.half+clearance&&Math.abs(y-o.y)<o.half+clearance);
+}
+function spawnLocations(random=Math.random){
+ const anchors=[[250,300],[SIZE-250,SIZE-300],[SIZE-250,300],[300,SIZE-300],[SIZE/2,250],[SIZE/2,SIZE-250]],obstacles=[...cliffObstacles(),...(state?.mountains||[])],spots=[];
+ for(const [x,y] of anchors){let site=null;for(let radius=0;radius<=640&&!site;radius+=32){const candidates=[];for(let dy=-radius;dy<=radius;dy+=32)for(let dx=-radius;dx<=radius;dx+=32){if(radius&&Math.max(Math.abs(dx),Math.abs(dy))!==radius)continue;candidates.push([x+dx,y+dy]);}candidates.sort((a,b)=>Math.hypot(a[0]-x,a[1]-y)-Math.hypot(b[0]-x,b[1]-y));site=candidates.find(([sx,sy])=>safeSpawnSite(sx,sy,obstacles)&&spots.every(([px,py])=>Math.hypot(px-sx,py-sy)>600));}if(!site)throw new Error('No safe starting area on this battlefield.');spots.push(site);}
+ for(let i=spots.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[spots[i],spots[j]]=[spots[j],spots[i]];}return spots;
+}
 function strongholdLevel(owner){return Math.max(1,...state.entities.filter(e=>e.owner===owner&&e.type==='base'&&e.hp>0&&!e.construction).map(e=>e.level||1));}
 function workerLimit(owner){return WORKER_CAP+4*(state.players[owner].capacity||0);}
 function researchPrice(key,level){return {gold:key==='fire'?200:key==='stronghold'?250+(level-1)*150:120+level*90,wood:key==='fire'?150:key==='stronghold'?180+(level-1)*100:90+level*70,time:key==='fire'?35:key==='stronghold'?45+level*10:25+level*10};}

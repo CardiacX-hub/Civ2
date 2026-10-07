@@ -295,3 +295,5 @@ PC command panels are compact and independently scrollable, giving the map more 
 Forest movement: ground units route around closely spaced tree trunks instead of squeezing through narrow gaps. Workers can still harvest exposed forest edges, felled trees reopen paths, and flying units pass overhead.
 
 Movement performance: spatial obstacle lookup and a priority queue keep forest routing responsive. Valid detours are reused until orders or obstacles change instead of being rebuilt every two seconds.
+
+Starting areas are checked against rivers, mountains, cliffs and ramps before armies are placed. All six spawn slots have a clear ground-level area for their stronghold, workers and early expansion; map previews use the same validated locations.
