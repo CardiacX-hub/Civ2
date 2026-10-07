@@ -94,3 +94,10 @@ footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;m
 
 #world{filter:saturate(.92) contrast(1.035)}
 @media(min-width:951px) and (pointer:fine){#gameSettings{font-size:11px;padding:8px 10px;top:7px}#resources{min-width:0;gap:20px}}
+
+/* Atlas portraits match the live units, without downloading separate artwork. */
+.unit-picture{display:inline-block;flex:0 0 48px;width:48px;height:64px;background-size:768px 1536px;background-position:0 -128px;background-repeat:no-repeat;filter:drop-shadow(0 3px 3px #0009);vertical-align:middle}
+#selectionPortrait{float:left;margin:0 10px 2px 0;border:1px solid #b59d6266;border-radius:6px;background:radial-gradient(ellipse at 50% 80%,#435242,#152423);width:50px;height:66px}
+#heroProgress{clear:both;display:grid;gap:3px;margin:5px 0;font-size:11px;color:#e5d6a6}#heroProgress progress{width:100%;height:7px;accent-color:#d7b969}#heroProgress small{font-size:10px;color:#adbda9}
+#heroProgress[hidden],#selectionPortrait[hidden]{display:none}
+#actions .build-action{display:flex;align-items:center;gap:5px;padding:4px 7px;min-height:70px}

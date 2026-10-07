@@ -28,6 +28,7 @@ const localResearchHero=researchHero;researchHero=function(e,id){if(!multiplayer
 const localCancel=cancelProduction;cancelProduction=function(id,jobId){if(multiplayerCommand({kind:'cancel',id,jobId}))return true;return localCancel(id,jobId);};
 const localAbility=heroAbility;heroAbility=function(e,aiControlled=false){if(multiplayerCommand({kind:'ability',id:e.id}))return true;return localAbility(e,aiControlled);};
 const localPower=castHeroPower;castHeroPower=function(e,power){if(multiplayerCommand({kind:'power',id:e.id,power}))return true;return localPower(e,power);};
+const localSpendHeroPoint=spendHeroPoint;spendHeroPoint=function(e,node){if(multiplayerCommand({kind:'heroSkill',id:e.id,node}))return true;return localSpendHeroPoint(e,node);};
 const localChooseFormation=chooseFormation;chooseFormation=function(kind){if(multiplayer.active&&formationDefinitions[kind])multiplayer.formation=kind;return localChooseFormation(kind);};
 const localRally=setRally;setRally=function(e,rally){if(!multiplayerCommand({kind:'rally',id:e.id,clear:!rally,x:rally?.x,y:rally?.y,resourceId:rally?.resource?.resourceId}))return localRally(e,rally);};
 const originalDrawEntity=drawEntity;drawEntity=function(e){if(e.networkFrom&&!e.building){const t=Math.min(1,(performance.now()-e.networkAt)/150);ctx.save();ctx.translate((e.networkFrom.x-e.x)*(1-t),(e.networkFrom.y-e.y)*(1-t));originalDrawEntity(e);ctx.restore();}else originalDrawEntity(e);};

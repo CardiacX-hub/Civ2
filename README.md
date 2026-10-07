@@ -11,9 +11,9 @@ Click or drag to select friendly units. Shift-click adds to selection. **Right-c
 - Infantry Lodge: durable melee, balanced ranged, and fragile high-damage ranged infantry.
 - Siege Works: slow artillery with splash damage.
 - Sky Roost: fast flying units.
-- Hero Sanctum: three unique faction heroes. Dawnward Sun Marshal grants 30% damage reduction within 190 units. Dominion Stormcaller grants 30% attack damage within 190 units.
+- Hero Sanctum: choose one of three faction heroes for the entire match. Dawnward Sun Marshal grants 30% damage reduction within 190 units. Dominion Stormcaller grants 30% attack damage within 190 units.
 - Harvest Guild: separate lumber and gold gathering upgrades, each with three levels.
-- Infantry Armory: three infantry attack and armor upgrades.
+- Infantry Armory: separate melee, ranged, and marksman/shadow-hunter training, with three ranks each.
 - Artillery Foundry: three artillery damage upgrades.
 
 The unexplored map stays hidden. Explored areas dim outside friendly sight; enemies only appear when currently visible, with red dots on the minimap. AI collects, constructs, trains, upgrades, and attacks after building an army. Ground units route around walls, cliffs, trees and rivers; flying units have distinctive visuals and faster movement, and all combat units can attack air targets. Collectors transport resources to a completed Stronghold or Resource Outpost before they are credited.
@@ -195,7 +195,7 @@ Collectors now approach trees precisely enough to reach chopping range at normal
 
 Lumber gathering is twice as fast (1.5 per second), with 25 lumber carried per delivery. Gold loads are reduced to 15, taking six seconds at the base mining rate. The Harvest Guild now researches lumber harvesting and gold mining separately, with independent three-level upgrades.
 
-Each faction can recruit one of each of its three heroes: Dawnward's Sun Marshal (Paladin), Frontier Wizard and Frontier Ranger; The Dominion's Stormcaller (Berserker), Frontier Witch and Dragon Sovereign. Their selection panels describe nearby troop auras and unique active powers. Shared hero training benefits all three; Paladin and Berserker powers remain in the stronghold-level-3 hero research tree. Stormcaller emits small lightning sparks. Dominion infantry can research Fire Spears, applying damage over time with Troll Spearthrower attacks.
+Each faction chooses one of its three heroes for the entire match: Dawnward's Sun Marshal (Paladin), Frontier Wizard and Frontier Ranger; The Dominion's Stormcaller (Berserker), Frontier Witch and Dragon Sovereign. Their selection panels describe nearby troop auras and unique active powers. Sanctum mastery benefits the chosen hero; Frontier-style powers are also unlocked with hero skill points, while purchased mastery requires Stronghold level 3. Stormcaller emits small lightning sparks. Dominion infantry can research Fire Spears, applying damage over time with Troll Spearthrower attacks.
 
 Winding rivers divide each battlefield. Ground troops cross at wooden bridges; flying units cross freely. Riverbanks, contrasting grass, stones and flowers add terrain detail. Roof shingles cover both complete slopes, and Dominion horns use smaller curved shapes with visible mounting collars.
 
@@ -257,3 +257,16 @@ Character proportions are more natural and all exported models use worn, texture
 Pathfinding now checks the full segment between navigation nodes, includes buildings, invalidates geometry caches when buildings change, and resolves blocked/unreachable movement destinations at reachable ground instead of walking endlessly. Units that begin inside an obstacle can move outward. Flying units still cross ground obstacles. Gathering, delivery, construction and attacks use the same movement logic.
 
 PC command panels are compact and independently scrollable, giving the map more space. At 1440×900, the map height increases from about 512 to 664 pixels. The new **Fullscreen** button toggles fullscreen on supported PC browsers. **Expand map** hides the lower panels for a nearly full-height battlefield; **Show panels** restores them. Phone layouts retain their touch panels. Fixed malformed CSS left over from the local-font migration. Build `20261007-realism-routes`.
+
+
+### Hero progression, forests and rivers — 20261007-heroes-forests
+
+- Every map has **10 gold mines**: one within reach of each of the four possible starting corners, plus six neutral mines. Trees grow in larger irregular groves with near-base patches; ramps and riverbanks remain clear.
+- The Infantry Armory trains **Dawn Knights / Orc Ravagers**, **Longbow Rangers / Troll Spearthrowers**, and **Royal Marksmen / Shadow Hunters** independently. Each rank gives only that unit type +20% attack damage and +8 percentage points of armor. Rank 2 needs Stronghold 2; rank 3 needs Stronghold 3. Fire arrows/spears remain a separate ranged-unit upgrade. Three upgrades can be queued.
+- The first successfully paid hero training order permanently locks that player's hero choice for the match, even if canceled. Only one living or queued hero is allowed across all Sanctums. After death, only that same hero can be recruited again. Starting a new match resets the choice.
+- Heroes start at level 1 with **one skill point** and gain experience from their army's kills within **600 map units**. Workers give 15 XP; normal troops 45; artillery and large flyers 70; heroes 100; buildings 90; Strongholds 180. Each level requires `100 × current level` XP, grants one skill point, and is capped at level 10. Select the hero to view its XP bar and spend points in **Frontier Hero Tree**.
+- The existing Frontier-inspired Paladin/Berserker prerequisite paths now support all six hero choices, with class-specific spell names for Wizard, Ranger, Witch, and Dragon Sovereign. Each skill costs one point and has three ranks. Skill-point training is available before Stronghold 3. Paid **Sanctum mastery** remains an additional Stronghold-3 research path and stacks with learned skills.
+- Death removes one hero level, down to a minimum of 1, and resets progress toward the next level. It first removes an unspent point; otherwise it removes the most recently allocated rank, preserving the remaining prerequisite path. Retraining restores the remaining level and skills at full health.
+- Unit selection and troop training buttons show small portraits cropped from the same faction-specific 3D sprite atlases used on the battlefield.
+- Rivers have layered depth colors, surface texture, downstream currents, moving sun glints, and occasional fish leaps with landing splashes. Bridges and elevation ramps use shaded round logs with bark grain, knots, end rings, supports, and contact shadows.
+- Hero progression, choice locks, and unit-specific upgrades run on the authoritative multiplayer server as well as in single-player. Desktop and phone browser checks verify the controls and portraits; `npm test` covers progression, death/retraining, resource placement, research isolation, multiplayer ownership, and existing RTS behavior.
