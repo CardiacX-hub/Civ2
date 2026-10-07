@@ -297,3 +297,5 @@ Forest movement: ground units route around closely spaced tree trunks instead of
 Movement performance: spatial obstacle lookup and a priority queue keep forest routing responsive. Valid detours are reused until orders or obstacles change instead of being rebuilt every two seconds.
 
 Starting areas are checked against rivers, mountains, cliffs and ramps before armies are placed. All six spawn slots have a clear ground-level area for their stronghold, workers and early expansion; map previews use the same validated locations.
+
+Stronghold progression: level 2 unlocks Siege Works, Artillery Foundry, Siege Bastion and artillery training. Level 3 unlocks Sky Roost and flying-unit training, including the Dominion Dragon Sovereign. Workers deliver cargo to reachable edges of completed friendly strongholds or outposts, and can use another drop-off when the nearest is inaccessible.
