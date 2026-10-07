@@ -22,7 +22,7 @@ function kawMenuOrc(){
 function kawCharacter(name){
  const orc=['orc','troll','shaman','peon','peon-pick','peon-hammer','peon-carry','peon-logs','hunter'].includes(name),cls=({knight:'paladin',orc:'berserker',ranger:'ranger',troll:'ranger',mage:'wizard',shaman:'necromancer',hunter:'necromancer',witch:'witch',marksman:'ranger'})[name]||'monk';
  const old={...pl[cls]};if(orc)pl[cls]={...old,skin:name==='troll'?0x93cadc:name==='hunter'?0x9e65bb:0x82a95c,cloth:name==='hunter'?0x11141d:0x655843,trim:0xc4aa70};
- const model=_l(cls,{});pl[cls]=old;const n=model.userData;n.weapon.position.set(0,-16,0);n.weapon.scale.setScalar(1);
+ if(name==='marksman')pl[cls]={...old,cloth:0xa62a36,trim:0xe6dfc4};const model=_l(cls,{});pl[cls]=old;const n=model.userData;n.weapon.position.set(0,-16,0);n.weapon.scale.setScalar(1);
  if(name.startsWith('worker')||name.startsWith('peon')){
   for(const fist of n.fists)fist.parent.remove(fist);n.weapon.clear();n.cls='berserker';const wood=kawMaterial(0x88603c,'wood'),metal=kawMaterial(0xaab9c0,'metal',.8);
   J(n.weapon,st('cylinder',1.8,2,40),wood,0,9,0);
@@ -36,6 +36,7 @@ function kawCharacter(name){
  if(name==='hunter'){n.weapon.clear();n.cls='wizard';V(n.weapon,5,kawMaterial(0x9d48dd,'metal'),0,8,0);}
  if(name.endsWith('logs')){n.weapon.clear();n.cls='monk';const log=kawMaterial(0x775137,'wood'),cut=kawMaterial(0xd0b47e);for(let i=0;i<4;i++){const z=-12-i%2*4,y=-2+Math.floor(i/2)*7;const l=J(n.upperBody,st('cylinder',3,3.5,29),log,0,y,z);l.rotation.z=Math.PI/2;const end=J(n.upperBody,st('cylinder',2.9,2.9,1),cut,15,y,z);end.rotation.z=Math.PI/2;}for(const x of [-7,7])ot(n.torso,2,22,1,log,x,1,11);}
  if(name==='marksman'){
+  const red=kawMaterial(0xa52b34,'cloth'),white=kawMaterial(0xe5dfc9,'cloth'),black=kawMaterial(0x1b242c,'cloth'),brass=kawMaterial(0xd7b76b,'metal',.6),skin=kawMaterial(0xd6af8e,'skin');n.head.clear();V(n.head,14,skin,0,0,0,.86,1.05,.8);for(const side of [-1,1]){V(n.head,1.9,white,side*4,2,11,1,.65,.3);V(n.head,.9,black,side*4,2,11.5);const strap=ot(n.torso,3,24,1.2,white,side*2,0,12);strap.rotation.z=side*.48;ot(n.upperBody,10,18,3,red,side*6,-13,-10);V(n.head,2,skin,side*12,-1,0,.5,1,.65);}V(n.head,2.2,skin,0,-1,12,.7,1,.7);J(n.head,st('cylinder',13,14,8,12),black,0,14,0);J(n.head,st('cylinder',23,23,2,3),black,0,11,0);J(n.head,st('torus',13.2,.65),brass,0,12,0).rotation.x=Math.PI/2;V(n.head,2,brass,-11,13,9);ot(n.torso,23,4,2,white,0,-10,12);for(let i=0;i<4;i++)V(n.torso,.9,brass,0,8-i*5,14);ot(n.torso,6,3,1.4,brass,0,-9,14);
   n.weapon.clear();n.weapon.rotation.set(0,0,0);const metal=kawMaterial(0x77929e,'metal',.85),wood=kawMaterial(0x6f4630,'wood'),gold=kawMaterial(0xd3b771,'metal',.7);
   ot(n.weapon,5,7,17,wood,0,0,-6);const barrel=J(n.weapon,st('cylinder',2,2.6,34),metal,0,3,17);barrel.rotation.x=Math.PI/2;
   const muzzle=J(n.weapon,st('cylinder',1.2,1.2,1),F(0x18242b,.3,.5),0,3,34.5);muzzle.rotation.x=Math.PI/2;

@@ -3,7 +3,7 @@
 
 A dependency-free 2D browser RTS. Run `npm start`, then open the served game on port 3000. Run `npm test` for simulation smoke tests.
 
-Choose the human **Dawnward** or the orc/troll **The Dominion**, customize banners, and play against one or two AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
+Choose the human **Dawnward** or the orc/troll **The Dominion**, customize banners, and play against up to five AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
 
 Click or drag to select friendly units. Shift-click adds to selection. **Right-click** the map to move selected units. Choose **Move** (or press **M**) and right-click to force movement even when pointing at a target. Left-click selects units and never issues movement. Use **Attack / gather** to target an enemy, resource, or construction site. Right-click an enemy to attack, a resource to gather, or a damaged Stronghold to repair. A destination ring and message confirm the order. Collectors choose buildings from the right-hand construction section. Buildings begin as construction sites and require a nearby collector until completed. Finished production buildings train units through timed queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
 
@@ -139,7 +139,7 @@ When peasants are selected, their bottom action panel shows commands on the left
 
 ### Battalion update
 
-Equipment is now rendered as part of each character's hand hierarchy in all eight directions and 16 animation frames. Workers switch between an axe for lumber, a pick for gold, and a hammer for construction or repair. The Royal Marksman carries a two-handed musket with no bow. Units, artillery vehicles, buildings, walls, construction stages, trees, mountains and timber-framed gold mines share the Frontier renderer's painted PBR materials and lighting.
+Equipment is now rendered as part of each character's hand hierarchy in all eight directions and 16 animation frames. Workers switch between an axe for lumber, a pick for gold, and a hammer for construction or repair. The Musketeer carries a two-handed musket with no bow. Units, artillery vehicles, buildings, walls, construction stages, trees, mountains and timber-framed gold mines share the Frontier renderer's painted PBR materials and lighting.
 
 Discovered enemy buildings keep red square markers on the minimap and a red last-seen marker in the battlefield fog. Enemy units appear only while visible. A remembered building disappears when its location is revisited and its destruction is confirmed.
 
@@ -205,7 +205,7 @@ In Settings → Administrative code, enter `WHOLETTHEPIGSOUT` and press Apply co
 
 ## Multiplayer lobbies — 20261006-multiplayer
 
-Choose **MULTIPLAYER · HOST / JOIN** from the main menu. Online battles support up to four total human and AI players, with at least one human. Each player has a unique banner color. The host chooses a map and can add a **4–64 character passcode**. Share the invitation link or seven-character lobby code; share the passcode separately. Guests mark themselves **Ready**, then the host starts the shared countdown. Normal mouse, keybinding and touch orders work during multiplayer, including gathering, construction, rally points, formations, research, training and cancellation.
+Choose **MULTIPLAYER · HOST / JOIN** from the main menu. Online battles support up to six total human and AI players, with at least one human. Each player has a unique banner color. The host chooses a map and can add a **4–64 character passcode**. Share the invitation link or seven-character lobby code; share the passcode separately. Guests mark themselves **Ready**, then the host starts the shared countdown. Normal mouse, keybinding and touch orders work during multiplayer, including gathering, construction, rally points, formations, research, training and cancellation.
 
 The server runs the authoritative simulation, checks ownership and costs, and sends each player their own fog-of-war view. Passcodes are salted and hashed, never included in room listings or invitations. Sessions use randomly generated bearer tokens and reconnect after a page refresh. Administrative codes and global pause are disabled for multiplayer. Opening settings pauses your local controls while the online match continues.
 
@@ -229,7 +229,7 @@ Rooms expire after three hours. Disconnected players have a 90-second reconnecti
 
 ### Four-player mixed lobbies — 20261006-four-player-ai
 
-Lobbies now have four total slots. Play with four people, two people and two AI opponents, three people and one AI, or one person and up to three AI opponents. In the waiting lobby, the host uses **AI opponents · Host controls** to add, edit or remove computer players. Choose each AI's Dawnward/Dominion faction, banner color and Easy/Normal/Hard/Extreme difficulty. Select an existing AI in **AI slot** to edit or remove it. Remove an AI to free a slot for another human.
+Lobbies now have six total slots. Play with up to six people or any mixture of humans and AI, with at least one human. In the waiting lobby, the host uses **AI opponents · Host controls** to add, edit or remove computer players. Choose each AI's Dawnward/Dominion faction, banner color and Easy/Normal/Hard/Extreme difficulty. Select an existing AI in **AI slot** to edit or remove it. Remove an AI to free a slot for another human.
 
 All human players must be connected and ready before the host starts; AI slots are always ready. Each participant gets a separate Stronghold, four collectors, randomized starting corner, and 100 gold/100 lumber. Server-controlled AI gathers, builds, recruits, researches and attacks using its own difficulty. AI never issues orders for human slots. Normal free-for-all victory requires being the final surviving Stronghold.
 
@@ -261,7 +261,7 @@ PC command panels are compact and independently scrollable, giving the map more 
 
 ### Hero progression, forests and rivers — 20261007-heroes-forests
 
-- Every map now has **13 gold mines** (the requested 25% increase from 10, rounded up): one within reach of each of the four possible starting corners, plus nine neutral mines. Trees grow in larger irregular groves with near-base patches; ramps and riverbanks remain clear.
+- Every map now has **13 gold mines** (the requested 25% increase from 10, rounded up): one within reach of each of the six possible starting positions, plus seven neutral mines. Trees grow in larger irregular groves with near-base patches; ramps and riverbanks remain clear.
 - The Infantry Armory trains **Dawn Knights / Orc Ravagers**, **Longbow Rangers / Troll Spearthrowers**, and **Royal Marksmen / Shadow Hunters** independently. Each rank gives only that unit type +20% attack damage and +8 percentage points of armor. Rank 2 needs Stronghold 2; rank 3 needs Stronghold 3. Fire arrows/spears remain a separate ranged-unit upgrade. Three upgrades can be queued.
 - The first successfully paid hero training order permanently locks that player's hero choice for the match, even if canceled. Only one living or queued hero is allowed across all Sanctums. After death, only that same hero can be recruited again. Starting a new match resets the choice.
 - Heroes start at level 1 with **one skill point** and gain experience from their army's kills within **600 map units**. Workers give 15 XP; normal troops 45; artillery and large flyers 70; heroes 100; buildings 90; Strongholds 180. Each level requires `100 × current level` XP, grants one skill point, and is capped at level 10. Select the hero to view its XP bar and spend points in **Frontier Hero Tree**.
@@ -275,9 +275,19 @@ PC command panels are compact and independently scrollable, giving the map more 
 ### Facing, worker controls, phone rotation and results — 20261007-controls-results
 
 - Both factions' buildings and construction stages now face straight toward the bottom of the battlefield from the elevated camera.
-- Maps have 13 mines: four starting-corner mines and nine neutral mines. This rounds the requested 25% increase from 10 mines up to a whole mine.
+- Maps have 13 mines: six starting-position mines and seven neutral mines. This rounds the requested 25% increase from 10 mines up to a whole mine.
 - Selecting another friendly worker takes priority over overlapping tree artwork and pending commands. Selection uses the closest unit silhouette; phone taps on a friendly unit leave Order mode and select that unit.
 - Group lumber orders assign individual accessible trees immediately. Walking, delivering and shift-queued workers reserve their trees. Workers wait rather than pile onto an occupied tree, and gathering approaches avoid other active collectors.
 - Canvas size and touch coordinates follow actual layout changes using resize/orientation events and a ResizeObserver. Rotating cancels interrupted gestures; portrait/landscape layouts can be switched repeatedly. Phone **Hide panel / Show panel** controls collapse the lower selection/command area; choosing a panel opens it again.
 - Victory and defeat show a scrollable statistics table: delivered gold and lumber, total resources gained, cumulative worker idle time, completed fighters, completed buildings, and enemy buildings destroyed. Starting resources, initial units/buildings, refunds and administrative resources do not count as production or gathering. Idle time sums seconds across all living workers without a task or on Stop/Hold.
 - Multiplayer statistics are recorded by the server. Only your own statistics are sent while opponents are still playing; the full scoreboard is revealed when the match finishes.
+
+
+### Six-player battlefields and Musketeer — 20261007-six-player-battlefields
+
+- Maps are **3200 × 3200**, up from 2400 × 2400 (about 78% more area). Mountain ranges and plateaus span the larger terrain, rivers extend across it, and six separated starting positions support six participants. There are 13 mines: six starting mines and seven neutral mines, with larger forest coverage.
+- Map selection previews draw the same river paths, bridges, mountains, forest patches, mine locations, raised plateaus and log ramps used by the simulation. Pale rings show possible starting positions, without identifying enemies.
+- The banner and every opponent occupy separate rows. Single player supports up to five AI opponents; online lobbies support up to six total humans and AI. Passcodes, readiness, unique colors, fog, ownership checks and free-for-all victory still apply to every slot.
+- **RYANISKING** enables unlimited resources and instant construction in single-player, including completing existing construction sites. Finished sites restore full building health, release builders, count once in statistics, and activate wall collision immediately. Unit training and research retain their timers. Administrative codes remain unavailable online.
+- The former Royal Marksman is now the **Musketeer**, with a British-inspired red coat, white crossed belts, brass buttons, a black tricorn hat, and a wood-and-steel musket. The 8-direction, 16-frame idle/walk/attack atlas and selection portraits use the new uniform.
+- **Hard** scouts after 20 seconds, raids from 40 seconds, evaluates tactics every 0.75 seconds, develops toward 24 collectors, targets known exposed resource buildings and researches flaming ammunition. It gets no free-resource bonus. **Extreme** remains harder, deciding every 0.5 seconds and raiding from 25 seconds with its advertised economy boost.
