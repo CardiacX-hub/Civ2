@@ -248,3 +248,12 @@ Each research building can queue **three upgrades total**, including the active 
 Use **GUIDED TUTORIAL · LEARN TO PLAY** to practice either faction. Ten lessons advance after actual actions; each can be skipped. Tutorial-only funding, passive opponents and faster construction do not change campaigns or multiplayer. Settings includes credits, license links and a privacy summary. Fonts are now self-hosted.
 
 See [RELEASE-REVIEW.md](RELEASE-REVIEW.md) for the commercial readiness findings and remaining work, and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for asset/dependency notices. Build `20261006-tutorial-review`.
+
+
+### Natural materials, obstacle routing and larger PC battlefield (20261007)
+
+Character proportions are more natural and all exported models use worn, textured surfaces with physically based roughness and bump detail. Foliage has finer clusters, mountains use irregular rock volumes, grass uses curved blades, and unit ground shadows have softer falloff. These remain 3D-rendered sprite graphics viewed from an RTS camera.
+
+Pathfinding now checks the full segment between navigation nodes, includes buildings, invalidates geometry caches when buildings change, and resolves blocked/unreachable movement destinations at reachable ground instead of walking endlessly. Units that begin inside an obstacle can move outward. Flying units still cross ground obstacles. Gathering, delivery, construction and attacks use the same movement logic.
+
+PC command panels are compact and independently scrollable, giving the map more space. At 1440×900, the map height increases from about 512 to 664 pixels. The new **Fullscreen** button toggles fullscreen on supported PC browsers. **Expand map** hides the lower panels for a nearly full-height battlefield; **Show panels** restores them. Phone layouts retain their touch panels. Fixed malformed CSS left over from the local-font migration. Build `20261007-realism-routes`.

@@ -2,13 +2,13 @@
 const kawModels={},kawTextures={};
 function kawStoneTexture(){if(kawTextures.stone)return kawTextures.stone;const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.fillStyle='#aaa9a3';g.fillRect(0,0,512,512);let seed=12345;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};for(let i=0;i<18000;i++){const shade=80+Math.floor(rand()*100);g.fillStyle=`rgba(${shade},${shade},${shade},${.1+rand()*.3})`;g.fillRect(rand()*512,rand()*512,1+rand()*3,1+rand()*3);}for(let i=0;i<80;i++){const x=rand()*512,y=rand()*512;g.strokeStyle='rgba(55,58,52,.16)';g.lineWidth=.6;g.beginPath();g.moveTo(x,y);g.lineTo(x+rand()*18-9,y+rand()*25);g.stroke();}const t=Ug('cloth').clone();t.image=c;t.needsUpdate=true;kawTextures.stone=t;return t;}
 
-function kawMaterial(color,kind='stone',metal=0){const mat=F(color,metal,metal?.28:.78);mat.map=kind==='stone'?kawStoneTexture():Ug(kind);mat.bumpMap=mat.map;mat.roughnessMap=mat.map;mat.bumpScale=kind==='wood'?.28:kind==='metal'?.13:.17;return mat;}
+function kawMaterial(color,kind='stone',metal=0){const mat=F(color,metal,metal?.38:.86);mat.map=kind==='stone'?kawStoneTexture():Ug(kind);mat.bumpMap=mat.map;mat.roughnessMap=mat.map;mat.bumpScale=kind==='wood'?.28:kind==='metal'?.13:.17;return mat;}
 function kawMenuOrc(){
  const root=new Kt,skin=kawMaterial(0x718b47,'skin'),steel=kawMaterial(0xbccbd2,'metal',.9),iron=kawMaterial(0x3c4851,'metal',.75),leather=kawMaterial(0x594331,'wood'),ivory=kawMaterial(0xe7d7b2),black=kawMaterial(0x171c16),blood=kawMaterial(0x9e1421,'metal',.15);
  function rod(parent,a,b,r,mat){const d={x:b[0]-a[0],y:b[1]-a[1],z:b[2]-a[2]},len=Math.hypot(d.x,d.y,d.z),mesh=J(parent,st('cylinder',r,r*1.12,len,12),mat,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2);mesh.quaternion.setFromUnitVectors(mesh.position.clone().set(0,1,0),mesh.position.clone().set(d.x,d.y,d.z).normalize());return mesh;}
  for(const side of [-1,1]){rod(root,[side*12,3,5],[side*17,20,0],7,iron);rod(root,[side*17,20,0],[side*11,34,-7],8,leather);ot(root,15,8,24,iron,side*12,4,8);ot(root,12,3,19,steel,side*12,8,9);}
  const body=Re(root,0,35,0);V(body,19,skin,0,8,1,1.3,1.15,.78);V(body,17,iron,0,3,-4,1.2,1,.7);ot(body,34,6,23,leather,0,-5,0);ot(body,8,7,3,steel,0,-5,13);body.rotation.x=.3;
- const head=Re(root,0,58,16);V(head,14,skin,0,0,0,1.05,1.1,.9);V(head,10,skin,0,-8,7,1.1,.7,.7);ot(head,14,3,2,black,0,-7,14);V(head,4,skin,0,0,13,1,.7,.8);
+ const head=Re(root,0,58,16);V(head,14,skin,0,0,0,.95,1.1,.9);head.scale.setScalar(.9);V(head,10,skin,0,-8,7,1.1,.7,.7);ot(head,14,3,2,black,0,-7,14);V(head,4,skin,0,0,13,1,.7,.8);
  for(const side of [-1,1]){const ear=J(head,st('cone',5,22,3),skin,side*20,3,-1);ear.rotation.z=-side*1.1;V(head,2.8,ivory,side*6,3,12,1,.5,.25);V(head,1.1,blood,side*6,3,13);const brow=ot(head,12,4,5,skin,side*6,7,11);brow.rotation.z=side*.2;J(head,st('cone',2.3,12,6),ivory,side*8,-9,13).rotation.z=-side*.25;V(root,12,iron,side*23,48,0,1.3,.6,1.1);for(let j=0;j<4;j++){J(root,st('cone',2,9,5),steel,side*(18+j*3),55,-4+j*3);V(root,1.3,steel,side*25,48,-8+j*5);}}
  rod(root,[-23,47,1],[-26,33,16],7,skin);rod(root,[-26,33,16],[-7,37,24],6,skin);rod(root,[23,47,1],[12,30,17],7,skin);rod(root,[12,30,17],[-11,23,24],6,skin);
  for(const [x,y,z] of [[-23,34,16],[9,29,19]]){V(root,7,iron,x,y,z,1,.75,1);for(let j=0;j<3;j++)V(root,1,steel,x-4+j*4,y+4,z+4);}
@@ -42,7 +42,8 @@ function kawCharacter(name){
   for(const z of [4,18,29]){const band=J(n.weapon,st('torus',2.8,.65),gold,0,3,z);}
   ot(n.weapon,2,4,5,metal,3,3,1);ot(n.weapon,3,1,3,gold,0,6,22);
  }
- return model;
+ // More natural proportions and worn surfaces, using the same physical light rig.
+ n.head.scale.multiplyScalar(name==='troll'?.92:.82);n.weapon.scale.multiplyScalar(.92);model.traverse(mesh=>{if(!mesh.isMesh)return;const mats=Array.isArray(mesh.material)?mesh.material:[mesh.material];const detailed=mats.map(original=>{const m=original.clone();if(m.metalness>.35){m.roughness=Math.max(.32,m.roughness);m.map??=Ug('metal');}else{m.roughness=Math.max(.7,m.roughness);m.map??=Ug('cloth');}m.bumpMap??=m.map;m.bumpScale=.12;m.roughnessMap??=m.map;m.needsUpdate=true;return m;});mesh.material=Array.isArray(mesh.material)?detailed:detailed[0];});return model;
 }
 function kawWorld(name,horde){
  const root=new Kt,stone=kawMaterial(horde?0x716e64:0xb0b8b5),wood=kawMaterial(0x806044,'wood'),roof=kawMaterial(horde?0x804239:0x35596e,'metal',.2),steel=kawMaterial(0x849ca5,'metal',.7),gold=kawMaterial(0xcfb47b,'metal',.6),dark=kawMaterial(0x25343a),leaf=kawMaterial(0x527647),red=kawMaterial(0xab4e35,'cloth');
@@ -62,9 +63,9 @@ function kawWorld(name,horde){
   box(14,8,12,wood,21,6,33);sphere(5,gold,21,11,33);box(2,18,2,steel,-19,10,23);sphere(3,kawMaterial(0xffc16c,'metal'),-19,19,24);
  }else if(name==='tree'||name==='pine'){
   J(root,st('cylinder',4,7,36),wood,0,18,0);for(let i=0;i<5;i++){const a=i*2.4;if(name==='tree')sphere(18,leaf,Math.cos(a)*12,40+Math.sin(a)*6,Math.sin(a)*10,1,.95,1);else J(root,st('cone',25-i*3,32),leaf,0,22+i*9,0);}
- for(let i=0;i<65;i++){const a=i*2.4,y=28+(i%7)*5,r=8+(i%5)*3;sphere(name==='pine'?3:5,i%3?leaf:kawMaterial(0x6c924f),Math.cos(a)*r,y,Math.sin(a)*r,1,.6,1);}for(let i=0;i<8;i++){const branch=J(root,st('cylinder',1,2,20),wood,Math.sin(i)*8,25+i*2,Math.cos(i)*8);branch.rotation.z=i*.7;}
+ for(let i=0;i<140;i++){const a=i*2.4,y=28+(i%7)*5,r=8+(i%5)*3;sphere(name==='pine'?2.2:3.4,i%3?leaf:kawMaterial(0x6c924f),Math.cos(a)*r,y,Math.sin(a)*r,1,.6,1);}for(let i=0;i<8;i++){const branch=J(root,st('cylinder',1,2,20),wood,Math.sin(i)*8,25+i*2,Math.cos(i)*8);branch.rotation.z=i*.7;}
  }else if(name==='mountain'){
-  for(let i=0;i<4;i++){const peak=J(root,st('cone',30-i*3,65-i*9,5),stone,-22+i*14,24-i*3,i%2*8);peak.rotation.y=i*.8;J(root,st('cone',12-i,22,5),kawMaterial(0xe0e6df),-22+i*14,46-i*6,i%2*8);}
+  for(let i=0;i<4;i++){const peak=J(root,new qr(27-i*3,8,6),stone,-22+i*14,26-i*3,i%2*8);peak.scale.set(1,1.65,.8);peak.rotation.y=i*.8;peak.rotation.z=(i-1.5)*.12;const snow=V(root,10-i,kawMaterial(0xcbd0c7),-22+i*14,52-i*6,i%2*8,1,.4,.7);}
  }else if(name.startsWith('construction')){
   box(68,3,52,stone);const stage=Number(name.slice(-1));for(const x of [-30,30])for(const z of [-23,23])box(3,stage*15,3,wood,x,stage*7.5,z);for(let y=12;y<stage*18;y+=12){box(65,3,3,wood,0,y,24);box(3,3,50,wood,-30,y,0);}for(let i=0;i<6;i++)box(17,3,6,wood,35,i*3+2,12);
  }else if(name==='wall'){
