@@ -299,3 +299,6 @@ Movement performance: spatial obstacle lookup and a priority queue keep forest r
 Starting areas are checked against rivers, mountains, cliffs and ramps before armies are placed. All six spawn slots have a clear ground-level area for their stronghold, workers and early expansion; map previews use the same validated locations.
 
 Stronghold progression: level 2 unlocks Siege Works, Artillery Foundry, Siege Bastion and artillery training. Level 3 unlocks Sky Roost and flying-unit training, including the Dominion Dragon Sovereign. Workers deliver cargo to reachable edges of completed friendly strongholds or outposts, and can use another drop-off when the nearest is inaccessible.
+
+The Dominion can train The Devoured at the Infantry Lodge: a heavy axe infantry unit (130 gold, 70 lumber, 320 health, 32 damage, 35% base armor, 12-second training) with spiked armor, skull trophies and its own Infantry Armory upgrades. It has eight facing directions and 16 frames for each idle, walking and axe-attack sequence.
+River-safe starts now check the entire starting clearing against the river, including bends. Ground-unit production also checks the spawn footprint and an unobstructed exit on the building's terrain level; if every exit is blocked, the completed unit waits in its queue until there is safe ground.
