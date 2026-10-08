@@ -348,3 +348,7 @@ Animation atlases load only when their units appear, and unused atlas references
 ### Living Covenant infantry — 20261008-covenant-creatures
 
 The Shellguard is now an Ancient Treant, a walking oak with root feet, branch arms and glowing green eyes. The Reed Archer is now a coiled Venom Viper that spits venom instead of arrows, poisoning enemy troops for 3 seconds; Potent Venom research extends that duration. The Resin Slinger is now a five-headed Fire Hydra with dark red scales, ivory horns and fire projectiles that burn targets for 4 seconds. The existing infantry training slots, prices and base stats remain, and the Hydra retains Smoke Screen. Original creature meshes have eight facing directions and 16 frames per idle, movement and attack cycle, with matching selection and production portraits.
+
+### Modern visual setup — 20261008-modern-visuals
+
+The Covenant menu now uses the supplied tree-and-hydra battlefield image. Settings includes Low, Balanced and High visual presets, with a lightweight GPU grading/bloom/edge-smoothing layer for sprite matches and automatic Canvas fallback. A separate working [live 3D rendering lab](graphics/lab.html) demonstrates PBR, cascaded shadows, GTAO contact shading, ACES, bloom, SMAA, emissive lights and wetness/weathering. Full modular source, reusable HLSL math and asset integration instructions are in [the visual-quality guide](docs/VISUAL_QUALITY.md). The live 3D lab is a migration kit, not a replacement for current sprite gameplay. Run `npm ci` and `npm run build:graphics` when changing its modules.

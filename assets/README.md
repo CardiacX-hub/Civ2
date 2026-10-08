@@ -9,3 +9,5 @@ The battalion update adds hand-attached worker axe/pick/hammer variants, a bow-f
 The Covenant update adds original procedural shell armor, woven reed clothing, clay-and-shell architecture, six-legged beetles and burrowers, moths and wasps, and specialist models. The meshes are defined in `../tools/covenant-art.js` and captured through the same painted renderer. These designs do not import artwork from Warcraft. New atlases retain eight directions and sixteen frames per action phase; the runtime uses cached WebP sheets and never loads the offline 3D renderer.
 
 The Covenant infantry atlases `frontier-cov-shellguard`, `frontier-cov-archer` and `frontier-cov-resin` now contain original walking oak, venom viper and five-headed fire hydra meshes respectively. These replace the earlier humanoid meshes; their corresponding portraits are regenerated from the same models.
+
+`covenant-menu-battle.jpg` is the exact user-supplied 1280×720 walking-tree and hydra battlefield image. It replaces the procedural faction-card illustration.

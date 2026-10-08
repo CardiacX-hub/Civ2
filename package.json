@@ -1,1 +1,17 @@
-{"name":"ashfang-rts","version":"1.0.0","private":true,"engines":{"node":">=22"},"scripts":{"start":"node server.js","test":"node --test"}}
+{
+  "name": "ashfang-rts",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "build:graphics": "esbuild graphics/modern-renderer.js --bundle --format=esm --minify --outfile=graphics/modern-renderer.bundle.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10",
+    "three": "^0.180.0"
+  }
+}

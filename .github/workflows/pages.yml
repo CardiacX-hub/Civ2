@@ -24,7 +24,7 @@ jobs:
       - uses: actions/configure-pages@v5
       - name: Prepare browser game
         run: |
-          node -e "const fs=require('node:fs');fs.mkdirSync('public',{recursive:true});for(const file of ['index.html','game.js','frontier-art.js','multiplayer.js','tutorial.js','style.css'])fs.copyFileSync(file,'public/'+file);fs.cpSync('assets','public/assets',{recursive:true});fs.cpSync('licenses','public/licenses',{recursive:true});"
+          node -e "const fs=require('node:fs');fs.mkdirSync('public',{recursive:true});for(const file of ['index.html','game.js','frontier-art.js','multiplayer.js','tutorial.js','visual-quality.js','style.css'])fs.copyFileSync(file,'public/'+file);fs.cpSync('assets','public/assets',{recursive:true});fs.cpSync('graphics','public/graphics',{recursive:true});fs.cpSync('licenses','public/licenses',{recursive:true});"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public
