@@ -75,7 +75,7 @@ function kawFinishPaintedModel(root,name,horde){
   if(['ranger','troll','marksman','hunter'].includes(name)){const leather=kawMaterial(0x79573b,'wood');for(const leg of n.legs)kawPlate(leg,7,8,2,leather,0,-8,4);for(const arm of n.arms)ot(arm,7,6,8,leather,0,-10,0);}
  }
  if(name.startsWith('world-')&&!['world-gold','world-tree','world-pine','world-mountain'].includes(name)&&!name.includes('construction')){
-  const kind=name.slice(6),wide=kind==='base'?70:['wall','tower'].includes(kind)?0:58;
+  const kind=name.slice(6).replace(/-level[234]$/,''),wide=kind==='base'?70:['wall','tower'].includes(kind)?0:58;
   if(wide){const stone=kawMaterial(horde?0x655d51:0xc1c1b2),wood=kawMaterial(0x72553a,'wood'),trim=horde?iron:gold;
    // Heavy foundations, inset entrances, lintels and contrasting corner blocks.
    for(const side of [-1,1]){ot(root,5,29,5,stone,side*(wide/2-2),15,kind==='base'?27:22);ot(root,7,2,7,trim,side*(wide/2-2),30,kind==='base'?27:22);}
