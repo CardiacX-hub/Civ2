@@ -108,3 +108,5 @@ footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;m
 .results-hint{display:none}@media(pointer:coarse),(max-width:700px){#end .results-hint{display:block;font-size:11px;color:#d1bf88}}
 
 .players{display:flex;flex-direction:column;gap:10px;max-width:460px}.players .player-row{display:grid;grid-template-columns:110px minmax(150px,1fr) 34px;gap:12px;width:100%;padding:8px 0;border-bottom:1px solid #40534455}.players .player-row:first-child input{grid-column:3}.map-preview{width:100%;height:auto;display:block;border-bottom:1px solid #80916c}.map-card p{min-height:38px}@media(max-width:700px){.players .player-row{grid-template-columns:90px minmax(130px,1fr) 34px;gap:6px}}
+
+.dawnward-art{background:#27313b}.dawnward-menu-photo{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}.dawnward-art .race-ribbon{z-index:2}
