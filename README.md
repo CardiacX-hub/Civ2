@@ -331,7 +331,7 @@ The Verdant Covenant is a third playable faction in campaign, tutorial and six-p
 | --- | --- |
 | Dawnward | Shieldwarden: protects troops within 100 from 25% of ranged damage; artillery ignores this aura. Field Medic: heals one nearby ally for 6 health/s while stationary. Siege Engineer: repairs artillery for 12 health/s and places temporary barricades. Pathfinder: fast, lightly armed ground scout. |
 | Dominion | Troll Trapper: places visible, destructible traps that slow enemy ground troops. Bogbreaker: heavy infantry whose blows knock troops back and briefly stagger them. Carrion Rider: fast, fragile flying scout. |
-| Covenant | Foragers, Shellguards, Reed Archers, Resin Slingers, Resin Weavers, Ironback Riders, Burrowbreakers, Moth Scouts, and Stag Wasps. Resin slows enemies; smoke screens protect nearby allies from ranged fire. Wasps apply poison damage over time. |
+| Covenant | Foragers, Ancient Treants, Venom Vipers, Fire Hydras, Resin Weavers, Ironback Riders, Burrowbreakers, Moth Scouts, and Stag Wasps. Vipers poison troops; hydras burn targets and can create protective smoke screens. Wasps apply poison damage over time. |
 
 **Active unit abilities:** select the unit and click its ability, or press **Z** (changeable in Settings). Royal Cavalier **Royal Charge** and Ironback Rider **Ironback Rush** require a visible ground enemy 70–330 units away and an unobstructed path; impact deals 65 damage and a 1s stun, with an 18s cooldown. The Devoured's **Sweeping Strike** deals 55 damage in a forward arc within 85, excluding friendly and flying units, with a 12s cooldown. Their base stats remain equal.
 
@@ -344,3 +344,7 @@ Covenant heroes keep the one-hero-per-match rule: Carapace Captain provides a 15
 The server health endpoint advertises the three factions and unit abilities. An older server is rejected with a deployment message rather than silently ignoring the new commands. On Render, **Manual Deploy → Deploy latest commit** updates the online server if automatic deployment is disabled.
 
 Animation atlases load only when their units appear, and unused atlas references expire after 45s. Small standalone portraits keep training menus from decoding full animation sheets. This reduces the artwork memory added by the larger roster.
+
+### Living Covenant infantry — 20261008-covenant-creatures
+
+The Shellguard is now an Ancient Treant, a walking oak with root feet, branch arms and glowing green eyes. The Reed Archer is now a coiled Venom Viper that spits venom instead of arrows, poisoning enemy troops for 3 seconds; Potent Venom research extends that duration. The Resin Slinger is now a five-headed Fire Hydra with dark red scales, ivory horns and fire projectiles that burn targets for 4 seconds. The existing infantry training slots, prices and base stats remain, and the Hydra retains Smoke Screen. Original creature meshes have eight facing directions and 16 frames per idle, movement and attack cycle, with matching selection and production portraits.

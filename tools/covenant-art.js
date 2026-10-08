@@ -37,3 +37,23 @@ function kawCovenantWorld(name){
  return root;
 }
 function kawCarrion(){const root=kawFlyer('gryphon');root.scale.setScalar(.8);root.traverse(mesh=>{if(mesh.isMesh){mesh.material=mesh.material.clone();mesh.material.color.multiplyScalar(.65);}});const rider=kawSpecialCharacter('trapper');rider.scale.setScalar(.38);rider.position.set(0,28,-8);root.add(rider);return root;}
+// Living infantry: rooted oak guardian, coiled viper, and five-headed fire hydra.
+function kawCreature(name){
+ const root=new Kt,bark=kawMaterial(0x65503a,'wood'),moss=kawMaterial(0x52632b,'cloth'),leaf=kawMaterial(0x738d36,'cloth'),scale=kawMaterial(name==='cov-archer'?0x4c713e:0x462b2b,'metal',.15),belly=kawMaterial(0xb89b70),horn=kawMaterial(0xd0b68a),eye=kawMaterial(name==='cov-shellguard'?0x91e443:name==='cov-archer'?0xebd84c:0xff692c),parts=[];
+ const segment=(parent,a,b,r,mat)=>{const d=root.position.clone().set(b[0]-a[0],b[1]-a[1],b[2]-a[2]);const m=J(parent,st('cylinder',r*.8,r,d.length(),8),mat,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2);m.quaternion.setFromUnitVectors(root.position.clone().set(0,1,0),d.normalize());return m;};
+ if(name==='cov-shellguard'){
+  const trunk=Re(root,0,35,0);V(trunk,22,bark,0,0,0,.85,1.25,.65);for(let i=0;i<12;i++){const a=i*Math.PI/6;segment(trunk,[Math.cos(a)*17,-22,Math.sin(a)*12],[Math.cos(a)*14,24,Math.sin(a)*12],1.5,i%3?bark:moss);}
+  for(const side of [-1,1]){const leg=Re(root,side*11,18,0);V(leg,12,bark,0,-7,0,.65,1.2,.65);for(let j=0;j<3;j++)segment(leg,[0,-11,0],[side*(8+j*3),-17,9-j*8],2.5,bark);parts.push(leg);const arm=Re(trunk,side*20,14,0);segment(arm,[0,0,0],[side*14,-10,3],7,bark);segment(arm,[side*14,-10,3],[side*17,-25,11],5,bark);for(let j=0;j<3;j++)segment(arm,[side*17,-25,11],[side*(15+j*3),-34,18],1.7,bark);parts.push(arm);}
+  V(trunk,15,bark,0,25,5,.85,1,.65);for(const side of [-1,1]){V(trunk,3,eye,side*6,28,16,1,.4,.3);const brow=ot(trunk,12,3,3,bark,side*6,32,16);brow.rotation.z=side*.3;}ot(trunk,10,4,2,eye,0,18,17);
+  for(let i=0;i<9;i++){const a=i*2.4,x=Math.cos(a)*24,z=Math.sin(a)*18;segment(trunk,[x*.5,18,z*.5],[x,44+i%3*5,z],3,bark);for(let j=0;j<4;j++)V(trunk,9, j%2?leaf:moss,x+(j-1.5)*5,44+i%3*5+(j%2)*4,z+(j%2)*6,1,.65,1);}
+  for(let i=0;i<24;i++){const a=i*2.4,x=Math.cos(a)*18,z=Math.sin(a)*13;segment(trunk,[x,-20,z],[x*1.1,10+i%5*3,z*1.1],.8,i%3?bark:moss);}for(let i=0;i<18;i++){const a=i*2.4,x=Math.cos(a)*27,z=Math.sin(a)*23;segment(trunk,[x,45,z],[x+3,27-i%4*3,z],.5,moss);for(let j=0;j<3;j++){const l=V(trunk,2.5,leaf,x+Math.sin(j)*3,39-j*5,z,1,.3,.7);l.rotation.z=i*.7;}}root.userData.creature={name,trunk,parts};
+ }else{
+  const hydra=name==='cov-resin',body=Re(root,0,hydra?18:9,0);V(body,hydra?24:15,scale,0,0,0,hydra?1.2:1,.65,hydra?1.4:1);for(let i=0;i<15;i++){const a=i*.42;V(root,hydra?7:5,scale,Math.sin(a)*(hydra?22:18),5,Math.cos(a)*(hydra?25:18)-19-i*.5,1,.7,1);}
+  if(hydra)for(const side of [-1,1])for(const z of [-15,16]){const leg=Re(root,side*20,15,z);V(leg,9,scale,side*6,-5,0,1,1,.65);for(let j=0;j<3;j++)J(leg,st('cone',2,8,6),horn,side*8,-12,5+j*4).rotation.x=Math.PI/2;parts.push(leg);}
+  const necks=[];for(let i=0;i<(hydra?5:1);i++){const x=hydra?(i-2)*12:0,y=hydra?48+(i%2)*13:36,z=hydra?12+(i%2)*6:10,neck=Re(body,x*.4,4,z*.4);segment(neck,[0,0,0],[x*.4,y*.45,0],hydra?6:5,scale);segment(neck,[x*.4,y*.45,0],[x*.6,y,12],hydra?5:4,scale);for(let j=0;j<7;j++)V(neck,hydra?5:3,belly,x*.6*j/7,y*j/7,5+j,1,.25,.5);const head=Re(neck,x*.6,y,12);V(head,hydra?9:7,scale,0,0,4,1,.7,1.3);V(head,hydra?7:6,belly,0,-5,7,1,.23,1);for(const side of [-1,1]){V(head,2,eye,side*6,2,10,.7,.7,.4);const fang=J(head,st('cone',1.2,6,6),horn,side*4,-3,13);fang.rotation.z=Math.PI;if(hydra){const spike=J(head,st('cone',3,17,6),horn,side*6,9,-2);spike.rotation.z=-side*.4;}}if(hydra)for(let j=0;j<7;j++)J(neck,st('cone',2,9,5),horn,x*.6*j/7,y*j/7+3,-2);necks.push(neck);}
+  for(let i=0;i<20;i++)V(body,2,scale,Math.sin(i*2.4)*20,10+Math.cos(i)*2,Math.cos(i*2.4)*22,1,.4,1);
+  root.userData.creature={name,body,parts,necks};
+ }
+ return root;
+}
+function kawAnimateCreature(root,angle,phase,t){const n=root.userData.creature,walk=phase==='walk',attack=phase==='attack',s=Math.sin(t*Math.PI*2),strike=attack?Math.sin(t*Math.PI):0;root.rotation.y=angle;for(let i=0;i<n.parts.length;i++)n.parts[i].rotation.x=walk?Math.sin(t*Math.PI*2+i*Math.PI)*.3:attack&&i%2===1?-strike*.9:0;if(n.trunk){n.trunk.rotation.x=-strike*.18;n.trunk.rotation.z=walk?s*.035:0;}if(n.body)n.body.position.x=walk?s*1.4:0;for(let i=0;i<(n.necks||[]).length;i++){n.necks[i].rotation.x=attack?-.25*strike:Math.sin(t*Math.PI*2+i)*.035;n.necks[i].rotation.z=walk?Math.sin(t*Math.PI*2+i)*.07:0;}}
