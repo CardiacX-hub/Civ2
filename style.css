@@ -114,3 +114,10 @@ footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;m
 .dominion-menu-photo{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}.ashfang-art .race-ribbon{z-index:2}
 
 .unit-picture{background-size:calc(768px * var(--portrait-scale,1)) calc(1536px * var(--portrait-scale,1));background-position:calc(24px * (1 - var(--portrait-scale,1))) calc(-128px * var(--portrait-scale,1) + 32px * (1 - var(--portrait-scale,1)))}
+
+/* Three readable faction cards; phone cards remain in their own scrolling menu. */
+.setup{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:1200px}.faction{min-width:0}.covenant-art{background:radial-gradient(ellipse at center,#6c7950,#18251f)}.covenant-art img{width:100%;height:100%;object-fit:cover;display:block}.covenant-art .race-ribbon{background:#3a5335;color:#e6d8a3}#selectedRaceBanner[data-faction="covenant"]{border-color:#93ad73;background:#253c2b}.faction[data-faction="covenant"].selected{border-color:#b3c67c}
+@media(max-width:800px){.setup{grid-template-columns:1fr}.faction-art{height:240px}}
+
+/* Small portraits avoid decoding a complete animation atlas for every training choice. */
+.unit-picture{background-size:48px 64px;background-position:center}

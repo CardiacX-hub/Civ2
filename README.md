@@ -3,7 +3,7 @@
 
 A dependency-free 2D browser RTS. Run `npm start`, then open the served game on port 3000. Run `npm test` for simulation smoke tests.
 
-Choose the human **Dawnward** or the orc/troll **The Dominion**, customize banners, and play against up to five AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
+Choose the human **Dawnward**, the orc/troll **The Dominion**, or the wilderness clans of **The Verdant Covenant**, customize banners, and play against up to five AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
 
 Click or drag to select friendly units. Shift-click adds to selection. **Right-click** the map to move selected units. Choose **Move** (or press **M**) and right-click to force movement even when pointing at a target. Left-click selects units and never issues movement. Use **Attack / gather** to target an enemy, resource, or construction site. Right-click an enemy to attack or a resource to gather. Carrying collectors turn in their cargo when you right-click your completed Stronghold or Resource Outpost. Use Repair for damaged Strongholds. Deselect (V) clears selection without stopping orders. A destination ring and message confirm the order. Collectors choose buildings from the right-hand construction section. Buildings begin as construction sites and require a nearby collector until completed. Finished production buildings train units through timed queues. WASD or arrows pan the camera; clicking the minimap recenters it. Escape cancels placement. Pause freezes the simulation.
 
@@ -322,3 +322,25 @@ Animation atlases retain eight directions and sixteen frames for idle, movement 
 - Crowd steering, wider formation spacing, open destinations and more forgiving route waypoints reduce unit congestion.
 - Hero talents and Sanctum talent research are removed. Hero levels, death level loss, innate auras and innate abilities remain.
 - Deselect clears the selected units/buildings and active placement without canceling orders; default shortcut **V**, configurable in Settings. Available on desktop and phone.
+
+### Covenant and specialists — 20261008-covenant-and-specialists
+
+The Verdant Covenant is a third playable faction in campaign, tutorial and six-player multiplayer lobbies, including AI slots. They are wilderness clans bonded with giant insects. Their buildings use clay, woven reeds and armored shells; they have no living buildings or tree creatures.
+
+| Faction | New units and battlefield roles |
+| --- | --- |
+| Dawnward | Shieldwarden: protects troops within 100 from 25% of ranged damage; artillery ignores this aura. Field Medic: heals one nearby ally for 6 health/s while stationary. Siege Engineer: repairs artillery for 12 health/s and places temporary barricades. Pathfinder: fast, lightly armed ground scout. |
+| Dominion | Troll Trapper: places visible, destructible traps that slow enemy ground troops. Bogbreaker: heavy infantry whose blows knock troops back and briefly stagger them. Carrion Rider: fast, fragile flying scout. |
+| Covenant | Foragers, Shellguards, Reed Archers, Resin Slingers, Resin Weavers, Ironback Riders, Burrowbreakers, Moth Scouts, and Stag Wasps. Resin slows enemies; smoke screens protect nearby allies from ranged fire. Wasps apply poison damage over time. |
+
+**Active unit abilities:** select the unit and click its ability, or press **Z** (changeable in Settings). Royal Cavalier **Royal Charge** and Ironback Rider **Ironback Rush** require a visible ground enemy 70–330 units away and an unobstructed path; impact deals 65 damage and a 1s stun, with an 18s cooldown. The Devoured's **Sweeping Strike** deals 55 damage in a forward arc within 85, excluding friendly and flying units, with a 12s cooldown. Their base stats remain equal.
+
+Scouts have 420 vision; **Survey** temporarily expands it to 650 for six seconds, with a 20s cooldown. Unexplored territory stays hidden, and enemies disappear when they leave sight. Human scouts and support troops require Stronghold 2. Flying scouts, Bogbreakers, and elite cavalry require Stronghold 3. The Covenant's Moth Scout is trained at the Shell Lodge; the Wing Pavilion trains Stag Wasps.
+
+Traps slow enemies by 60% for four seconds, deal 15 damage, expire after 90s, and are limited to six per player. Engineer barricades block ground movement, last 45s, and are limited to six. Both structures can be attacked and destroyed; workers cannot construct them through their normal menu. **Burrow Ambush** digs a Burrowbreaker in for 2.5s, then erupts for 60 damage to nearby ground enemies. A replacement move or Stop cancels a charge or burrow; Shift keeps the current order and queues movement.
+
+Covenant heroes keep the one-hero-per-match rule: Carapace Captain provides a 15% protection aura and temporary guard; Smoke Alchemist provides 1 health/s recovery and a smoke cloud; Trail Matriarch provides a 10% movement aura and a temporary speed surge. Hero talents remain removed. AI recruits its own faction's specialists, uses abilities, escorts support units, and scouts instead of sending fragile scouts into direct fights.
+
+The server health endpoint advertises the three factions and unit abilities. An older server is rejected with a deployment message rather than silently ignoring the new commands. On Render, **Manual Deploy → Deploy latest commit** updates the online server if automatic deployment is disabled.
+
+Animation atlases load only when their units appear, and unused atlas references expire after 45s. Small standalone portraits keep training menus from decoding full animation sheets. This reduces the artwork memory added by the larger roster.
