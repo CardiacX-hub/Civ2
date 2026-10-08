@@ -124,3 +124,6 @@ footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;m
 
 /* The GPU presentation canvas replaces the image only; gameplay input stays on #world. */
 #world{filter:none}#visualOutput{touch-action:none}.graphics-settings{padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:14px}.graphics-settings p{font-size:12px;color:#b0bbae}.graphics-settings a{color:#dfc590}.covenant-art img{width:100%;height:100%;object-fit:cover;object-position:center}
+
+/* Live geometry sits beneath the transparent gameplay overlay. */
+#liveBattlefield{touch-action:none}#countdown,#end,#toast{z-index:4}

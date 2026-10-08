@@ -39,7 +39,7 @@ function kawCovenantWorld(name){
 function kawCarrion(){const root=kawFlyer('gryphon');root.scale.setScalar(.8);root.traverse(mesh=>{if(mesh.isMesh){mesh.material=mesh.material.clone();mesh.material.color.multiplyScalar(.65);}});const rider=kawSpecialCharacter('trapper');rider.scale.setScalar(.38);rider.position.set(0,28,-8);root.add(rider);return root;}
 // Living infantry: rooted oak guardian, coiled viper, and five-headed fire hydra.
 function kawCreature(name){
- const root=new Kt,bark=kawMaterial(0x65503a,'wood'),moss=kawMaterial(0x52632b,'cloth'),leaf=kawMaterial(0x738d36,'cloth'),scale=kawMaterial(name==='cov-archer'?0x4c713e:0x462b2b,'metal',.15),belly=kawMaterial(0xb89b70),horn=kawMaterial(0xd0b68a),eye=kawMaterial(name==='cov-shellguard'?0x91e443:name==='cov-archer'?0xebd84c:0xff692c),parts=[];
+ const root=new Kt,bark=kawMaterial(0x65503a,'wood'),moss=kawMaterial(0x52632b,'cloth'),leaf=kawMaterial(0x738d36,'cloth'),scale=kawMaterial(name==='cov-archer'?0x4c713e:0x462b2b,'metal',.15),belly=kawMaterial(0xb89b70),horn=kawMaterial(0xd0b68a),eye=kawMaterial(name==='cov-shellguard'?0x91e443:name==='cov-archer'?0xebd84c:0xff692c),parts=[];leaf.userData.kawThinSurface=.22;moss.userData.kawThinSurface=.18;
  const segment=(parent,a,b,r,mat)=>{const d=root.position.clone().set(b[0]-a[0],b[1]-a[1],b[2]-a[2]);const m=J(parent,st('cylinder',r*.8,r,d.length(),8),mat,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2);m.quaternion.setFromUnitVectors(root.position.clone().set(0,1,0),d.normalize());return m;};
  if(name==='cov-shellguard'){
   const trunk=Re(root,0,35,0);V(trunk,22,bark,0,0,0,.85,1.25,.65);for(let i=0;i<12;i++){const a=i*Math.PI/6;segment(trunk,[Math.cos(a)*17,-22,Math.sin(a)*12],[Math.cos(a)*14,24,Math.sin(a)*12],1.5,i%3?bark:moss);}

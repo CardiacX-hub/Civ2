@@ -15,14 +15,14 @@ import {createTerrainMaterial} from './terrain-material.js';
 export {createTerrainMaterial};
 export {AnimationMixer,Matrix4,Vector3} from 'three';
 export const presets={low:{dpr:1,shadow:1024,cascades:2,distance:180,ao:false,bloom:false},balanced:{dpr:1.25,shadow:2048,cascades:3,distance:260,ao:true,bloom:true},high:{dpr:1.5,shadow:4096,cascades:4,distance:350,ao:true,bloom:true}};
-export function createPipeline(canvas,{quality='balanced',cinematic=false}={}){
+export function createPipeline(canvas,{quality='balanced',cinematic=false,cameraType='perspective'}={}){
  const p=presets[quality]||presets.balanced;
  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'high-performance'});
  renderer.setPixelRatio(Math.min(devicePixelRatio||1,p.dpr));
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
- renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.info.autoReset=false;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  const scene=new THREE.Scene();scene.background=new THREE.Color('#607e89');scene.fog=new THREE.Fog('#607e89',200,500);const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.35;room.dispose();pmrem.dispose();
- const camera=new THREE.PerspectiveCamera(42,1,.5,600);camera.position.set(90,100,145);camera.lookAt(0,15,0);
+ const camera=cameraType==='orthographic'?new THREE.OrthographicCamera(-50,50,40,-40,.5,600):new THREE.PerspectiveCamera(42,1,.5,600);camera.position.set(90,100,145);camera.lookAt(0,15,0);
  // Hemisphere light provides restrained fill; the sun remains the dominant source.
  scene.add(new THREE.HemisphereLight(0xc7e3ff,0x4a4333,1.1));
  const csm=new CSM({camera,parent:scene,cascades:p.cascades,maxFar:p.distance,mode:'practical',shadowMapSize:Math.min(p.shadow,renderer.capabilities.maxTextureSize),lightDirection:new THREE.Vector3(-1,-1,-.5).normalize(),lightIntensity:3.1,lightNear:1,lightFar:650,shadowBias:-.0002});
@@ -54,14 +54,14 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false}={}){
   };
   material.customProgramCacheKey=()=>`visual-v1-${sss}-${rim}-${p.cascades}`;material.needsUpdate=true;return material;
  }
- function prepare(root){root.traverse(o=>{if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;for(const m of Array.isArray(o.material)?o.material:[o.material])prepareMaterial(m,{sss:o.userData.sss||0});});scene.add(root);return root;}
+ function prepare(root){root.traverse(o=>{if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;for(const m of Array.isArray(o.material)?o.material:[o.material])prepareMaterial(m,{sss:m.userData.kawThinSurface||o.userData.sss||0});});scene.add(root);return root;}
  async function loadAsset(url){const gltf=await new GLTFLoader().loadAsync(url);prepare(gltf.scene);return gltf;}
  function addLOD(levels){const lod=new THREE.LOD();for(const {object,distance} of levels)lod.addLevel(object,distance);prepare(lod);return lod;}
  function addInstances(geometry,material,matrices){prepareMaterial(material);const mesh=new THREE.InstancedMesh(geometry,material,matrices.length);matrices.forEach((m,i)=>mesh.setMatrixAt(i,m));mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();return prepare(mesh);}
  function emissiveLight(position,color,intensity=8,distance=30){if(emitters.length>=8)return null;const light=new THREE.PointLight(color,intensity,distance,2);light.position.copy(position);light.castShadow=false;scene.add(light);emitters.push(light);return light;}
  function resize(){const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);if(w===width&&h===height)return;width=w;height=h;renderer.setSize(w,h,false);composer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();csm.updateFrustums();}
- function render(){resize();scene.traverse(o=>{if(o.isMesh&&o.visible){o.getWorldPosition(casterPosition);o.castShadow=casterPosition.distanceTo(camera.position)<p.distance;}});csm.update();for(const e of emitters)e.visible=e.position.distanceTo(camera.position)<p.distance;composer.render();}
- function dispose(){csm.remove();csm.dispose();for(const m of trackedMaterials)m.dispose();scene.traverse(o=>o.geometry?.dispose());for(const pass of composer.passes)pass.dispose?.();composer.dispose();environment.dispose();renderer.dispose();}
+ function render(){renderer.info.reset();resize();scene.traverse(o=>{if(o.isMesh&&o.visible){o.getWorldPosition(casterPosition);o.castShadow=!o.userData.noShadow&&casterPosition.distanceTo(camera.position)<p.distance;}});csm.update();for(const e of emitters)e.visible=e.position.distanceTo(camera.position)<p.distance;composer.render();}
+ function dispose(){csm.remove();csm.dispose();const textures=new Set();for(const m of trackedMaterials){for(const value of Object.values(m))if(value?.isTexture)textures.add(value);m.dispose();}for(const t of textures)t.dispose();scene.traverse(o=>{o.geometry?.dispose();if(o.isSkinnedMesh)o.skeleton.dispose();});for(const pass of composer.passes)pass.dispose?.();composer.dispose();environment.dispose();renderer.dispose();}
  return {renderer,scene,camera,csm,effects:{ao,bloom,dof,aa},weather,prepare,prepareMaterial,loadAsset,addLOD,addInstances,emissiveLight,render,resize,dispose};
 }
 /** Original calibration scene: shaded armor, foliage, instanced trees and wet ground. */
