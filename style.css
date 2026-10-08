@@ -127,3 +127,5 @@ footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;m
 
 /* Live geometry sits beneath the transparent gameplay overlay. */
 #liveBattlefield{touch-action:none}#countdown,#end,#toast{z-index:4}
+/* Battlefield canvases stay below interactive overlays, including while loading. */
+main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}

@@ -362,3 +362,7 @@ Matches now use the original source meshes in live 3D with continuous articulate
 Fog of war now uses drifting cloud layers in both Live 3D and Classic views. Unexplored areas remain fully opaque; explored areas outside vision retain a dim terrain memory. Enemy visibility rules are unchanged. Cached cloud textures and a low-resolution visibility mask limit rendering cost on phones.
 
 The Hydra and Venom Viper have continuous scale materials with normal-map detail. The Hydra has sharper facial plates, neck ridges and dorsal spines. The Ancient Treant has longitudinal arm bark, knots, twigs, small leaves and a darker green canopy. Both live models and Classic atlases are rebuilt from the same source. `tools/check-fog.cjs` verifies cloud animation, opacity and reveal behavior with Playwright.
+
+### Seamless fog and stable 3D presentation — 20261008-smooth-fog
+
+Fog boundaries use a cached distance field and smooth opacity falloff toward visible terrain, with rounded corners and no square opacity steps. Unexplored cells remain opaque. The live renderer keeps rendering the 3D scene as assets stream; workers and upgraded buildings retain their existing model until the replacement loads. The production/work queue has an explicit layer above battlefield canvases and remains interactive in both graphics modes. Browser checks cover delayed model downloads, worker-tool changes, queue controls and fog opacity gradients.
