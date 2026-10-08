@@ -11,8 +11,20 @@ function kawPaintTexture(kind){
  if(kind==='metal'){g.fillStyle='#ffffff88';g.fillRect(4,4,504,4);g.fillRect(4,4,4,504);g.fillStyle='#33425833';g.fillRect(4,501,504,7);for(let i=0;i<32;i++){g.strokeStyle='#ffffff44';g.lineWidth=1;const x=rand()*512,y=rand()*512;g.beginPath();g.moveTo(x,y);g.lineTo(x+3+rand()*9,y-3);g.stroke();}}
  if(kind==='cloth')for(let i=0;i<10;i++){const x=i*56;const fold=g.createLinearGradient(x,0,x+48,0);fold.addColorStop(0,'#26334a22');fold.addColorStop(.4,'#ffffff22');fold.addColorStop(1,'#26334a11');g.fillStyle=fold;g.fillRect(x,0,48,512);}
  if(kind==='stone')for(let i=0;i<26;i++){g.strokeStyle='#33425322';g.lineWidth=1.5;const x=rand()*512,y=rand()*512;g.beginPath();g.moveTo(x,y);g.lineTo(x+14,y+6);g.lineTo(x+21,y+3);g.stroke();}
- if(kind==='scales')for(let row=0;row<14;row++)for(let col=0;col<12;col++){const x=col*46+(row%2)*23,y=row*38;g.fillStyle=(row+col)%3?'#ffffff16':'#34405022';g.beginPath();g.moveTo(x-22,y);g.lineTo(x,y+29);g.lineTo(x+22,y);g.fill();g.strokeStyle='#34405033';g.stroke();}
- const t=Ug('cloth').clone();t.image=c;t.needsUpdate=true;kawTextures['paint-'+kind]=t;return t;
+ if(kind==='scales'){
+  g.fillStyle='#69716b';g.fillRect(0,0,512,512);
+  // Overlapping, beveled scales remain readable after 128px GLB texture export.
+  for(let row=-1;row<9;row++)for(let col=-1;col<9;col++){
+   const x=col*64+(row%2)*32,y=row*64;
+   const shade=g.createLinearGradient(x,y,x,y+60);shade.addColorStop(0,'#e6e4d3');shade.addColorStop(.35,'#b5bcac');shade.addColorStop(.85,'#858f82');shade.addColorStop(1,'#4c584f');
+   g.fillStyle=shade;g.strokeStyle='#35473e';g.lineWidth=5;
+   g.beginPath();g.moveTo(x-31,y);g.quadraticCurveTo(x-27,y+37,x,y+60);g.quadraticCurveTo(x+27,y+37,x+31,y);g.closePath();g.fill();g.stroke();
+   g.strokeStyle='#fff9df99';g.lineWidth=2;g.beginPath();g.moveTo(x-25,y+4);g.quadraticCurveTo(x-19,y+30,x,y+50);g.stroke();
+  }
+ }
+
+ // Texture.clone shares its Source; detach it so later materials cannot overwrite this canvas.
+ const t=Ug('cloth').clone();t.source=new t.source.constructor(c);t.needsUpdate=true;kawTextures['paint-'+kind]=t;return t;
 }
 function kawMaterial(color,kind='stone',metal=0){
  const mat=F(color,metal,metal?.52:.88).clone();mat.map=kawPaintTexture(kind);mat.bumpMap=mat.map;mat.bumpScale=kind==='wood'?.09:.035;mat.roughnessMap=null;mat.clearcoat=metal?.18:0;mat.envMapIntensity=.65;return mat;

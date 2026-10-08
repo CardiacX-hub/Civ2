@@ -36,3 +36,32 @@
  }catch{fail();}}};
  const control=document.getElementById('visualQuality');if(control){control.value=quality;control.onchange=()=>window.KawVisual.setQuality(control.value);}
 })();
+
+// Fog-of-war presentation only: the simulation's visibility mask remains authoritative.
+// Two cached cloud tiles drift over an opaque unknown-region mask. No enemy geometry
+// or undiscovered terrain can show through the cloud texture, even on Low quality.
+window.KawFog=(()=>{
+ const tile=document.createElement('canvas');tile.width=tile.height=256;
+ const paint=tile.getContext('2d');let seed=8137;
+ const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+ for(let i=0;i<65;i++){const x=random()*256,y=random()*256,r=20+random()*48;
+  for(const ox of [-256,0,256])for(const oy of [-256,0,256]){const g=paint.createRadialGradient(x+ox,y+oy,0,x+ox,y+oy,r);g.addColorStop(0,'rgba(166,188,189,.14)');g.addColorStop(1,'rgba(166,188,189,0)');paint.fillStyle=g;paint.fillRect(x+ox-r,y+oy-r,r*2,r*2);}}
+ const layer=document.createElement('canvas'),mask=document.createElement('canvas');
+ let lastMask='',previousVisible=null,previousSeen=null;
+ function draw(ctx,state,cam,viewport,cell,n){
+  // Half-resolution clouds bound fill cost on phones; masks are redrawn only when
+  // visibility or the viewport changes. Clouds animate without per-cell gradients.
+  const w=Math.ceil(viewport.width/2),h=Math.ceil(viewport.height/2);
+  if(layer.width!==w||layer.height!==h){layer.width=w;layer.height=h;lastMask='';}
+  const left=Math.max(0,Math.floor(cam.x/cell)),top=Math.max(0,Math.floor(cam.y/cell)),right=Math.min(n,Math.ceil((cam.x+viewport.width)/cell)),bottom=Math.min(n,Math.ceil((cam.y+viewport.height)/cell));
+  const key=[cam.x,cam.y,w,h].join(':');let dirty=key!==lastMask||previousVisible?.length!==state.visible.length;
+  if(!dirty)for(let y=top;y<bottom&&!dirty;y++)for(let x=left;x<right;x++){const i=y*n+x;if(previousVisible[i]!==state.visible[i]||previousSeen[i]!==state.seen[i]){dirty=true;break;}}
+  const m=mask.getContext('2d');if(dirty){mask.width=mask.height=n;const pixels=m.createImageData(n,n);for(let i=0;i<n*n;i++)pixels.data[i*4+3]=state.visible[i]?0:state.seen[i]?186:255;m.putImageData(pixels,0,0);
+   previousVisible=new Uint8Array(state.visible);previousSeen=new Uint8Array(state.seen);lastMask=key;}
+  const g=layer.getContext('2d');g.globalCompositeOperation='source-over';g.fillStyle='#26383e';g.fillRect(0,0,w,h);
+  const t=performance.now()/1000;for(let pass=0;pass<2;pass++){const size=pass?320:220,dx=((cam.x/2-t*(pass?2:4))%size+size)%size,dy=((cam.y/2+t*(pass?1:2))%size+size)%size;g.globalAlpha=pass?.7:1;for(let y=-size;y<h+size;y+=size)for(let x=-size;x<w+size;x+=size)g.drawImage(tile,x-dx,y-dy,size,size);}
+  g.globalAlpha=1;g.globalCompositeOperation='destination-in';g.imageSmoothingEnabled=false;g.drawImage(mask,cam.x/cell,cam.y/cell,viewport.width/cell,viewport.height/cell,0,0,w,h);g.imageSmoothingEnabled=true;g.globalCompositeOperation='source-over';
+  ctx.save();ctx.translate(cam.x,cam.y);ctx.drawImage(layer,0,0,viewport.width,viewport.height);ctx.restore();
+ }
+ return {draw};
+})();

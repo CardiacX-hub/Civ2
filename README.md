@@ -356,3 +356,9 @@ The Covenant menu now uses the supplied tree-and-hydra battlefield image. Settin
 ### Live 3D battlefield — 20261008-live-battlefield
 
 Matches now use the original source meshes in live 3D with continuous articulated animation, dynamic cascaded shadows, PBR normal/roughness detail, GTAO, ACES, bloom and SMAA. Terrain elevation, flowing rivers, log ramps/bridges and instanced grass use actual geometry. The fog/selection/health/effects overlay and minimap preserve gameplay readability. Settings lets you select Classic sprites for compatibility or battery saving and adjust ground moisture. Multiplayer reuses a stable renderer across incoming snapshots. The original 106 model assets are exported by `tools/export-live-models.cjs`; see the visual-quality guide for rebuilding and performance details.
+
+### Living fog and Verdant creature detail — 20261008-living-fog
+
+Fog of war now uses drifting cloud layers in both Live 3D and Classic views. Unexplored areas remain fully opaque; explored areas outside vision retain a dim terrain memory. Enemy visibility rules are unchanged. Cached cloud textures and a low-resolution visibility mask limit rendering cost on phones.
+
+The Hydra and Venom Viper have continuous scale materials with normal-map detail. The Hydra has sharper facial plates, neck ridges and dorsal spines. The Ancient Treant has longitudinal arm bark, knots, twigs, small leaves and a darker green canopy. Both live models and Classic atlases are rebuilt from the same source. `tools/check-fog.cjs` verifies cloud animation, opacity and reveal behavior with Playwright.

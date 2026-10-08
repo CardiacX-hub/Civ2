@@ -13,3 +13,5 @@ The Covenant infantry atlases `frontier-cov-shellguard`, `frontier-cov-archer` a
 `covenant-menu-battle.jpg` is the exact user-supplied 1280×720 walking-tree and hydra battlefield image. It replaces the procedural faction-card illustration.
 
 `model-*.glb` (106 assets) contain the original live source meshes, batched PBR materials with embedded normal/roughness detail, and rigid-part skeleton animation where applicable. They are generated from the same authored model code as the atlases; atlas/portrait files remain for Classic rendering and command UI.
+
+The 20261008-living-fog revision rebuilds `cov-shellguard`, `cov-archer` and `cov-resin` models, atlases and portraits with bark/foliage detail and continuous reptile scale textures. Hydra spines are original low-sided meshes attached to its animated necks and torso.
