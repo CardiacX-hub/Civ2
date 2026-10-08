@@ -24,6 +24,7 @@ function kawPaintTexture(kind){
  }
 
  // Texture.clone shares its Source; detach it so later materials cannot overwrite this canvas.
+ if(kind==='compound'){g.fillStyle='#555c5c';g.fillRect(0,0,512,512);for(let row=-1;row<25;row++)for(let col=-1;col<25;col++){const x=col*24+row%2*12,y=row*21;g.fillStyle=(row+col)%3?'#abb0a5':'#e0d9c4';g.strokeStyle='#303c38';g.lineWidth=2;g.beginPath();for(let k=0;k<6;k++){const a=k*Math.PI/3;const px=x+Math.cos(a)*12,py=y+Math.sin(a)*12;k?g.lineTo(px,py):g.moveTo(px,py);}g.closePath();g.fill();g.stroke();}}
  const t=Ug('cloth').clone();t.source=new t.source.constructor(c);t.needsUpdate=true;kawTextures['paint-'+kind]=t;return t;
 }
 function kawMaterial(color,kind='stone',metal=0){

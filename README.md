@@ -366,3 +366,9 @@ The Hydra and Venom Viper have continuous scale materials with normal-map detail
 ### Seamless fog and stable 3D presentation — 20261008-smooth-fog
 
 Fog boundaries use a cached distance field and smooth opacity falloff toward visible terrain, with rounded corners and no square opacity steps. Unexplored cells remain opaque. The live renderer keeps rendering the 3D scene as assets stream; workers and upgraded buildings retain their existing model until the replacement loads. The production/work queue has an explicit layer above battlefield canvases and remains interactive in both graphics modes. Browser checks cover delayed model downloads, worker-tool changes, queue controls and fog opacity gradients.
+
+### Winged vermin — 20261008-winged-vermin
+
+The Verdant Covenant Stag Wasp now has striped chitin, a narrow petiole, compound eyes, mandibles, six jointed legs, translucent veined wings and a pointed stinger. [View its original 16:9 model sheet](assets/stag-wasp-model-sheet.jpg). The Burrow Breaker is an eight-legged green-and-black spider with large curved fangs. The new Sky Skitterer is a winged, armored centipede, trained at the Wing Pavilion at Stronghold level 3 for 260 gold and 160 lumber.
+
+Research **Venom Stingers** at the Wing Pavilion for **160 gold and 120 lumber**, taking 25 seconds. Existing and newly trained Stag Wasps gain green stingers and poison enemy units for **5 damage per second for 4 seconds**. Repeated hits refresh the duration; poison does not stack or affect buildings. These are original animated Three.js models, also exported to Classic atlases; no Unreal Engine runtime is required.

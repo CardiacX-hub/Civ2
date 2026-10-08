@@ -1,15 +1,15 @@
 'use strict';
 // All sprites use the same Frontier mesh renderer, PBR light rig, and painted material maps.
-const ART_VERSION='20261008-smooth-fog',WORLD_ART_VERSION=ART_VERSION;
+const ART_VERSION='20261008-winged-vermin',WORLD_ART_VERSION=ART_VERSION;
 const frontierSheets={},frontierWorld={},frontierSheetUsage=new Map();let frontierCleanupTime=0;
 // Wider framing prevents weapons/wings being clipped; restore their world scale.
-const frontierFramingScale={shieldwarden:320/205,trapper:300/205,'cov-shellguard':350/205,'cov-archer':270/205,'cov-resin':350/205,'cov-captain':280/205,'cov-burrower':320/205,bogbreaker:330/205,carrion:340/205,'cov-moth':340/205,'cov-wasp':340/270,knight:280/205,marksman:280/205,witch:280/205,devoured:370/255,shaman:285/205,gryphon:340/205,wyvern:340/205,phoenix:340/270,dragon:340/270,pig:280/205};
+const frontierFramingScale={shieldwarden:320/205,trapper:300/205,'cov-shellguard':350/205,'cov-archer':270/205,'cov-resin':350/205,'cov-captain':280/205,'cov-burrower':250/205,bogbreaker:330/205,carrion:340/205,'cov-moth':340/205,'cov-wasp':1,'cov-wasp-venom':1,'cov-centipede':1,knight:280/205,marksman:280/205,witch:280/205,devoured:370/255,shaman:285/205,gryphon:340/205,wyvern:340/205,phoenix:340/270,dragon:340/270,pig:280/205};
 function getFrontierSheet(name){if(!name)return null;const now=Date.now();frontierSheetUsage.set(name,now);if(now>frontierCleanupTime){frontierCleanupTime=now+5000;for(const [key,last]of frontierSheetUsage)if(now-last>45000){delete frontierSheets[key];frontierSheetUsage.delete(key);}}if(!frontierSheets[name]){const img=new Image();img.src='assets/frontier-'+name+'.webp?v='+ART_VERSION;frontierSheets[name]=img;}return frontierSheets[name];}
 for(const name of ['gold','tree','pine','mountain','construction1','construction2','construction3','wall','tower','bastion','base','base-level2','base-level3','base-level4','barracks','forge','roost','altar','mill','armory','foundry','depot'])for(const horde of ['gold','tree','pine','mountain','construction1','construction2','construction3'].includes(name)?[false]:[false,true]){const key=name+(horde?'-dominion':''),img=new Image();img.onload=()=>{if(typeof terrainLayer!=='undefined')terrainLayer=null;};img.src='assets/world-'+key+'.webp?v='+WORLD_ART_VERSION;frontierWorld[key]=img;}
-function frontierAppearance(type,race){return unitAppearance(type,race);}
+function frontierAppearance(type,race,owner){return unitAppearance(type,race,owner);}
 function drawFrontierUnit(e,p,horde){
  if(e.burrowUntil>state.time){ctx.fillStyle='#806842';ctx.beginPath();ctx.ellipse(0,0,28,14,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#bca77a';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,21,9,0,0,Math.PI*2);ctx.stroke();return true;}
- let name=frontierAppearance(e.type,p.faction);
+ let name=e.type==='air2'&&p.faction==='covenant'&&e.venomStinger?'cov-wasp-venom':frontierAppearance(e.type,p.faction,e.owner);
  if(e.type==='worker'){if(e.cargoGold>0)name+='-carry';else if(e.cargoWood>0&&e.order?.kind==='deliver')name+='-logs';else if(['repair','build'].includes(e.order?.kind))name+='-hammer';else if(e.order?.target?.type==='gold')name+='-pick';}
  const img=getFrontierSheet(name);if(!img?.complete||!img.naturalWidth)return false;
  const {action,progress,phase,dir,frame}=frontierFrame(e,state.time),baseWidth=p.faction==='covenant'&&e.type==='melee'?64:p.faction==='covenant'&&e.type==='sniper'?78:p.faction==='covenant'&&e.type==='ranged'?50:e.type==='beetle'?82:e.type==='bogbreaker'?70:e.type==='scout'&&p.faction!=='human'?70:e.type==='shieldwarden'?54:e.type==='pig'?84:e.type==='air2'?92:e.type==='air'?76:e.type==='siege'?68:e.type==='hero3'&&horde?96:isHeroType(e.type)?58:e.type==='ranged'&&horde?54:e.type==='cavalier'?82:e.type==='devoured'?64:e.type==='melee'?48:44,width=baseWidth*(frontierFramingScale[name]||1),height=width*4/3,displayHeight=baseWidth*4/3;
