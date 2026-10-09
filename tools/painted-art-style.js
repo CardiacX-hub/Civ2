@@ -25,6 +25,9 @@ function kawPaintTexture(kind){
 
  // Texture.clone shares its Source; detach it so later materials cannot overwrite this canvas.
  if(kind==='compound'){g.fillStyle='#555c5c';g.fillRect(0,0,512,512);for(let row=-1;row<25;row++)for(let col=-1;col<25;col++){const x=col*24+row%2*12,y=row*21;g.fillStyle=(row+col)%3?'#abb0a5':'#e0d9c4';g.strokeStyle='#303c38';g.lineWidth=2;g.beginPath();for(let k=0;k<6;k++){const a=k*Math.PI/3;const px=x+Math.cos(a)*12,py=y+Math.sin(a)*12;k?g.lineTo(px,py):g.moveTo(px,py);}g.closePath();g.fill();g.stroke();}}
+ if(kind==='verdant-roof'){g.fillStyle='#a9b5a2';g.fillRect(0,0,512,512);for(let row=0;row<8;row++)for(let col=0;col<8;col++){const x=col*64+(row%2)*32,y=row*64;g.strokeStyle='#354c38';g.lineWidth=3;g.beginPath();g.moveTo(x,y+60);g.quadraticCurveTo(x-35,y+25,x,y);g.quadraticCurveTo(x+35,y+25,x,y+60);g.stroke();g.strokeStyle='#e3ddb0';g.lineWidth=1;g.beginPath();g.moveTo(x,y+5);g.lineTo(x,y+55);g.stroke();}}
+ if(kind==='verdant-leaf'){g.fillStyle='#8f9e62';g.fillRect(0,0,512,512);for(let i=0;i<600;i++){const x=rand()*512,y=rand()*512;g.fillStyle=i%3?'#c2c88e':'#435b2e';g.beginPath();g.ellipse(x,y,3+rand()*7,2+rand()*3,rand()*3,0,Math.PI*2);g.fill();}}
+ if(kind==='verdant-water'){g.fillStyle='#809da5';g.fillRect(0,0,512,512);for(let i=0;i<160;i++){g.strokeStyle=i%3?'#d2e4e5':'#416c7b';g.lineWidth=1+rand()*3;const x=rand()*512,y=rand()*512;g.beginPath();g.moveTo(x,y);g.lineTo(x+rand()*2,y+20+rand()*150);g.stroke();}}
  const t=Ug('cloth').clone();t.source=new t.source.constructor(c);t.needsUpdate=true;kawTextures['paint-'+kind]=t;return t;
 }
 function kawMaterial(color,kind='stone',metal=0){
@@ -87,7 +90,7 @@ function kawFinishPaintedModel(root,name,horde){
   if(['orc','devoured'].includes(name))for(const arm of n.arms){kawPlate(arm,16,9,10,iron,0,-9,2);for(const x of [-5,5])V(arm,.9,gold,x,-7,8);}
   if(['ranger','troll','marksman','hunter'].includes(name)){const leather=kawMaterial(0x79573b,'wood');for(const leg of n.legs)kawPlate(leg,7,8,2,leather,0,-8,4);for(const arm of n.arms)ot(arm,7,6,8,leather,0,-10,0);}
  }
- if(name.startsWith('world-')&&!['world-gold','world-tree','world-pine','world-mountain'].includes(name)&&!name.includes('construction')){
+ if(name.startsWith('world-')&&!root.userData.verdantArchitecture&&!['world-gold','world-tree','world-pine','world-mountain'].includes(name)&&!name.includes('construction')){
   const kind=name.slice(6).replace(/-level[234]$/,''),wide=kind==='base'?70:['wall','tower'].includes(kind)?0:58;
   if(wide){const stone=kawMaterial(horde?0x655d51:0xc1c1b2),wood=kawMaterial(0x72553a,'wood'),trim=horde?iron:gold;
    // Heavy foundations, inset entrances, lintels and contrasting corner blocks.
@@ -107,7 +110,7 @@ function kawFinishPaintedModel(root,name,horde){
   }
  }
  const materials=new Map();root.traverse(mesh=>{if(!mesh.isMesh)return;const original=Array.isArray(mesh.material)?mesh.material:[mesh.material];const next=original.map(m=>{
-  if(materials.has(m))return materials.get(m);const p=m.clone();p.flatShading=true;p.clearcoat=.12;p.envMapIntensity=.65;p.roughness=p.metalness>.35?.52:.88;
+  if(materials.has(m))return materials.get(m);const p=m.clone();p.flatShading=true;p.envMapIntensity=.65;if(!root.userData.verdantArchitecture){p.clearcoat=.12;p.roughness=p.metalness>.35?.52:.88;}
   const kind=p.metalness>.35?'metal':name.includes('world-')?'stone':['dragon','wyvern'].includes(name)?'scales':'cloth';
   // Keep deliberately authored painted wood/cloth/skin maps on custom meshes.
   if(!Object.values(kawTextures).includes(p.map))p.map=kawPaintTexture(kind);p.bumpMap=p.map;p.bumpScale=.035;p.roughnessMap=null;p.needsUpdate=true;materials.set(m,p);return p;

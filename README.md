@@ -1,7 +1,7 @@
 # Civ2 — Kingdoms at War
 
 
-A dependency-free 2D browser RTS. Run `npm start`, then open the served game on port 3000. Run `npm test` for simulation smoke tests.
+A browser RTS with live 3D models and an optional Classic renderer. Run `npm start`, then open the served game on port 3000. Run `npm test` for simulation smoke tests.
 
 Choose the human **Dawnward**, the orc/troll **The Dominion**, or the wilderness clans of **The Verdant Covenant**, customize banners, and play against up to five AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.
 
@@ -381,3 +381,9 @@ Research **Venom Stingers** at the Wing Pavilion for **160 gold and 120 lumber**
 - Stag Wasps and Dominion dragons are 30% smaller; Sky Skitterers are 35% smaller. Combat stats and collision rules are unchanged.
 - Deliveries credit **75% of carried gold/lumber**, including resource outposts, AI and multiplayer. Match statistics show the credited totals. Existing cargo limits and gathering rates remain unchanged.
 - Fully harvested trees fall over for 1.4 seconds and disappear. Their collision obstruction clears immediately, and depleted trees cannot be harvested again.
+
+## Verdant Rootspire architecture
+
+The Verdant Covenant buildings now share ivory masonry, pointed emerald windows, gold tracery, leaf-panel roofs, hanging tree banners, winding bark roots, ivy, and layered canopies. The stronghold grows additional towers, bridges, crystals, and foliage through all four tiers; its level-three defenses remain functional. Rocky foundations and small cascading pools tie the structures into the landscape. Workshops, barracks, roosts, resource storage, hero sanctums, walls, and defenses have distinct layouts in the same style.
+
+The original procedural models are authored in `tools/covenant-art.js`. Shared painted surfaces are in `tools/painted-art-style.js`. Rebuild with `npm run build:exporter`, then `node tools/export-live-models.cjs covenant-world`; with a local server running, use `ART_URL=http://localhost:3000 node tools/render-art.cjs covenant-world` for Classic images and UI artwork. Asset generation requires Playwright and Chromium. Architecture uses embedded 256-pixel textures and material batching to keep draw calls low; no external rendering service is required during play.

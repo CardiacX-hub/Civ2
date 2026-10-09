@@ -19,3 +19,5 @@ The 20261008-living-fog revision rebuilds `cov-shellguard`, `cov-archer` and `co
 The winged-vermin revision adds original articulated wasp/green-stinger variants, an eight-legged fang-bearing spider, and a flying centipede. Source geometry is in `tools/covenant-art.js`; `tools/render-arthropod-sheet.cjs` captures the wasp studio sheet from the same game mesh.
 
 The stone-and-web revision replaces `cov-captain` with the original Granite Guardian mesh and boulder-throw animation, authored in `tools/covenant-art.js`. Its GLB, portrait and Classic atlas share the same source geometry.
+
+The Rootspire update replaces all seventeen Covenant building models and their Classic images with original ivory-and-gold woodland architecture based on the user’s castle reference. All four stronghold tiers have progressively larger geometry. Architecture texture resolution is 256 pixels; geometry is batched into at most eight materials per building.
