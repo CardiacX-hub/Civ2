@@ -410,7 +410,7 @@ Unit training, construction, and research take 25% longer. Deliveries credit 25%
 
 Verdant roofs follow each owner's banner color. Plateau cliff materials have sediment bands and rocky bevels. Dragons and wyverns have tan wing membranes, articulated finger ribs, and wing talons. Large-map terrain caching is limited to a 4096-pixel surface to control memory usage.
 
-### Straw hats and architectural detail (20261009-straw-and-stone)
+### Straw hats and architectural detail (20261009-straw-and-stone-r2)
 
 Dawnward peasants wear woven straw farmer hats attached to their animated heads in every axe, pick, hammer, gold-carrying and lumber-carrying variant. Their portraits and Classic animation atlases use the same models.
 

@@ -6,7 +6,7 @@ function normalFromHeight(map){if(normalTextures.has(map.uuid))return normalText
 // Keep expensive 512px maps only on architectural surfaces, rather than
 // enlarging every cloth/metal texture in a detailed building.
 const exportTextures=new Map();
-function exportTexture(map){const size=['paint-masonry','paint-cut-stone'].includes(map.name)?512:map.name==='paint-straw'?256:128,key=map.uuid+':'+size;if(exportTextures.has(key))return exportTextures.get(key);const canvas=document.createElement('canvas');canvas.width=canvas.height=size;canvas.getContext('2d').drawImage(map.image,0,0,size,size);const texture=map.clone();texture.source=new map.source.constructor(canvas);texture.needsUpdate=true;exportTextures.set(key,texture);return texture;}
+function exportTexture(map){const size=['paint-masonry','paint-cut-stone'].includes(map.name)?512:map.name==='paint-straw'||map.name.startsWith('paint-verdant-')?256:128,key=map.uuid+':'+size;if(exportTextures.has(key))return exportTextures.get(key);const canvas=document.createElement('canvas');canvas.width=canvas.height=size;canvas.getContext('2d').drawImage(map.image,0,0,size,size);const texture=map.clone();texture.source=new map.source.constructor(canvas);texture.needsUpdate=true;exportTextures.set(key,texture);return texture;}
 window.KawExportGLB=async function(name,horde=false){
  window.KawSkipRender=true;KawCapture(name,0,'idle',0,144,192,horde);const root=window.KawAssetModel,nodes=[];root.traverse(n=>nodes.push(n));
  const clips=[];if(!name.startsWith('world-'))for(const phase of ['idle','walk','attack']){const poses=new Map(nodes.map(n=>[n,{position:[],quaternion:[],scale:[]} ])),times=[],duration=phase==='idle'?2.5:phase==='walk'?.588:.55;
