@@ -129,3 +129,15 @@ footer{height:330px;flex-shrink:0}.command-layout{display:flex;gap:12px;flex:1;m
 #liveBattlefield{touch-action:none}#countdown,#end,#toast{z-index:4}
 /* Battlefield canvases stay below interactive overlays, including while loading. */
 main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
+
+/* Dense desktop command cards retain independent command/construction scrolling. */
+@media (min-width:1000px) and (pointer:fine){
+  #game footer{height:310px;max-height:35dvh}.selection{width:190px;max-width:190px}
+ .orders{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+ .action-section{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:4px;margin-bottom:7px}
+ .action-section h3{grid-column:1/-1;margin:3px 0;font-size:10px}
+ #actions .action-section button,#buildActions .action-section button,#actions .build-action,#buildActions .build-action{min-width:0!important;padding:6px;font-size:11px;min-height:42px}
+ .action-section button small{font-size:9px}.build-action img{width:30px;height:36px;object-fit:contain}
+ #formationPane{width:110px}#formationPane button{padding:5px;font-size:10px}
+ #constructionPane{padding-left:10px}.command-layout{gap:8px}#actions{margin-top:6px}
+}

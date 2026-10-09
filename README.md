@@ -401,3 +401,11 @@ The Sky Skitterer has lighter brown chitin, dark brown abdominal bands, pointed 
 The Verdant Ironback Rider now appears as a six-legged mechanical iron beast with jointed legs, overlapping riveted armor, pointed claws, horns, amber eyes, lantern towers, chains, and woodland banners. Its Ironback Rush and existing combat stats are retained. The former Resin Weaver is now the Wind Elemental: an ornate masked spirit with translucent animated vortex filaments, gust projectiles, and Wind Trap. Its trap deals 15 damage and slows enemy ground units by 60% for four seconds, with the existing twelve-second cooldown and six-trap limit. Wind traps swirl in both graphics modes. Dominion Troll Trappers retain their resin traps.
 
 `cov-beetle`, `cov-weaver`, and `world-trap-covenant` models, Classic sheets, and portraits use the original procedural source in `tools/covenant-art.js`. `world-trap-resin` preserves the earlier resin trap for other factions.
+
+### Expanded battles (20261009-grand-battles)
+
+Maps are now 4000 × 4000 (25% wider, 56% more area). Desktop command cards use a denser grid, with separate construction and formation sections. **Attack move (N)** followed by right-click sends troops toward a destination while fighting enemies in attack range; they resume when the target dies or leaves range. Shift adds destinations to the task sequence. **All fighters (F7)** selects all living friendly combat units across the map, excluding collectors and noncombat medics. These shortcuts can be changed in Settings.
+
+Unit training, construction, and research take 25% longer. Deliveries credit 25% less than the previous version: 56.25% of physical cargo, or 5.90625 gold / 14.0625 lumber for an unupgraded full load. Gathering rates and physical carrying capacities are unchanged. AI reserves actual Stronghold upgrade costs, prioritizes Siege Works and Sky Roosts when unlocked, and advances in formation using attack-move so nearby defenders interrupt raids.
+
+Verdant roofs follow each owner's banner color. Plateau cliff materials have sediment bands and rocky bevels. Dragons and wyverns have tan wing membranes, articulated finger ribs, and wing talons. Large-map terrain caching is limited to a 4096-pixel surface to control memory usage.

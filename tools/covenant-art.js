@@ -29,7 +29,7 @@ function kawCovenantWorld(asset){
  const resin=asset==='trap-resin';if(resin)asset='trap';if(asset==='trap'&&!resin)return kawWindTrap();
  const level=Number(asset.match(/-level([234])$/)?.[1]||1),role=asset.replace(/-level[234]$/,''),root=new Kt;
  const stone=kawMaterial(0xc4bea1,'stone'),shade=kawMaterial(0x898873,'stone'),bark=kawMaterial(0x69492d,'wood'),gold=kawMaterial(0xd6b76b,'metal',.65),roof=kawMaterial(0x246e58,'verdant-roof',.12),leaf=kawMaterial(0x567632,'verdant-leaf'),dark=kawMaterial(0x263b2f,'stone'),cloth=kawMaterial(0x205d4c,'cloth'),crystal=kawMaterial(0x65dc7c,'metal',.12),water=kawMaterial(0x76b5c5,'verdant-water',.08),foam=kawMaterial(0xd0ece4,'stone');
- leaf.userData.kawThinSurface=.18;roof.userData.kawThinSurface=.1;crystal.emissive.set(0x2eab46);crystal.emissiveIntensity=.65;crystal.roughness=.17;crystal.clearcoat=1;
+ roof.name='verdant-roof';leaf.userData.kawThinSurface=.18;roof.userData.kawThinSurface=.1;crystal.emissive.set(0x2eab46);crystal.emissiveIntensity=.65;crystal.roughness=.17;crystal.clearcoat=1;
  water.name='verdant-cascade';water.transparent=true;water.opacity=.8;water.depthWrite=false;water.roughness=.2;water.clearcoat=1;water.emissive.set(0x163d43);water.emissiveIntensity=.2;
  const features={towers:0,windows:0,leafPanels:0,rootSegments:0,canopies:0,bridges:0,banners:0,waterfalls:0};
  root.userData.verdantArchitecture={revision:'rootspire-v1',role,level,features};
