@@ -372,3 +372,12 @@ Fog boundaries use a cached distance field and smooth opacity falloff toward vis
 The Verdant Covenant Stag Wasp now has striped chitin, a narrow petiole, compound eyes, mandibles, six jointed legs, translucent veined wings and a pointed stinger. [View its original 16:9 model sheet](assets/stag-wasp-model-sheet.jpg). The Burrow Breaker is an eight-legged green-and-black spider with large curved fangs. The new Sky Skitterer is a winged, armored centipede, trained at the Wing Pavilion at Stronghold level 3 for 260 gold and 160 lumber.
 
 Research **Venom Stingers** at the Wing Pavilion for **160 gold and 120 lumber**, taking 25 seconds. Existing and newly trained Stag Wasps gain green stingers and poison enemy units for **5 damage per second for 4 seconds**. Repeated hits refresh the duration; poison does not stack or affect buildings. These are original animated Three.js models, also exported to Classic atlases; no Unreal Engine runtime is required.
+
+### Stone and web — 20261009-stone-and-web
+
+- The Covenant Granite Guardian replaces the Carapace Captain, retaining its protective aura and Stoneguard ability. Its original articulated rock-and-moss model winds up and throws boulders.
+- Burrowbreakers fire webs. Research **Sticky Webs** at the **Burrow Den**, requiring Stronghold level 2, for **180 gold / 140 lumber / 30 seconds**. Hits slow living targets by **50% for 4 seconds**, refreshing without stacking. Buildings are immune to slowing.
+- **Zoom out** and **Zoom in** in the game header change the camera from 100% to 55%, keeping the camera center, mouse/touch orders, minimap, fog and both renderers aligned. Phone dragging uses the same zoom scale.
+- Stag Wasps and Dominion dragons are 30% smaller; Sky Skitterers are 35% smaller. Combat stats and collision rules are unchanged.
+- Deliveries credit **75% of carried gold/lumber**, including resource outposts, AI and multiplayer. Match statistics show the credited totals. Existing cargo limits and gathering rates remain unchanged.
+- Fully harvested trees fall over for 1.4 seconds and disappear. Their collision obstruction clears immediately, and depleted trees cannot be harvested again.

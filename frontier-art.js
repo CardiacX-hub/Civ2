@@ -1,6 +1,6 @@
 'use strict';
 // All sprites use the same Frontier mesh renderer, PBR light rig, and painted material maps.
-const ART_VERSION='20261008-winged-vermin',WORLD_ART_VERSION=ART_VERSION;
+const ART_VERSION='20261009-stone-and-web',WORLD_ART_VERSION=ART_VERSION;
 const frontierSheets={},frontierWorld={},frontierSheetUsage=new Map();let frontierCleanupTime=0;
 // Wider framing prevents weapons/wings being clipped; restore their world scale.
 const frontierFramingScale={shieldwarden:320/205,trapper:300/205,'cov-shellguard':350/205,'cov-archer':270/205,'cov-resin':350/205,'cov-captain':280/205,'cov-burrower':250/205,bogbreaker:330/205,carrion:340/205,'cov-moth':340/205,'cov-wasp':1,'cov-wasp-venom':1,'cov-centipede':1,knight:280/205,marksman:280/205,witch:280/205,devoured:370/255,shaman:285/205,gryphon:340/205,wyvern:340/205,phoenix:340/270,dragon:340/270,pig:280/205};
@@ -12,7 +12,7 @@ function drawFrontierUnit(e,p,horde){
  let name=e.type==='air2'&&p.faction==='covenant'&&e.venomStinger?'cov-wasp-venom':frontierAppearance(e.type,p.faction,e.owner);
  if(e.type==='worker'){if(e.cargoGold>0)name+='-carry';else if(e.cargoWood>0&&e.order?.kind==='deliver')name+='-logs';else if(['repair','build'].includes(e.order?.kind))name+='-hammer';else if(e.order?.target?.type==='gold')name+='-pick';}
  const img=getFrontierSheet(name);if(!img?.complete||!img.naturalWidth)return false;
- const {action,progress,phase,dir,frame}=frontierFrame(e,state.time),baseWidth=p.faction==='covenant'&&e.type==='melee'?64:p.faction==='covenant'&&e.type==='sniper'?78:p.faction==='covenant'&&e.type==='ranged'?50:e.type==='beetle'?82:e.type==='bogbreaker'?70:e.type==='scout'&&p.faction!=='human'?70:e.type==='shieldwarden'?54:e.type==='pig'?84:e.type==='air2'?92:e.type==='air'?76:e.type==='siege'?68:e.type==='hero3'&&horde?96:isHeroType(e.type)?58:e.type==='ranged'&&horde?54:e.type==='cavalier'?82:e.type==='devoured'?64:e.type==='melee'?48:44,width=baseWidth*(frontierFramingScale[name]||1),height=width*4/3,displayHeight=baseWidth*4/3;
+ const {action,progress,phase,dir,frame}=frontierFrame(e,state.time),baseWidth=p.faction==='covenant'&&e.type==='melee'?64:p.faction==='covenant'&&e.type==='sniper'?78:p.faction==='covenant'&&e.type==='ranged'?50:e.type==='beetle'?82:e.type==='bogbreaker'?70:e.type==='scout'&&p.faction!=='human'?70:e.type==='shieldwarden'?54:e.type==='pig'?84:e.type==='air2'?92:e.type==='air'?76:e.type==='siege'?68:e.type==='hero3'&&horde?96:isHeroType(e.type)?58:e.type==='ranged'&&horde?54:e.type==='cavalier'?82:e.type==='devoured'?64:e.type==='melee'?48:44,width=baseWidth*(frontierFramingScale[name]||1)*unitVisualScale(e),height=width*4/3,displayHeight=baseWidth*4/3*unitVisualScale(e);
  ctx.save();if(e.type==='air2'&&p.faction==='human'){ctx.shadowColor='#ff9846';ctx.shadowBlur=7;}
  if(e.type==='air2'&&p.faction==='human'){for(let i=0;i<8;i++){const a=state.time*7+i;ctx.fillStyle=i%2?'#e93624':'#ff6b32';ctx.beginPath();ctx.moveTo(Math.sin(a)*22,6);ctx.lineTo(Math.sin(a)*22+4,-12-Math.sin(a*1.2)*8);ctx.lineTo(Math.sin(a)*22+8,6);ctx.fill();}}ctx.drawImage(img,frame*144,(phase*8+dir)*192,144,192,-width/2,-(height+displayHeight)/2+13,width,height);ctx.restore();
  // Equipment is part of the hand hierarchy in every frame, with no flat tool/weapon overlays.

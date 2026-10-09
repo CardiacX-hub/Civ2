@@ -99,3 +99,24 @@ function kawSkyCentipede(){
  root.userData.arthropod={body,head,legs,wings,segments,kind:'centipede'};return root;
 }
 function kawAnimateArthropod(root,angle,phase,t){const a=root.userData.arthropod,flight=a.kind!=='spider',strike=phase==='attack'?Math.sin(t*Math.PI):0;root.rotation.y=angle;a.body.rotation.x=-strike*.15;if(flight)root.position.y=6+Math.sin(t*Math.PI*2)*1.5;for(let j=0;j<a.legs.length;j++){a.legs[j].rotation.x=flight?Math.sin(t*Math.PI*2+j*.7)*.07:phase==='walk'?Math.sin(t*Math.PI*2+j*Math.PI)*.28:0;a.legs[j].rotation.z=strike*(j%2?.12:-.12);}for(const wing of a.wings){wing.rotation.z=wing.userData.sign*(.2+Math.sin(t*Math.PI*2)*.32);wing.rotation.y=wing.userData.sign*(a.kind==='wasp'&&phase==='idle'?1:.3);}for(let j=0;j<(a.segments||[]).length;j++)a.segments[j].rotation.y=Math.sin(t*Math.PI*2-j*.5)*.06;if(a.abdomen)a.abdomen.rotation.x=strike*.4;}
+
+// Original moss-covered rock guardian. Every boulder belongs to a body/limb joint.
+function kawRockGolem(){
+ const root=new Kt,stone=kawMaterial(0x897e68,'stone'),shade=kawMaterial(0x5c584b,'stone'),moss=kawMaterial(0x465c2c,'cloth'),amber=kawMaterial(0xffb63d,'metal',.05),body=Re(root,0,53,0),arms=[],legs=[];
+ amber.emissive.set(0xff9b18);amber.emissiveIntensity=1.4;
+ const rock=(parent,r,x,y,z,sx=1,sy=1,sz=1,mat=stone)=>{const m=J(parent,new qr(r,7,5),mat,x,y,z);m.scale.set(sx,sy,sz);m.rotation.set(Math.sin(x+y)*.2,Math.cos(z+x)*.5,Math.sin(z+y)*.2);return m;};
+ rock(body,24,0,9,0,1.15,1,.7);rock(body,18,0,-15,0,1,.8,.7);
+ for(const side of [-1,1]){rock(body,13,side*17,12,9,1,1,.6);rock(body,10,side*14,-8,11,1,.8,.5);rock(body,17,side*27,17,0,1.2,.9,1);rock(body,7,side*29,26,-2,1.3,.25,1,moss);
+  const arm=Re(body,side*28,13,0);rock(arm,13,side*3,-11,0,.85,1.4,.8);const forearm=Re(arm,side*4,-26,1);rock(forearm,13,0,-4,0,1,1.4,.9);rock(forearm,15,0,-19,3,1.1,.9,1);for(let i=0;i<4;i++)rock(forearm,5,-8+i*5,-25,10,.65,1,.8);rock(forearm,5,-side*11,-18,5,.8,1.2,.8);rock(forearm,5,5,-4,11,1.2,.6,.15,moss);arms.push({arm,forearm});
+  const leg=Re(root,side*12,32,0);rock(leg,13,0,-3,0,.9,1.25,.9);rock(leg,11,0,-18,1,.75,1,.8);rock(leg,11,0,-27,6,1.15,.5,1.5);for(let i=0;i<3;i++)rock(leg,5,-7+i*6,-29,15,1,.5,1.3);legs.push(leg);
+ }
+ const head=Re(body,0,37,1);rock(head,16,0,0,0,.85,1,.75,shade);rock(head,13,0,5,-2,.95,.8,1);for(const side of [-1,1]){rock(head,7,side*9,2,10,1,.5,.4);const brow=rock(head,6,side*7,2,12,1.3,.3,.4);brow.rotation.z=side*.3;rock(head,3.4,side*6,-1,12.5,1,.5,.25,amber);rock(head,7,side*8,-10,8,.7,1,.6);}rock(head,7,0,-10,12,.6,1.1,.35);rock(body,6,-8,24,14,1.6,.4,.15,moss);
+ for(let i=0;i<14;i++){const side=i%2?1:-1;rock(body,3,side*(10+i%3*6),-9+Math.floor(i/2)*6,13,.8,.45,.15,i%3?moss:shade);}
+ const boulder=Re(arms[1].forearm,0,-24,12);rock(boulder,9,0,0,0,1,.85,1);rock(boulder,4,4,3,3,.8,.6,.7,shade);
+ root.userData.golem={body,arms,legs,boulder};return root;
+}
+function kawAnimateRockGolem(root,angle,phase,t){
+ root.rotation.y=angle;const n=root.userData.golem,walking=phase==='walk',swing=Math.sin(t*Math.PI*2),attack=phase==='attack',wind=attack?(t<.3?t/.3:t<.6?1-(t-.3)/.3:0):0,follow=attack&&t>.35?Math.sin(Math.min(1,(t-.35)/.65)*Math.PI):0;
+ n.body.rotation.set(attack?-.12*wind+.2*follow:walking?Math.abs(swing)*.025:Math.sin(t*Math.PI*2)*.006,attack?-.15*wind:.0,0);
+ n.arms.forEach(({arm,forearm},i)=>{arm.rotation.set(attack&&i===1?-2.2*wind+.65*follow:walking?swing*(i?1:-1)*.22:-.08,0,(i?1:-1)*.12);forearm.rotation.x=attack&&i===1?-.65*wind:0;});n.legs.forEach((leg,i)=>leg.rotation.x=walking?swing*(i?1:-1)*.23:0);n.boulder.scale.setScalar(attack&&t<.55?1:.001);
+}

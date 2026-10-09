@@ -17,3 +17,5 @@ The Covenant infantry atlases `frontier-cov-shellguard`, `frontier-cov-archer` a
 The 20261008-living-fog revision rebuilds `cov-shellguard`, `cov-archer` and `cov-resin` models, atlases and portraits with bark/foliage detail and continuous reptile scale textures. Hydra spines are original low-sided meshes attached to its animated necks and torso.
 
 The winged-vermin revision adds original articulated wasp/green-stinger variants, an eight-legged fang-bearing spider, and a flying centipede. Source geometry is in `tools/covenant-art.js`; `tools/render-arthropod-sheet.cjs` captures the wasp studio sheet from the same game mesh.
+
+The stone-and-web revision replaces `cov-captain` with the original Granite Guardian mesh and boulder-throw animation, authored in `tools/covenant-art.js`. Its GLB, portrait and Classic atlas share the same source geometry.

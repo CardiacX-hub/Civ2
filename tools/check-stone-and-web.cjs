@@ -1,0 +1,25 @@
+// Functional browser check: local server, Playwright and Chromium are required.
+const assert=require('node:assert/strict');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+(async()=>{
+ const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox','--enable-unsafe-swiftshader']});
+ try{for(const mobile of [false,true]){
+  const page=await browser.newPage({viewport:mobile?{width:390,height:844}:{width:1440,height:900},isMobile:mobile,hasTouch:mobile});page.setDefaultTimeout(60000);const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url())});
+  await page.addInitScript(()=>localStorage.setItem('kaw-visual-quality','low'));await page.goto(process.env.CHECK_URL||'http://localhost:3030');await page.click('[data-faction=covenant]');await page.click('#start');await page.click('#launchMap');
+  await page.evaluate(()=>{paused=true;state.count=0;state.ai=999;state.entities=[];state.resources=[];state.mountains=[];state.rivers=[];state.plateaus=[];state.visible.fill(1);state.seen.fill(1);state.wallVersion++;clearTerrainCache();const base=entity('base',0,700,550,true);base.level=3;entity('base',1,2800,2800,true);window.den=entity('forge',0,820,550,true);window.collector=entity('worker',0,700,750);entity('hero',0,800,750);entity('siege',0,900,750);entity('air2',0,1000,750);entity('air3',0,1100,750);state.players[0].gold=state.players[0].wood=5000;cam.x=500;cam.y=450;selected=[den];updateUI();});
+  await page.getByRole('button',{name:/Sticky webs/}).click();assert(await page.evaluate(()=>den.research?.key==='stickyWebs'));await page.evaluate(()=>{finishResearch(den);updateUI();});assert(await page.evaluate(()=>state.players[0].stickyWebs===1));
+  await page.waitForFunction(()=>KawBattlefield.active&&KawBattlefield.stats.pending===0,{},{timeout:60000});
+  const before=await page.evaluate(()=>({width:viewport.width,cx:cam.x+viewport.width/2}));await page.click('#zoomOut');await page.waitForTimeout(100);assert(await page.evaluate(w=>viewport.width>w&&battlefieldZoom===.85,before.width));
+  const hit=await page.evaluate(()=>{const q=KawBattlefield.project(collector.x,collector.y,32);return{x:q.x*battlefieldZoom,y:q.y*battlefieldZoom,world:point({clientX:document.getElementById('world').getBoundingClientRect().left+q.x*battlefieldZoom,clientY:document.getElementById('world').getBoundingClientRect().top+q.y*battlefieldZoom}).x,expected:collector.x};});assert(Math.abs(hit.world-hit.expected)<.01);
+  await page.evaluate(()=>{paused=false;});const rect=await page.locator('#world').boundingBox();if(mobile)await page.touchscreen.tap(rect.x+hit.x,rect.y+hit.y);else await page.mouse.click(rect.x+hit.x,rect.y+hit.y);assert(await page.evaluate(()=>selected.some(e=>e.id===collector.id)));await page.evaluate(()=>{paused=true;});
+  await page.click('#zoomOut');await page.click('#zoomOut');assert(await page.evaluate(()=>battlefieldZoom===.55&&document.getElementById('zoomOut').disabled));
+  if(mobile){await page.setViewportSize({width:844,height:390});await page.waitForTimeout(100);await page.setViewportSize({width:390,height:844});await page.waitForTimeout(100);assert(await page.evaluate(()=>Math.abs(canvas.clientWidth-viewport.width*battlefieldZoom)<1));}
+  await page.evaluate(()=>{const hero=state.entities.find(e=>e.type==='hero'),spider=state.entities.find(e=>e.type==='siege'),target=entity('worker',1,850,780);target.hp=target.max=5000;target.order={kind:'stop'};hero.order={kind:'attack',target};spider.order={kind:'attack',target};tick(.01);});assert(await page.evaluate(()=>state.entities.find(e=>e.type==='hero').shot.rock&&state.entities.find(e=>e.type==='siege').shot.web&&state.entities.find(e=>e.owner===1&&e.type==='worker').webSlowUntil>state.time));
+  await page.evaluate(()=>{const t={type:'wood',x:900,y:850,amount:0,fallAt:state.time,fallDirection:1};state.resources.push(t);window.fallingTree=t;state.visible.fill(1);state.seen.fill(1);state.time+=.6;});await page.waitForFunction(()=>KawBattlefield.stats.pending===0);assert(await page.evaluate(()=>resourceStillVisible(fallingTree)&&treeFallProgress(fallingTree)>0));
+  await page.screenshot({path:'/tmp/stone-and-web-'+(mobile?'phone':'pc')+'.png'});
+  await page.evaluate(()=>{KawBattlefield.setEnabled(false);});await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>KawBattlefield.active),false);await page.screenshot({path:'/tmp/stone-and-web-classic-'+(mobile?'phone':'pc')+'.png'});
+  await page.evaluate(()=>{state.time+=1;});assert.equal(await page.evaluate(()=>resourceStillVisible(fallingTree)),false);
+  for(let i=0;i<3;i++)await page.click('#zoomIn');assert(await page.evaluate(()=>battlefieldZoom===1&&document.getElementById('zoomIn').disabled));assert.deepEqual(errors,[]);console.log({mobile,zoomPicking:true,webResearch:true,golemAndSmallerFlyers:true,treeFalling:true,classic:true});await page.close();
+ }}finally{await browser.close();}
+})().catch(error=>{console.error(error);process.exitCode=1;});
