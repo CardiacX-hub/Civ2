@@ -1,5 +1,6 @@
 // Original wilderness-clan and specialist meshes; rendered with the existing painted light rig.
 function kawSpecialCharacter(name){
+ if(name.startsWith('cov-worker'))return kawVerdantWorker(name);
  const base=name.startsWith('cov-worker')?name.replace('cov-',''):({shieldwarden:'knight',medic:'worker',engineer:'worker-hammer',trapper:'troll',bogbreaker:'troll',pathfinder:'ranger','cov-worker':'worker','cov-shellguard':'knight','cov-archer':'ranger','cov-resin':'worker','cov-captain':'knight','cov-alchemist':'worker','cov-matriarch':'ranger','cov-weaver':'worker'})[name]||'worker';
  const root=kawCharacter(base),n=root.userData,covenant=name.startsWith('cov-'),reed=kawMaterial(0xb99c62,'wood'),shell=kawMaterial(0x566e58,'metal',.25),cloth=kawMaterial(covenant?0x686d42:0xc5bea0,'cloth'),brass=kawMaterial(0xbda765,'metal',.5),steel=kawMaterial(0x9bacb8,'metal',.65);
  if(covenant){root.traverse(mesh=>{if(!mesh.isMesh)return;const m=mesh.material.clone();if(m.metalness>.3)m.color.set(0x677960);else if(['cov-archer','cov-matriarch'].includes(name)&&m.metalness>.03&&m.metalness<.3)m.color.set(0x716d45);else if(m.map)m.color.multiplyScalar(.88);mesh.material=m;});for(const arm of n.arms){V(arm,10,shell,0,0,0,1,.45,1);for(let i=0;i<5;i++)ot(arm,.7,9,.8,reed,-6+i*3,-2,9);}for(let i=0;i<9;i++)ot(n.torso,1.2,23,.7,reed,-10+i*2.5,0,14);ot(n.torso,24,3,2,cloth,0,-9,15);V(n.head,14,shell,0,10,-1,1,.5,1);for(const x of [-7,7])ot(n.head,1,8,1,reed,x,13,10);}
@@ -162,4 +163,39 @@ function kawAnimateRockGolem(root,angle,phase,t){
  root.rotation.y=angle;const n=root.userData.golem,walking=phase==='walk',swing=Math.sin(t*Math.PI*2),attack=phase==='attack',wind=attack?(t<.3?t/.3:t<.6?1-(t-.3)/.3:0):0,follow=attack&&t>.35?Math.sin(Math.min(1,(t-.35)/.65)*Math.PI):0;
  n.body.rotation.set(attack?-.12*wind+.2*follow:walking?Math.abs(swing)*.025:Math.sin(t*Math.PI*2)*.006,attack?-.15*wind:.0,0);
  n.arms.forEach(({arm,forearm},i)=>{arm.rotation.set(attack&&i===1?-2.2*wind+.65*follow:walking?swing*(i?1:-1)*.22:-.08,0,(i?1:-1)*.12);forearm.rotation.x=attack&&i===1?-.65*wind:0;});n.legs.forEach((leg,i)=>leg.rotation.x=walking?swing*(i?1:-1)*.23:0);n.boulder.scale.setScalar(attack&&t<.55?1:.001);
+}
+
+// Woodland collectors share the existing articulated worker rig so tools remain
+// attached to the hands and all task variants use the same body proportions.
+function kawVerdantWorker(name){
+ const root=kawCharacter(name.replace('cov-','')),n=root.userData,bark=kawMaterial(0x765338,'wood'),dark=kawMaterial(0x3c3023,'wood'),leaf=kawMaterial(0x536d2c,'verdant-leaf'),cloth=kawMaterial(0x254b3e,'cloth'),ivory=kawMaterial(0xd1c8a0,'cloth'),gold=kawMaterial(0xbba16a,'metal',.35),steel=kawMaterial(0x98a9a4,'metal',.65),eye=kawMaterial(0x9afb48,'metal',.05);
+ eye.emissive.set(0x65ed26);eye.emissiveIntensity=1.8;leaf.userData.kawThinSurface=.2;
+ root.userData.verdantWorker={revision:'woodland-v1',task:name.replace('cov-worker','')||'axe'};
+ // Repaint the base garments; replacement facial geometry prevents human skin
+ // showing through the carved wood mask.
+ root.traverse(m=>{if(!m.isMesh)return;const old=m.material;m.material=old.metalness>.3?steel:old.metalness>.03?cloth:bark;});
+ const limb=(p,a,b,r,m=bark)=>kawBugLimb(p,a,b,r,m);
+ const knot=(p,x,y,z,r=2)=>{const q=J(p,st('torus',r,.4),dark,x,y,z);q.scale.y=1.4;};
+ const twig=(p,points,r=1)=>{for(let i=0;i<points.length-1;i++)limb(p,points[i],points[i+1],r*(1-i*.14));};
+ const sprig=(p,x,y,z,size=1)=>{const g=Re(p,x,y,z);const shape=new Ce;shape.moveTo(0,0);shape.quadraticCurveTo(-3*size,3*size,0,7*size);shape.quadraticCurveTo(3*size,3*size,0,0);J(g,new Oe(shape,{depth:.25,bevelEnabled:false}),leaf,0,0,0);limb(g,[0,0,.3],[0,6*size,.3],.12,gold);g.rotation.z=Math.sin(x+y)*.7;return g;};
+ const panel=(p,x,y,z,w,h,m=cloth)=>{const s=new Ce;s.moveTo(-w/2,0);s.lineTo(w/2,0);s.lineTo(w*.42,-h*.8);s.lineTo(0,-h);s.lineTo(-w*.42,-h*.8);s.closePath();const g=Re(p,x,y,z);J(g,new Oe(s,{depth:.5,bevelEnabled:false}),m,0,0,0);for(const side of [-1,1])limb(g,[side*w/2,0,.8],[side*w*.4,-h*.78,.8],.35,gold);limb(g,[-w*.4,-h*.78,.8],[0,-h,.8],.35,gold);limb(g,[w*.4,-h*.78,.8],[0,-h,.8],.35,gold);return g;};
+ const emblem=(p,x,y,z,size=1)=>{limb(p,[x,y-7*size,z],[x,y+5*size,z],.3*size,gold);for(let i=0;i<4;i++)for(const side of [-1,1]){const yy=y+(-3+i*2.4)*size;limb(p,[x,yy,z],[x+side*(5-i*.8)*size,yy+3*size,z],.25*size,gold);sprig(p,x+side*(5-i*.8)*size,yy+3*size,z,.25*size);}};
+ n.head.clear();V(n.head,13,bark,0,0,0,.83,1.12,.7);
+ // Long facial grain, angular cheek ridges, a root nose and luminous inset eyes.
+ for(let i=0;i<9;i++){const x=(i-4)*2;twig(n.head,[[x,-12,7],[x+Math.sin(i)*1.3,0,9],[x*.8,11,7]],.6);}
+ for(const side of [-1,1]){V(n.head,2.6,eye,side*5,3,9,1,.4,.25);limb(n.head,[side*1,6,10],[side*9,7,7],1.4);twig(n.head,[[side*10,-5,6],[side*8,-10,9],[side*3,-14,7]],1.1);const hood=panel(n.head,side*10,12,0,12,18,ivory);hood.rotation.y=side*.6;twig(n.head,[[side*8,11,-1],[side*12,23,-3],[side*19,29,-2],[side*23,36,-4]],1.5);twig(n.head,[[side*12,23,-3],[side*7,30,0],[side*6,37,1]],1);for(let i=0;i<5;i++)sprig(n.head,side*(11+i*2.5),18+i*3,-1,.6);}
+ limb(n.head,[0,5,10],[0,-5,12],1.5);knot(n.head,-8,-3,8,1.5);
+ // Layered pointed leaf shoulder mantles move with each shoulder joint.
+ for(const arm of n.arms)arm.traverse(m=>{if(m.isMesh&&m.material===steel)m.material=bark;});for(const [i,arm] of n.arms.entries()){const side=i===0?-1:1;for(let row=0;row<3;row++)for(let j=0;j<4;j++){const l=sprig(arm,side*(-4+j*3),5-row*5,7+j%2,1.1);l.rotation.z=Math.PI+side*.25;}for(let j=0;j<5;j++)twig(arm,[[j*2-4,2,7],[j*2-5,-9,7],[j*2-3,-21,5]],.65);twig(arm,[[side*6,-2,1],[side*8,-12,6],[side*3,-21,7]],1.1);for(const y of [-8,-17]){const rope=J(arm,st('torus',6,.65),gold,0,y,0);rope.rotation.x=Math.PI/2;}knot(arm,2,-11,7);V(arm,4,bark,0,-17,1,.85,1,.75);for(let finger=0;finger<4;finger++)twig(arm,[[finger*1.5-2,-17,4],[finger*1.5-2,-21,5],[finger*1.5-2,-22,2]],.6);}
+ for(const leg of n.legs){for(let j=0;j<5;j++)twig(leg,[[j*2-4,1,6],[j*2-5,-12,7],[j*2-3,-17,5]],.8);for(let j=0;j<4;j++)sprig(leg,j*3-5,-5-j*3,7,.65);for(let j=0;j<4;j++)limb(leg,[j*3-5,-17,3],[j*3-5,-18,11],1.2);knot(leg,3,-14,7);}
+ panel(n.torso,0,10,13,17,23,ivory);emblem(n.torso,0,-1,14,.65);panel(n.upperBody,0,-8,12,17,19);emblem(n.upperBody,0,-18,13,.7);
+ for(const side of [-1,1]){const skirt=panel(n.upperBody,side*12,-8,4,10,17,ivory);skirt.rotation.y=side*.3;for(let i=0;i<5;i++){const l=sprig(n.upperBody,side*(11+i%2*3),-9-i*2.5,10,1);l.rotation.z=Math.PI+side*.2;}ot(n.torso,3,24,1.5,dark,side*8,0,12).rotation.z=side*.12;ot(n.upperBody,7,9,4,dark,side*13,-12,8);}
+ ot(n.torso,25,4,3,dark,0,-11,12);ot(n.torso,6,5,1,gold,0,-11,14);
+ // Woven pack with rails, lashings, carved banner, and task-specific cargo.
+ const pack=Re(n.upperBody,0,0,-17);ot(pack,23,27,10,dark,0,0,0);for(let row=0;row<9;row++)for(let j=0;j<3;j++)limb(pack,[-11,row*3-12,-6-j*.12],[11,row*3-12+Math.sin(row)*.6,-6-j*.12],.7,bark);for(const side of [-1,1]){limb(pack,[side*13,-16,-6],[side*13,16,-6],1.4);for(let j=0;j<6;j++)J(pack,st('torus',2,.5),gold,side*13,-12+j*5,-6);sprig(pack,side*13,13,-6,.9);}const back=panel(pack,0,11,-7,16,24);back.rotation.y=Math.PI;emblem(back,0,-11,1,.75);
+ const logs=name.endsWith('logs'),carry=name.endsWith('carry');for(let i=0;i<(logs?7:3);i++){const x=(i%3-1)*7,y=17+Math.floor(i/3)*4,z=-3-i%2*3;const log=J(pack,st('cylinder',2.5,3,18+i%3*5),bark,x,y,z);log.rotation.z=.2*(i%3-1);const cut=J(pack,st('cylinder',2.3,2.3,.6),ivory,x,y+9+i%3*2.5,z);knot(pack,x,y+9,z,1.2);}if(carry){for(let i=0;i<6;i++)V(pack,2.8,gold,-7+i%3*6,14+Math.floor(i/3)*4,-7);}
+ // Keep the tool pivot inherited from the rig; leaf bindings and engraved blades
+ // are children of that pivot, never separate floating scene props.
+ if(!carry&&!logs){if(!name.endsWith('pick')&&!name.endsWith('hammer')){n.weapon.clear();J(n.weapon,st('cylinder',1.8,2,40),bark,0,9,0);const blade=new Ce;blade.moveTo(0,29);blade.quadraticCurveTo(11,35,18,33);blade.quadraticCurveTo(20,23,16,16);blade.quadraticCurveTo(9,23,0,20);blade.closePath();J(n.weapon,new Oe(blade,{depth:2.5,bevelEnabled:true,bevelSize:.5,bevelThickness:.4,bevelSegments:1}),steel,0,0,-1.25);}for(const y of [0,8,16])J(n.weapon,st('torus',2.1,.5),gold,0,y,0).rotation.x=Math.PI/2;twig(n.weapon,[[0,-8,1],[2,4,1],[-1,16,1],[1,25,1]],.5);for(let i=0;i<3;i++)sprig(n.weapon,2,7+i*6,1,.45);if(!name.endsWith('pick')&&!name.endsWith('hammer'))for(let i=0;i<3;i++)twig(n.weapon,[[3+i*3,22,2],[6+i*3,26,2],[5+i*3,30,2]],.22);}
+ return root;
 }

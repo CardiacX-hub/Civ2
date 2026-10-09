@@ -21,3 +21,5 @@ The winged-vermin revision adds original articulated wasp/green-stinger variants
 The stone-and-web revision replaces `cov-captain` with the original Granite Guardian mesh and boulder-throw animation, authored in `tools/covenant-art.js`. Its GLB, portrait and Classic atlas share the same source geometry.
 
 The Rootspire update replaces all seventeen Covenant building models and their Classic images with original ivory-and-gold woodland architecture based on the user’s castle reference. All four stronghold tiers have progressively larger geometry. Architecture texture resolution is 256 pixels; geometry is batched into at most eight materials per building.
+
+The woodland collector update replaces all five `cov-worker` task variants with original bark-and-leaf collector meshes inspired by the user's reference: carved wooden faces, emerald eyes, branching crowns, leaf armor, ivory/green tree-emblem clothing, woven packs, and attached tools. Their Classic atlases and portraits use the same source models and retain eight directions and sixteen frames per action.
