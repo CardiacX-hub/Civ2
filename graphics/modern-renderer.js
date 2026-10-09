@@ -18,7 +18,9 @@ export const presets={low:{dpr:1,shadow:1024,cascades:2,distance:180,ao:false,bl
 export function createPipeline(canvas,{quality='balanced',cinematic=false,cameraType='perspective'}={}){
  const p=presets[quality]||presets.balanced;
  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'high-performance'});
- renderer.setPixelRatio(Math.min(devicePixelRatio||1,p.dpr));
+ // Quality presets budget the actual render resolution, including 1× desktop
+ // displays. Never reduce the drawing buffer just because the camera zooms out.
+ renderer.setPixelRatio(p.dpr);
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
  renderer.info.autoReset=false;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  const scene=new THREE.Scene();scene.background=new THREE.Color('#607e89');scene.fog=new THREE.Fog('#607e89',200,500);const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.35;room.dispose();pmrem.dispose();
@@ -28,6 +30,8 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
  const csm=new CSM({camera,parent:scene,cascades:p.cascades,maxFar:p.distance,mode:'practical',shadowMapSize:Math.min(p.shadow,renderer.capabilities.maxTextureSize),lightDirection:new THREE.Vector3(-1,-1,-.5).normalize(),lightIntensity:3.1,lightNear:1,lightFar:650,shadowBias:-.0002});
  csm.fade=true;for(const light of csm.lights){light.shadow.normalBias=.025;light.color.set(0xffecd0);}
  const target=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType});
+ // Resolve subpixel wing edges, foliage and roof trim before screen-space AA.
+ target.samples=Math.min(quality==='low'?2:4,renderer.capabilities.maxSamples||0);
  const composer=new EffectComposer(renderer,target);composer.addPass(new RenderPass(scene,camera));
  const ao=new GTAOPass(scene,camera,1,1);ao.enabled=p.ao;ao.blendIntensity=.65;ao.updateGtaoMaterial({radius:3,distanceExponent:1.8,thickness:1});composer.addPass(ao);
  const bloom=new UnrealBloomPass(new THREE.Vector2(1,1),.12,.35,1.2);bloom.enabled=p.bloom;composer.addPass(bloom);

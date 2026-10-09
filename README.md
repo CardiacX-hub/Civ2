@@ -391,3 +391,7 @@ The original procedural models are authored in `tools/covenant-art.js`. Shared p
 ## Verdant woodland collectors
 
 Verdant workers now use carved bark faces with glowing green eyes, branching crowns, leaf shoulder mantles, ivory and emerald tree-emblem cloth, vine-wrapped limbs, articulated wooden fingers and toes, and woven packs with logs and cargo. Axe, pickaxe, hammer, gold-carrying, and lumber-carrying variants share the same animated rig. Tools and decorations are attached to the corresponding hand/body joints. Models and Classic atlases are generated from `kawVerdantWorker` in `tools/covenant-art.js`.
+
+## Sky Skitterer and zoom clarity
+
+The Sky Skitterer has lighter brown chitin, dark brown abdominal bands, pointed veined wings, and a downward-curled sting. Live models, Classic animations, and its portrait use the same source design. Balanced and High rendering now apply their full resolution budget even on 1× desktop displays. Multisample anti-aliasing resolves thin geometry before SMAA; zooming out preserves the physical drawing-buffer resolution in live and Classic modes. Low remains capped at 1× with two samples for phones. Run `CHECK_URL=http://localhost:3000 node tools/check-zoom-quality.cjs` with Playwright installed to check desktop/phone zoom resolution and selection projection.

@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {createPipeline,createTerrainMaterial} from './modern-renderer.js';
-const SCALE=.1,VERSION='20261009-woodland-collectors';
+const SCALE=.1,VERSION='20261009-skitterer-clarity';
 const liveCanvas=document.createElement('canvas');liveCanvas.id='liveBattlefield';liveCanvas.style.cssText='position:absolute;pointer-events:none;z-index:0;display:none';const source=document.getElementById('world');source.insertAdjacentElement('beforebegin',liveCanvas);source.style.position='relative';source.style.zIndex='1';
 let wetness=0;try{wetness=Math.max(0,Math.min(1,Number(localStorage.getItem('kaw-ground-wetness'))||0));}catch{}const waterTime={value:0};
 let enabled=true;try{enabled=localStorage.getItem('kaw-live-3d')!=='off';}catch{}
@@ -46,7 +46,7 @@ function present(c){lastContext=c;const animationTime=c.state.time+(c.state.netw
  // Light pool reuses a fixed number of unshadowed emitters; no per-shot allocations.
  const fires=c.state.entities.filter(e=>e.shot?.fire&&e.shot.left>0&&c.visible(e.x,e.y)&&c.inViewport(e.x,e.y));lights.forEach((light,i)=>{if(!light)return;const e=fires[i];if(e){const t=1-e.shot.left/e.shot.duration;light.position.set((e.x+(e.shot.x-e.x)*t)*SCALE,(c.renderAltitude(e)+20)*SCALE,(e.y+(e.shot.y-e.y)*t)*SCALE);}else light.position.set(9999,9999,9999);});
  // Startup may use Classic once; later streaming must never switch the whole frame.
- if(waiting&&!presented){liveCanvas.style.display='none';window.KawVisual?.suspend(false);return false;}waterTime.value=animationTime;pipeline.render();presented=true;liveCanvas.style.display='block';window.KawVisual?.suspend(true);return true;
+ if(waiting&&!presented){liveCanvas.style.display='none';window.KawVisual?.suspend(false);return false;}waterTime.value=animationTime;liveCanvas.style.display='block';pipeline.render();presented=true;window.KawVisual?.suspend(true);return true;
  }catch(error){fallback(error);return false;}
 }
 liveCanvas.addEventListener('webglcontextlost',event=>{event.preventDefault();fallback(new Error('WebGL context lost'));});
