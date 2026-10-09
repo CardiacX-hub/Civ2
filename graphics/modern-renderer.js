@@ -43,6 +43,8 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
  function prepareMaterial(material,{sss=0,rim=.12}={}){
   if(!material?.isMeshStandardMaterial||trackedMaterials.has(material))return material;
   trackedMaterials.add(material);material.userData.visual={sss,rim};
+  // Preserve mortar and roof detail at grazing camera angles with capped filtering.
+  for(const map of [material.map,material.normalMap,material.roughnessMap])if(map){map.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),quality==='low'?2:8);map.needsUpdate=true;}
   material.roughness=THREE.MathUtils.clamp(material.roughness,.08,1);
   csm.setupMaterial(material);const csmCompile=material.onBeforeCompile;
   material.onBeforeCompile=shader=>{

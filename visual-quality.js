@@ -2,7 +2,7 @@
  * grades the finished sprite scene; it does NOT invent scene depth or normals. */
 (()=>{'use strict';
  const presets={low:{scale:1,bloom:0,aa:0},balanced:{scale:1.25,bloom:.055,aa:1},high:{scale:1.5,bloom:.085,aa:1}};
- let quality=window.matchMedia?.('(pointer:coarse)').matches?'low':'balanced';try{quality=localStorage.getItem('kaw-visual-quality')||quality;}catch{}if(!presets[quality])quality='balanced';
+ let quality=window.matchMedia?.('(pointer:coarse)').matches?'low':'high';try{quality=localStorage.getItem('kaw-visual-quality')||quality;}catch{}if(!presets[quality])quality='balanced';
  const source=document.getElementById('world'),output=document.createElement('canvas');output.id='visualOutput';output.setAttribute('aria-hidden','true');output.style.cssText='position:absolute;pointer-events:none;display:none;z-index:0';source.insertAdjacentElement('afterend',output);
  let gl,program,texture,ready=false;const uniforms={};
  const vertex=`#version 300 es

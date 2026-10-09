@@ -409,3 +409,13 @@ Maps are now 4000 × 4000 (25% wider, 56% more area). Desktop command cards use 
 Unit training, construction, and research take 25% longer. Deliveries credit 25% less than the previous version: 56.25% of physical cargo, or 5.90625 gold / 14.0625 lumber for an unupgraded full load. Gathering rates and physical carrying capacities are unchanged. AI reserves actual Stronghold upgrade costs, prioritizes Siege Works and Sky Roosts when unlocked, and advances in formation using attack-move so nearby defenders interrupt raids.
 
 Verdant roofs follow each owner's banner color. Plateau cliff materials have sediment bands and rocky bevels. Dragons and wyverns have tan wing membranes, articulated finger ribs, and wing talons. Large-map terrain caching is limited to a 4096-pixel surface to control memory usage.
+
+### Straw hats and architectural detail (20261009-straw-and-stone)
+
+Dawnward peasants wear woven straw farmer hats attached to their animated heads in every axe, pick, hammer, gold-carrying and lumber-carrying variant. Their portraits and Classic animation atlases use the same models.
+
+Dawnward Strongholds have individually shaded, beveled stone blocks with staggered courses and recessed mortar across their keeps, towers and all upgrade wings. Building masonry across all three factions has consistent stone-course scale, chipped surfaces and fine weathering, with 512px architectural color and normal maps. Other surface maps retain smaller export budgets, and the stone geometry is merged into a small number of material batches instead of issuing a draw call per brick. Classic building images are captured at 768 × 768.
+
+New PC sessions default to High visual quality (higher resolution, four shadow cascades, ambient occlusion and restrained bloom); phones default to Low. Saved preferences remain in effect. Settings → Graphics allows switching to Balanced or Low for slower hardware. Capped anisotropic texture filtering preserves masonry detail at elevated camera angles. Small objects and distant buildings still have finite screen resolution; this is an improvement to the existing browser renderer, not a conversion to a different engine.
+
+Asset authoring helpers are in `tools/masonry-art.js`. Include this file alongside the Frontier, painted-style and Covenant authoring scripts. Export affected live meshes with `node tools/export-live-models.cjs worker,worker-pick,worker-hammer,worker-carry,worker-logs,detailed-buildings`; render the corresponding worker atlases and building images with `tools/render-art.cjs`. Browser validation: `tools/check-masonry.cjs`. These commands use the existing documented Playwright/Chromium setup and local server.

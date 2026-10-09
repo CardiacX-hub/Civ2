@@ -10,6 +10,9 @@ function kawPaintTexture(kind){
  if(kind==='wood')for(let i=0;i<60;i++){const x=i*9+rand()*5;g.strokeStyle=i%3?'#38404b24':'#ffffff44';g.lineWidth=1+rand()*2;g.beginPath();g.moveTo(x,0);g.bezierCurveTo(x+10,150,x-12,300,x+4,512);g.stroke();}
  if(kind==='metal'){g.fillStyle='#ffffff88';g.fillRect(4,4,504,4);g.fillRect(4,4,4,504);g.fillStyle='#33425833';g.fillRect(4,501,504,7);for(let i=0;i<32;i++){g.strokeStyle='#ffffff44';g.lineWidth=1;const x=rand()*512,y=rand()*512;g.beginPath();g.moveTo(x,y);g.lineTo(x+3+rand()*9,y-3);g.stroke();}}
  if(kind==='cloth')for(let i=0;i<10;i++){const x=i*56;const fold=g.createLinearGradient(x,0,x+48,0);fold.addColorStop(0,'#26334a22');fold.addColorStop(.4,'#ffffff22');fold.addColorStop(1,'#26334a11');g.fillStyle=fold;g.fillRect(x,0,48,512);}
+ if(kind==='straw'){g.fillStyle='#ddd5ad';g.fillRect(0,0,512,512);for(let y=0;y<512;y+=7){g.strokeStyle=y%3?'#927747':'#fff1bf';g.lineWidth=2;g.beginPath();g.moveTo(0,y);for(let x=0;x<=512;x+=8)g.lineTo(x,y+Math.sin(x*.18+y)*2);g.stroke();}for(let x=0;x<512;x+=13){g.strokeStyle='#725a343b';g.fillRect(x,0,1,512);}}
+ if(kind==='masonry'){g.fillStyle='#6b6960';g.fillRect(0,0,512,512);for(let row=-1;row<17;row++)for(let col=-1;col<9;col++){const x=col*64+(row%2)*32,y=row*32,tone=155+Math.floor(rand()*35);const shade=g.createLinearGradient(x,y,x,y+30);shade.addColorStop(0,`rgb(${tone+25},${tone+22},${tone+10})`);shade.addColorStop(.25,`rgb(${tone+8},${tone+7},${tone})`);shade.addColorStop(1,`rgb(${tone-18},${tone-19},${tone-22})`);g.fillStyle=shade;g.fillRect(x+2,y+2,60,28);g.strokeStyle='#eee7ce99';g.lineWidth=1;g.strokeRect(x+3,y+3,58,26);for(let i=0;i<14;i++){g.fillStyle=i%3?'#403e3628':'#fff9dd35';g.fillRect(x+4+rand()*54,y+4+rand()*23,1+rand()*2,1);}if((row+col)%5===0){g.strokeStyle='#4d504d60';g.beginPath();g.moveTo(x+19,y+3);g.lineTo(x+22,y+11);g.lineTo(x+17,y+16);g.stroke();}}}
+ if(kind==='cut-stone'){g.fillStyle='#d0cbbd';g.fillRect(0,0,512,512);for(let i=0;i<5000;i++){g.fillStyle=i%3?'#5c5b5230':'#fffae533';const x=rand()*512,y=rand()*512;g.fillRect(x,y,1+rand()*3,1+rand()*2);}for(let i=0;i<30;i++){const x=rand()*512,y=rand()*512;g.strokeStyle='#635f5133';g.beginPath();g.moveTo(x,y);g.lineTo(x+8,y+5);g.lineTo(x+12,y+3);g.stroke();}}
  if(kind==='stone')for(let i=0;i<26;i++){g.strokeStyle='#33425322';g.lineWidth=1.5;const x=rand()*512,y=rand()*512;g.beginPath();g.moveTo(x,y);g.lineTo(x+14,y+6);g.lineTo(x+21,y+3);g.stroke();}
  if(kind==='scales'){
   g.fillStyle='#69716b';g.fillRect(0,0,512,512);
@@ -28,7 +31,7 @@ function kawPaintTexture(kind){
  if(kind==='verdant-roof'){g.fillStyle='#a9b5a2';g.fillRect(0,0,512,512);for(let row=0;row<8;row++)for(let col=0;col<8;col++){const x=col*64+(row%2)*32,y=row*64;g.strokeStyle='#354c38';g.lineWidth=3;g.beginPath();g.moveTo(x,y+60);g.quadraticCurveTo(x-35,y+25,x,y);g.quadraticCurveTo(x+35,y+25,x,y+60);g.stroke();g.strokeStyle='#e3ddb0';g.lineWidth=1;g.beginPath();g.moveTo(x,y+5);g.lineTo(x,y+55);g.stroke();}}
  if(kind==='verdant-leaf'){g.fillStyle='#8f9e62';g.fillRect(0,0,512,512);for(let i=0;i<600;i++){const x=rand()*512,y=rand()*512;g.fillStyle=i%3?'#c2c88e':'#435b2e';g.beginPath();g.ellipse(x,y,3+rand()*7,2+rand()*3,rand()*3,0,Math.PI*2);g.fill();}}
  if(kind==='verdant-water'){g.fillStyle='#809da5';g.fillRect(0,0,512,512);for(let i=0;i<160;i++){g.strokeStyle=i%3?'#d2e4e5':'#416c7b';g.lineWidth=1+rand()*3;const x=rand()*512,y=rand()*512;g.beginPath();g.moveTo(x,y);g.lineTo(x+rand()*2,y+20+rand()*150);g.stroke();}}
- const t=Ug('cloth').clone();t.source=new t.source.constructor(c);t.needsUpdate=true;kawTextures['paint-'+kind]=t;return t;
+ const t=Ug('cloth').clone();t.source=new t.source.constructor(c);t.name='paint-'+kind;if(kind==='masonry')t.wrapS=t.wrapT=1000;t.needsUpdate=true;kawTextures['paint-'+kind]=t;return t;
 }
 function kawMaterial(color,kind='stone',metal=0){
  const mat=F(color,metal,metal?.52:.88).clone();mat.map=kawPaintTexture(kind);mat.bumpMap=mat.map;mat.bumpScale=kind==='wood'?.09:.035;mat.roughnessMap=null;mat.clearcoat=metal?.18:0;mat.envMapIntensity=.65;return mat;
@@ -109,6 +112,7 @@ function kawFinishPaintedModel(root,name,horde){
    if(kind==='depot')for(let i=0;i<6;i++){const log=J(root,st('cylinder',2,2,22,8),wood,-18,5+Math.floor(i/3)*4,28+i%3*4);log.rotation.z=Math.PI/2;}
   }
  }
+ kawDressBuilding(root,name,horde);
  const materials=new Map();root.traverse(mesh=>{if(!mesh.isMesh)return;const original=Array.isArray(mesh.material)?mesh.material:[mesh.material];const next=original.map(m=>{
   if(materials.has(m))return materials.get(m);const p=m.clone();p.flatShading=true;p.envMapIntensity=.65;if(!root.userData.verdantArchitecture){p.clearcoat=.12;p.roughness=p.metalness>.35?.52:.88;}
   const kind=p.metalness>.35?'metal':name.includes('world-')?'stone':['dragon','wyvern'].includes(name)?'scales':'cloth';
