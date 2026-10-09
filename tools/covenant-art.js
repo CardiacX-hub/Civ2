@@ -1,5 +1,6 @@
 // Original wilderness-clan and specialist meshes; rendered with the existing painted light rig.
 function kawSpecialCharacter(name){
+ if(name==='cov-weaver')return kawWindElemental();
  if(name.startsWith('cov-worker'))return kawVerdantWorker(name);
  const base=name.startsWith('cov-worker')?name.replace('cov-',''):({shieldwarden:'knight',medic:'worker',engineer:'worker-hammer',trapper:'troll',bogbreaker:'troll',pathfinder:'ranger','cov-worker':'worker','cov-shellguard':'knight','cov-archer':'ranger','cov-resin':'worker','cov-captain':'knight','cov-alchemist':'worker','cov-matriarch':'ranger','cov-weaver':'worker'})[name]||'worker';
  const root=kawCharacter(base),n=root.userData,covenant=name.startsWith('cov-'),reed=kawMaterial(0xb99c62,'wood'),shell=kawMaterial(0x566e58,'metal',.25),cloth=kawMaterial(covenant?0x686d42:0xc5bea0,'cloth'),brass=kawMaterial(0xbda765,'metal',.5),steel=kawMaterial(0x9bacb8,'metal',.65);
@@ -13,6 +14,7 @@ function kawSpecialCharacter(name){
  return root;
 }
 function kawInsect(name){
+ if(name==='cov-beetle')return kawIronBeast();
  if(name==='cov-wasp'||name==='cov-wasp-venom')return kawStagWasp(name.endsWith('-venom'));if(name==='cov-burrower')return kawBurrowSpider();if(name==='cov-centipede')return kawSkyCentipede();
  const root=new Kt,shell=kawMaterial(name==='cov-burrower'?0x81724f:0x49675b,'metal',.25),edge=kawMaterial(0xb8a36a,'metal',.4),dark=kawMaterial(0x26342c),wing=kawMaterial(name==='cov-wasp'?0xc7ac70:0xbdb695,'cloth'),body=Re(root,0,24,0),legs=[];
  V(body,26,shell,0,0,0,1,.6,1.3);V(body,18,shell,0,1,23,.85,.65,.8);V(body,14,dark,0,-2,-21,.75,.6,1);for(const side of [-1,1]){V(body,23,shell,side*8,6,-2,.62,.35,1.35);for(let i=0;i<6;i++){const stripe=ot(body,1.3,1.5,24,edge,side*(4+i*2),13-i*.6,-3);stripe.rotation.z=side*.15;}V(body,3,kawMaterial(0xd1c678),side*9,6,33,1,.8,.4);const antenna=J(body,st('cylinder',.7,.8,23,6),edge,side*9,18,29);antenna.rotation.z=side*.4;for(const z of [-17,0,17]){const leg=Re(root,side*19,22,z);const upper=ot(leg,25,3,3,dark,side*12,0,0);upper.rotation.z=-side*.4;const lower=ot(leg,3,22,3,shell,side*23,-13,0);lower.rotation.z=side*.22;legs.push(leg);}}
@@ -24,6 +26,7 @@ function kawInsect(name){
 // A shared architectural kit keeps the wilderness faction visually consistent.
 // Geometry is authored in local coordinates and batched into a few PBR materials.
 function kawCovenantWorld(asset){
+ const resin=asset==='trap-resin';if(resin)asset='trap';if(asset==='trap'&&!resin)return kawWindTrap();
  const level=Number(asset.match(/-level([234])$/)?.[1]||1),role=asset.replace(/-level[234]$/,''),root=new Kt;
  const stone=kawMaterial(0xc4bea1,'stone'),shade=kawMaterial(0x898873,'stone'),bark=kawMaterial(0x69492d,'wood'),gold=kawMaterial(0xd6b76b,'metal',.65),roof=kawMaterial(0x246e58,'verdant-roof',.12),leaf=kawMaterial(0x567632,'verdant-leaf'),dark=kawMaterial(0x263b2f,'stone'),cloth=kawMaterial(0x205d4c,'cloth'),crystal=kawMaterial(0x65dc7c,'metal',.12),water=kawMaterial(0x76b5c5,'verdant-water',.08),foam=kawMaterial(0xd0ece4,'stone');
  leaf.userData.kawThinSurface=.18;roof.userData.kawThinSurface=.1;crystal.emissive.set(0x2eab46);crystal.emissiveIntensity=.65;crystal.roughness=.17;crystal.clearcoat=1;
@@ -201,3 +204,42 @@ function kawVerdantWorker(name){
  if(!carry&&!logs){if(!name.endsWith('pick')&&!name.endsWith('hammer')){n.weapon.clear();J(n.weapon,st('cylinder',1.8,2,40),bark,0,9,0);const blade=new Ce;blade.moveTo(0,29);blade.quadraticCurveTo(11,35,18,33);blade.quadraticCurveTo(20,23,16,16);blade.quadraticCurveTo(9,23,0,20);blade.closePath();J(n.weapon,new Oe(blade,{depth:2.5,bevelEnabled:true,bevelSize:.5,bevelThickness:.4,bevelSegments:1}),steel,0,0,-1.25);}for(const y of [0,8,16])J(n.weapon,st('torus',2.1,.5),gold,0,y,0).rotation.x=Math.PI/2;twig(n.weapon,[[0,-8,1],[2,4,1],[-1,16,1],[1,25,1]],.5);for(let i=0;i<3;i++)sprig(n.weapon,2,7+i*6,1,.45);if(!name.endsWith('pick')&&!name.endsWith('hammer'))for(let i=0;i<3;i++)twig(n.weapon,[[3+i*3,22,2],[6+i*3,26,2],[5+i*3,30,2]],.22);}
  return root;
 }
+
+// Original six-legged siege beast: segmented iron armor over jointed machinery.
+function kawIronBeast(){
+ const root=new Kt,iron=kawMaterial(0x475052,'metal',.72),edge=kawMaterial(0x9e8556,'metal',.5),dark=kawMaterial(0x252b29,'metal',.45),banner=kawMaterial(0x254a3a,'cloth'),amber=kawMaterial(0xffac35,'metal',.1),body=Re(root,0,34,0),legs=[],knees=[];
+ amber.emissive.set(0xed7618);amber.emissiveIntensity=1.2;
+ const rod=(p,a,b,r,m=edge)=>kawBugLimb(p,a,b,r,m);
+ const plate=(p,x,y,z,w,h,d=3)=>{const q=kawPlate(p,w,h,d,iron,x,y,z);for(const side of [-1,1]){rod(p,[x+side*w*.43,y-h*.42,z+d],[x+side*w*.43,y+h*.42,z+d],.6);for(const yy of [-.35,0,.35])V(p,.8,edge,x+side*w*.42,y+h*yy,z+d+.6);}return q;};
+ const tooth=(p,x,y,z,h,r=2)=>J(p,st('cone',r,h,5),edge,x,y,z);
+ const emblem=(p,x,y,z)=>{rod(p,[x,y-7,z],[x,y+6,z],.4);for(let i=0;i<4;i++)for(const side of [-1,1])rod(p,[x,y-4+i*3,z],[x+side*(5-i*.7),y-1+i*3,z],.3);};
+ V(body,29,dark,0,0,-7,1.2,.7,1.55);
+ // Overlapping dorsal slabs, flanged seams, rivets and crest spikes.
+ for(let j=0;j<6;j++){const z=-39+j*12;for(const side of [-1,1]){const p=Re(body,side*15,13,z);p.rotation.z=-side*.4;p.rotation.x=-.1;plate(p,0,0,0,25,14,4);rod(p,[-10,-4,5],[10,-4,5],.6);tooth(p,side*7,9,0,9,1.8);}plate(body,0,18,z,14,12,3).rotation.x=-Math.PI/2;}
+ for(const side of [-1,1])for(let j=0;j<3;j++){
+  const leg=Re(body,side*23,-2,-28+j*26);V(leg,7,dark,0,0,0,1,1,.65);const joint=J(leg,st('torus',5.5,1.2),edge,side*2,0,4);joint.rotation.y=Math.PI/2;
+  rod(leg,[0,0,0],[side*15,-6,2],5,iron);const shoulder=plate(leg,side*8,-2,5,17,14,3);shoulder.rotation.z=side*.45;
+  const knee=Re(leg,side*15,-6,2);V(knee,5,dark,0,0,0);J(knee,st('torus',4,1),edge,0,0,5);V(knee,2,amber,0,0,5.5);
+  rod(knee,[0,0,0],[side*5,-23,6],3.4,iron);plate(knee,side*3,-10,9,11,21,3).rotation.z=-side*.15;const foot=Re(knee,side*5,-24,6);V(foot,6,iron,0,0,0,1.2,.45,1.2);for(let toe=0;toe<3;toe++){const claw=J(foot,st('cone',1.8,9,4),edge,-4+toe*4,-1,7);claw.rotation.x=Math.PI/2;}tooth(leg,side*11,7,1,7,1.5);legs.push(leg);knees.push(knee);
+ }
+ const head=Re(body,0,0,37);V(head,17,dark,0,0,0,1.1,.65,1.1);plate(head,0,7,11,22,17,4).rotation.x=-.45;for(const side of [-1,1]){plate(head,side*12,0,4,10,17,3).rotation.y=side*.5;V(head,3,amber,side*9,1,16,1,.35,.4);rod(head,[side*7,11,3],[side*15,24,-1],2.3);const horn=tooth(head,side*17,30,-2,15,2);horn.rotation.z=-side*.25;const tusk=J(head,st('cone',2.8,17,5),edge,side*12,-5,19);tusk.rotation.x=Math.PI/2;}const beak=J(head,st('cone',5,25,4),iron,0,-3,22);beak.rotation.x=Math.PI/2;rod(head,[0,12,5],[0,3,23],1);
+ // Small lantern turrets and hanging woodland heraldry recall the reference.
+ for(const z of [-24,1]){const spire=Re(body,0,25,z);J(spire,st('cylinder',4,5,14,6),dark,0,7,0);for(const side of [-1,1]){rod(spire,[side*4,1,3],[side*3,13,3],.5);V(spire,2,amber,side*2,7,3,.6,1.5,.4);}J(spire,st('cone',6,9,6),iron,0,18,0);tooth(spire,0,26,0,9,1);}
+ for(const side of [-1,1]){const b=Re(body,side*29,13,-13);b.rotation.y=side*Math.PI/2;const s=new Ce;s.moveTo(-8,0);s.lineTo(8,0);s.lineTo(7,-21);s.lineTo(0,-27);s.lineTo(-7,-21);s.closePath();J(b,new Oe(s,{depth:.4,bevelEnabled:false}),banner,0,0,0);for(const x of [-7,7])rod(b,[x,0,1],[x,-20,1],.35);emblem(b,0,-12,1);for(let i=0;i<7;i++){const chain=J(body,st('torus',1.4,.3),edge,side*25,20-i*2.2,-26+i*3);chain.rotation.y=i%2?Math.PI/2:0;}}
+ root.userData.ironBeast={body,head,legs,knees};return root;
+}
+function kawAnimateIronBeast(root,angle,phase,t){const n=root.userData.ironBeast,walk=phase==='walk',strike=phase==='attack'?Math.sin(t*Math.PI):0;root.rotation.y=angle;n.body.rotation.x=-strike*.12;n.body.position.y=34+(walk?Math.abs(Math.sin(t*Math.PI*2))*1.1:Math.sin(t*Math.PI*2)*.12);n.head.rotation.x=strike*.35;for(let i=0;i<6;i++){const step=Math.sin(t*Math.PI*2+(i%3+i/3)*Math.PI);n.legs[i].rotation.x=walk?step*.3:0;n.knees[i].rotation.x=walk?Math.max(0,step)*.25:0;}}
+// Air is represented by translucent spirals and cloud filaments around an
+// articulated gold/wood mask, rather than a humanoid carrying a ranged weapon.
+function kawWindElemental(){
+ const root=new Kt,air=kawMaterial(0xa6dbea,'cloth'),cloud=kawMaterial(0xd4e7e3,'cloth'),gold=kawMaterial(0xc5a66c,'metal',.5),wood=kawMaterial(0x594732,'wood'),core=kawMaterial(0x62ccec,'metal',.1),body=Re(root,0,34,0),arms=[],spirals=[];
+ air.transparent=true;air.opacity=.38;air.depthWrite=false;air.side=2;air.emissive.set(0x31697a);air.emissiveIntensity=.45;cloud.transparent=true;cloud.opacity=.62;cloud.depthWrite=false;cloud.side=2;core.emissive.set(0x1bafde);core.emissiveIntensity=1.1;cloud.userData.kawThinSurface=.2;
+ const rod=(p,a,b,r,m=gold)=>kawBugLimb(p,a,b,r,m);
+ const helix=(p,r,h,y,offset=0)=>{const g=Re(p,0,y,0);for(let i=0;i<30;i++){const a=offset+i*Math.PI*4/30,b=offset+(i+1)*Math.PI*4/30,rr=r*(.55+.45*i/30),rr2=r*(.55+.45*(i+1)/30);rod(g,[Math.cos(a)*rr,h*i/30,Math.sin(a)*rr],[Math.cos(b)*rr2,h*(i+1)/30,Math.sin(b)*rr2],.7+i%3*.3,i%5?air:cloud);}spirals.push(g);return g;};
+ helix(root,19,31,2);helix(root,15,29,3,Math.PI);for(let i=0;i<12;i++){const a=i*2.4;V(body,8,cloud,Math.cos(a)*12,-8+Math.sin(i)*7,Math.sin(a)*8,1,.45,.7);}helix(body,24,20,-10,.6);
+ const chest=kawPlate(body,22,18,3,wood,0,6,10);for(const side of [-1,1]){rod(body,[side*11,14,12],[0,-3,14],.9);rod(body,[side*7,11,13],[0,1,15],.5);const arm=Re(body,side*18,10,0);V(arm,8,cloud,0,-7,0,.7,1.4,.7);kawPlate(arm,13,12,3,gold,side*2,1,4);helix(arm,10,21,-20,side*.5);for(let i=0;i<3;i++){rod(arm,[side*3,-18,5],[side*(4+i*3),-27,6],.6,cloud);}arms.push(arm);}
+ const head=Re(body,0,24,0);V(head,11,air,0,0,0,.8,1.15,.7);for(const side of [-1,1]){rod(head,[side*7,-9,7],[side*10,6,6],1.1,wood);rod(head,[side*10,6,6],[side*5,16,3],1,gold);rod(head,[side*5,16,3],[side*12,29,0],.8);rod(head,[side*7,-7,8],[0,-15,10],.7);V(head,2.7,core,side*4,1,8,1,.4,.35);const horn=J(head,st('cone',1.7,16,5),gold,side*12,26,0);horn.rotation.z=-side*.4;}const gem=J(head,new qr(4,4,2),core,0,13,6);gem.scale.set(.6,2,.5);rod(head,[0,9,7],[0,-10,10],.8,gold);
+ for(let i=0;i<10;i++){const a=i*2.4;V(body,2.5,cloud,Math.cos(a)*25,12+Math.sin(i)*15,Math.sin(a)*18,1.8,.25,.65);}root.userData.windElemental={body,head,arms,spirals};return root;
+}
+function kawAnimateWindElemental(root,angle,phase,t){const n=root.userData.windElemental,strike=phase==='attack'?Math.sin(t*Math.PI):0;root.rotation.y=angle;n.body.position.y=34+Math.sin(t*Math.PI*2)*1.1;n.body.rotation.x=-strike*.16;n.arms.forEach((a,i)=>{a.rotation.x=-strike*1.15+(phase==='walk'?Math.sin(t*Math.PI*2+i*Math.PI)*.12:0);a.rotation.z=(i?1:-1)*(.12+strike*.22);});n.spirals.forEach((s,i)=>s.rotation.y=t*Math.PI*2*(i%2?-1:1));}
+function kawWindTrap(){const root=new Kt;root.userData.verdantArchitecture={revision:'wind-trap-v1',role:'trap',level:1};const air=kawMaterial(0xb6e5ee,'cloth'),core=kawMaterial(0x5fcde6,'metal',.1);air.transparent=true;air.opacity=.55;air.depthWrite=false;air.side=2;core.emissive.set(0x279caf);core.emissiveIntensity=.65;for(let j=0;j<4;j++){const ring=J(root,st('torus',11-j*2,.45,Math.PI*1.6),j===0?core:air,0,1+j*3,0);ring.rotation.x=Math.PI/2;ring.rotation.z=j*1.2;}for(let i=0;i<6;i++){const a=i*2.4;V(root,2,air,Math.cos(a)*9,2+Math.sin(i)*2,Math.sin(a)*9,1.6,.3,.7);}return root;}

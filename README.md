@@ -395,3 +395,9 @@ Verdant workers now use carved bark faces with glowing green eyes, branching cro
 ## Sky Skitterer and zoom clarity
 
 The Sky Skitterer has lighter brown chitin, dark brown abdominal bands, pointed veined wings, and a downward-curled sting. Live models, Classic animations, and its portrait use the same source design. Balanced and High rendering now apply their full resolution budget even on 1× desktop displays. Multisample anti-aliasing resolves thin geometry before SMAA; zooming out preserves the physical drawing-buffer resolution in live and Classic modes. Low remains capped at 1× with two samples for phones. Run `CHECK_URL=http://localhost:3000 node tools/check-zoom-quality.cjs` with Playwright installed to check desktop/phone zoom resolution and selection projection.
+
+## Iron beast and wind elemental
+
+The Verdant Ironback Rider now appears as a six-legged mechanical iron beast with jointed legs, overlapping riveted armor, pointed claws, horns, amber eyes, lantern towers, chains, and woodland banners. Its Ironback Rush and existing combat stats are retained. The former Resin Weaver is now the Wind Elemental: an ornate masked spirit with translucent animated vortex filaments, gust projectiles, and Wind Trap. Its trap deals 15 damage and slows enemy ground units by 60% for four seconds, with the existing twelve-second cooldown and six-trap limit. Wind traps swirl in both graphics modes. Dominion Troll Trappers retain their resin traps.
+
+`cov-beetle`, `cov-weaver`, and `world-trap-covenant` models, Classic sheets, and portraits use the original procedural source in `tools/covenant-art.js`. `world-trap-resin` preserves the earlier resin trap for other factions.

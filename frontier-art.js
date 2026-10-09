@@ -1,6 +1,6 @@
 'use strict';
 // All sprites use the same Frontier mesh renderer, PBR light rig, and painted material maps.
-const ART_VERSION='20261009-skitterer-clarity',WORLD_ART_VERSION=ART_VERSION;
+const ART_VERSION='20261009-iron-and-wind',WORLD_ART_VERSION=ART_VERSION;
 const frontierSheets={},frontierWorld={},frontierSheetUsage=new Map();let frontierCleanupTime=0;
 // Wider framing prevents weapons/wings being clipped; restore their world scale.
 const frontierFramingScale={shieldwarden:320/205,trapper:300/205,'cov-shellguard':350/205,'cov-archer':270/205,'cov-resin':350/205,'cov-captain':280/205,'cov-burrower':250/205,bogbreaker:330/205,carrion:340/205,'cov-moth':340/205,'cov-wasp':1,'cov-wasp-venom':1,'cov-centipede':1,knight:280/205,marksman:280/205,witch:280/205,devoured:370/255,shaman:285/205,gryphon:340/205,wyvern:340/205,phoenix:340/270,dragon:340/270,pig:280/205};
@@ -23,7 +23,7 @@ function drawFrontierUnit(e,p,horde){
 }
 function frontierFrame(e,time){const action=e.action&&e.action.until>time?e.action:null,walking=e.walkUntil>time,phase=action?2:walking?1:0,dir=(Math.round((e.facing||0)/(Math.PI/4))+8)%8;const progress=action?1-(action.until-time)/action.duration:(time+(e.id%8)*.07)*(walking?1.7:.4);return {action,progress,phase,dir,frame:action?Math.min(15,Math.max(0,Math.floor(progress*16))):Math.floor(progress*16)%16};}
 function worldSprite(name,width,height=width,g=ctx){const img=frontierWorld[name];if(!img?.complete||!img.naturalWidth)return false;g.drawImage(img,-width/2,-height*.64,width,height);return true;}
-function drawFrontierBuilding(e,p,horde){if(['trap','barricade'].includes(e.type))return worldSprite(e.type+'-covenant',e.type==='trap'?44:70);const level=Math.min(4,e.level||1),asset=e.type==='base'&&level>1?'base-level'+level:e.type;const width=e.type==='base'?(level===1?210:240+level*15):e.type==='wall'?58:['tower','roost','altar'].includes(e.type)?145:135;if(!worldSprite(asset+worldFactionSuffix(p.faction),width))return false;
+function drawFrontierBuilding(e,p,horde){if(['trap','barricade'].includes(e.type))return worldSprite(e.type==='trap'?(p.faction==='covenant'?'trap-covenant':'trap-resin'):'barricade-covenant',e.type==='trap'?44:70);const level=Math.min(4,e.level||1),asset=e.type==='base'&&level>1?'base-level'+level:e.type;const width=e.type==='base'?(level===1?210:240+level*15):e.type==='wall'?58:['tower','roost','altar'].includes(e.type)?145:135;if(!worldSprite(asset+worldFactionSuffix(p.faction),width))return false;
  ctx.fillStyle=p.color;ctx.strokeStyle='#163039';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-6,-width*.65);ctx.lineTo(8,-width*.65+4);ctx.lineTo(-6,-width*.65+10);ctx.closePath();ctx.fill();ctx.stroke();
  if(['forge','foundry'].includes(e.type)){ctx.save();for(let i=0;i<3;i++){const t=(state.time*.25+i/3)%1;ctx.globalAlpha=(1-t)*.25;ctx.fillStyle='#d2d7cb';ctx.beginPath();ctx.ellipse(-22+t*12,-width*.48-t*30,5+t*9,5+t*7,0,0,Math.PI*2);ctx.fill();}ctx.restore();}return true;
 }
@@ -36,3 +36,5 @@ function drawFrontierConstruction(e){const progress=1-e.construction.left/e.cons
 
 function worldFactionSuffix(race){return race==='horde'?'-dominion':race==='covenant'?'-covenant':'';}
 for(const name of ['wall','tower','bastion','base','base-level2','base-level3','base-level4','barracks','forge','roost','altar','mill','armory','foundry','depot','trap','barricade']){const key=name+'-covenant',img=new Image();img.src='assets/world-'+key+'.webp?v='+WORLD_ART_VERSION;frontierWorld[key]=img;}
+
+{const img=new Image();img.src='assets/world-trap-resin.webp?v='+WORLD_ART_VERSION;frontierWorld['trap-resin']=img;}
