@@ -897,7 +897,7 @@ function drawLiveOverlay(e){if(e.hiddenInMine)return;const p=state.players[e.own
 
 function drawLiveMineLabel(r){const miners=state.entities.filter(w=>w.hp>0&&w.hiddenInMine&&w.order?.target===r).length;ctx.save();ctx.translate(r.x,r.y-terrainHeight(r.x,r.y));ctx.fillStyle='#14251ce8';ctx.fillRect(-27,8,54,14);ctx.fillStyle=miners>=5?'#ffd487':'#d8e1c7';ctx.font='9px system-ui';ctx.textAlign='center';ctx.fillText(miners+'/5 miners',0,18);ctx.restore();}
 
-function unitVisualScale(e){const race=state.players[e.owner]?.faction;const specific=e.type==='air2'&&race==='human'?.75:e.type==='air2'&&race==='covenant'?.7:e.type==='air3'&&race==='covenant'?.65:race==='horde'&&['air2','hero3'].includes(e.type)?.7:1;return .9*.85*specific;}
+function unitVisualScale(e){const race=state.players[e.owner]?.faction;const specific=e.type==='air2'&&race==='human'?.75:e.type==='air2'&&race==='covenant'?.7:e.type==='air3'&&race==='covenant'?.65:race==='horde'&&['air2','hero3'].includes(e.type)?.7:1;return .9*.85*.85*specific;}
 
 // Zoom is local camera state and never changes the authoritative simulation.
 function changeBattlefieldZoom(delta){const cx=cam.x+viewport.width/2,cy=cam.y+viewport.height/2;battlefieldZoom=Math.max(.55,Math.min(1,Math.round((battlefieldZoom+delta)*100)/100));resize();cam.x=cx-viewport.width/2;cam.y=cy-viewport.height/2;clampCam();clearTerrainCache();$('zoomOut').disabled=battlefieldZoom<=.55;$('zoomIn').disabled=battlefieldZoom>=1;for(const id of ['zoomOut','zoomIn'])$(id).title='Battlefield zoom: '+Math.round(battlefieldZoom*100)+'%';}

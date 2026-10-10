@@ -66,7 +66,7 @@ function kawCovenantWorld(asset){
  }else{
   foundation(['tower','bastion'].includes(role)?56:78,58);
   if(role==='tower'){const t=tower(root,0,0,14,61);gem(t,0,66,12,5);canopy(root,-22,40,-5,12);cascade(root,20,18,28,4,15);}
-  else if(role==='bastion'){for(const side of [-1,1]){const t=tower(root,side*16,0,10,43,false);gem(t,0,47,0,4);const barrel=J(t,st('cylinder',2,3,22),gold,0,45,12);barrel.rotation.x=Math.PI/2;}bridge(root,[-16,51,0],[16,51,0],12);canopy(root,0,63,-5,13);}
+  else if(role==='bastion'){kawBastionDetail(root,'covenant');for(const side of [-1,1]){const t=tower(root,side*16,0,10,43,false);gem(t,0,47,0,4);const barrel=J(t,st('cylinder',2,3,22),gold,0,45,12);barrel.rotation.x=Math.PI/2;}bridge(root,[-16,51,0],[16,51,0],12);canopy(root,0,63,-5,13);}
   else if(role==='roost'){for(const side of [-1,1]){const t=tower(root,side*23,0,11,43);balcony(t,19,17);rootCurve(root,[[side*35,0,-17],[side*28,23,-10],[side*22,47,0]],4);for(let i=0;i<5;i++)rock(t,3,-6+i*3,21,9,1,1.5,1,crystal);}bridge(root,[-23,40,0],[23,40,0],10);canopy(root,0,73,-17,20);}
   else if(role==='altar'){hall(38,42,33);for(const side of [-1,1])tower(root,side*27,0,7,35);gem(root,0,74,20,11);const ring=J(root,st('torus',12,.8,Math.PI*2),gold,0,28,25);ring.rotation.x=Math.PI/2;canopy(root,-24,63,-13,13);}
   else{

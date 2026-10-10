@@ -48,11 +48,23 @@ function kawWoodlandPeon(name){
 }
 
 /** Rocky rear mass is separate from the accessible mine entrance. */
-function kawGoldOutcrop(){const root=new Kt;root.userData.goldOutcrop=true;
- const rock=kawMaterial(0x686c61,'stone'),strata=kawMaterial(0x91917e,'stone'),moss=kawMaterial(0x52603a,'cloth'),ore=kawMaterial(0xbca158,'metal',.35);
- const giant=J(root,new qr(46,14,10),rock,0,40,-63);giant.scale.set(1.35,1.05,1.15);giant.rotation.y=.3;for(let j=0;j<14;j++){const a=j*2.4;const seam=J(root,st('cylinder',.6,1.3,14+j%4,5),j%3?strata:ore,Math.sin(a)*43,27+j%5*10,-63+Math.cos(a)*45);seam.rotation.z=Math.sin(a)*.7;}
- for(const [x,y,z,r,sx,sy] of [[-29,28,-69,29,1,1.1],[0,41,-91,38,1,1.3],[35,25,-66,25,1,.95]]){const shape=new qr(r,9,6).toNonIndexed();shape.computeVertexNormals();const lump=J(root,shape,rock,x,y,z);lump.scale.set(sx,sy,.85);lump.rotation.y=x*.023;for(let layer=0;layer<5;layer++){const band=J(root,st('torus',r*.8,1,Math.PI*2),strata,x,y-r*.55+layer*r*.24,z);band.rotation.x=Math.PI/2;band.scale.set(1,.8,1);}for(let i=0;i<9;i++)V(root,3,i%4?moss:ore,x+Math.sin(i*2.4)*r*.75,y+r*.7-i%3*6,z+Math.cos(i*2.4)*r*.65,1,.35,1);}
- for(let i=0;i<12;i++){const a=i*2.4;J(root,new qr(5+i%3,5,3),rock,Math.sin(a)*45,3+i%2,-67+Math.cos(a)*33);}
+/** One authored mine/boulder assembly: mouth at the resource anchor, bulk behind.
+ * A clear entrance apron preserves the existing worker delivery/pathing corridor. */
+function kawGoldOutcrop(){const root=new Kt;root.userData.goldOutcrop=true;root.userData.embeddedMine={mouthWidth:38,sharedScale:true};
+ const rock=kawMaterial(0x686c61,'stone'),strata=kawMaterial(0x91917e,'stone'),moss=kawMaterial(0x52603a,'cloth'),ore=kawMaterial(0xbca158,'metal',.55),wood=kawMaterial(0x775338,'wood'),iron=kawMaterial(0x4c5557,'metal',.65),dark=kawMaterial(0x111813,'stone');
+ // Separate side lobes and a keystone surround the recessed opening; no front
+ // sphere fills the tunnel. The connected rear mass reads as a single boulder.
+ for(const [x,y,z,r,sx,sy,sz]of [[0,40,-66,46,1.3,1.05,1.1],[-36,22,-33,28,.9,1,.9],[35,25,-36,29,.9,1,.9],[-27,21,-6,17,.7,1.25,1],[27,21,-6,17,.7,1.25,1],[0,43,-14,25,1.3,.55,1]]){const lump=J(root,new qr(r,11,8),rock,x,y,z);lump.scale.set(sx,sy,sz);lump.rotation.y=x*.03;}
+ // Dark arched recess is inside the stone collar, not a detached black box.
+ const arch=new Ce;arch.moveTo(-19,0);arch.lineTo(-19,25);arch.quadraticCurveTo(-18,38,0,38);arch.quadraticCurveTo(18,38,19,25);arch.lineTo(19,0);arch.closePath();J(root,new Oe(arch,{depth:12,bevelEnabled:false,curveSegments:10}),dark,0,0,-10);
+ for(const side of [-1,1]){ot(root,5,33,6,wood,side*20,17,5);ot(root,7,3,8,iron,side*20,6,5);ot(root,7,3,8,iron,side*20,29,5);for(const y of [7,28])V(root,.75,ore,side*20,y,9);}
+ ot(root,46,5,7,wood,0,35,5);for(let j=0;j<7;j++){const a=j*Math.PI/6,stone=J(root,new qr(6,6,4),j%2?rock:strata,Math.cos(a)*24,26+Math.sin(a)*16,1);stone.scale.set(1,.6,.8);}
+ for(const x of [-11,11])ot(root,1.2,1.4,42,iron,x,1.1,18);for(let z=-1;z<38;z+=6)ot(root,28,1,2,wood,0,.7,z);
+ // Ore seams, chipped strata and moss break up the giant rock's surface.
+ for(let j=0;j<20;j++){const a=j*2.4,x=Math.sin(a)*43,y=25+j%5*10,z=-66+Math.cos(a)*46;const seam=J(root,st('cylinder',.4,1,13+j%4,5),j%3?strata:ore,x,y,z);seam.rotation.z=Math.sin(a)*.8;V(root,2.5,j%3?moss:ore,x,y+3,z,1,.35,1);}
+ for(let j=0;j<9;j++){const a=j*2.4;J(root,new qr(4+j%3,5,3),rock,Math.sin(a)*47,3,-60+Math.cos(a)*35);}
+ const cart=Re(root,27,0,19);ot(cart,15,7,16,wood,0,7,0);for(const side of [-1,1])for(const z of [-5,5]){const wheel=J(cart,st('cylinder',3,3,1.5,10),iron,side*8,4,z);wheel.rotation.z=Math.PI/2;}for(let j=0;j<8;j++)V(cart,2.3,ore,-5+j%3*4,12+j%2, -4+Math.floor(j/3)*4);
+ const lamp=kawMaterial(0xffbe51,'metal',.15);lamp.emissive.set(0xff9d24);lamp.emissiveIntensity=.8;ot(root,4,5,4,iron,-24,24,10);V(root,1.6,lamp,-24,24,12,1,1.5,.6);ot(root,1,9,1,iron,-24,30,10);
  return root;
 }
 

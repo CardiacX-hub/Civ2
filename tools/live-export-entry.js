@@ -10,7 +10,7 @@ function exportTexture(map){const size=['paint-masonry','paint-cut-stone'].inclu
 window.KawExportGLB=async function(name,horde=false){
  window.KawSkipRender=true;KawCapture(name,0,'idle',0,144,192,horde);const root=window.KawAssetModel,allNodes=[];root.traverse(n=>allNodes.push(n));
  // Phoenix vanes are rigid to their wing: keep three animated bones, not one per feather.
- const nodes=['phoenix','dragon','wyvern'].includes(name)?[root,...root.userData.wings,...(root.userData.tailSegments||[])]:(root.userData.woodlandPeon||root.userData.detailedTroll||root.userData.standardBearer)?(()=>{const n=root.userData.mountedRider?.userData||root.userData,rig=new Set([root,n.upperBody,n.torso,n.head,n.weapon,...n.arms,...n.legs,...(root.userData.horseLegs||[]),root.userData.horseHead,root.userData.cape,root.userData.plume].filter(Boolean));for(const node of [...rig])for(let parent=node.parent;parent;parent=parent.parent)rig.add(parent);return allNodes.filter(node=>rig.has(node));})():allNodes;
+ const nodes=['phoenix','dragon','wyvern'].includes(name)?[root,...root.userData.wings,...(root.userData.wingJoints||[]),...(root.userData.tailSegments||[])]:(root.userData.woodlandPeon||root.userData.detailedTroll||root.userData.standardBearer)?(()=>{const n=root.userData.mountedRider?.userData||root.userData,rig=new Set([root,n.upperBody,n.torso,n.head,n.weapon,...n.arms,...n.legs,...(root.userData.horseLegs||[]),root.userData.horseHead,root.userData.cape,root.userData.plume].filter(Boolean));for(const node of [...rig])for(let parent=node.parent;parent;parent=parent.parent)rig.add(parent);return allNodes.filter(node=>rig.has(node));})():allNodes;
  const clips=[];if(!name.startsWith('world-'))for(const phase of ['idle','walk','attack']){const poses=new Map(nodes.map(n=>[n,{position:[],quaternion:[],scale:[]} ])),times=[],duration=phase==='idle'?2.5:phase==='walk'?.588:.55;
   for(let frame=0;frame<=16;frame++){KawCapture(name,0,phase,frame===16&&phase!=='attack'?0:Math.min(15,frame),144,192,horde);root.updateMatrixWorld(true);times.push(duration*frame/16);for(const n of nodes){const pose=poses.get(n);pose.position.push(...n.position.toArray());pose.quaternion.push(...n.quaternion.toArray());pose.scale.push(...n.scale.toArray());}}
   const tracks=[];for(const n of nodes)for(const field of ['position','quaternion','scale']){const values=poses.get(n)[field],size=field==='quaternion'?4:3;if(values.some((v,i)=>Math.abs(v-values[i%size])>.00001))tracks.push(field==='quaternion'?new QuaternionKeyframeTrack(n.uuid+'.quaternion',times,values):new VectorKeyframeTrack(n.uuid+'.'+field,times,values));}
@@ -28,6 +28,9 @@ window.KawExportGLB=async function(name,horde=false){
  if(root.userData.forestCanopy)live.userData.forestCanopy=root.userData.forestCanopy;
  if(root.userData.goldWorks)live.userData.goldWorks=true;
  if(root.userData.goldOutcrop)live.userData.goldOutcrop=true;
+ if(root.userData.embeddedMine)live.userData.embeddedMine=root.userData.embeddedMine;
+ if(root.userData.dragonWings)live.userData.dragonWings=root.userData.dragonWings;
+ if(root.userData.bastionDetail)live.userData.bastionDetail=root.userData.bastionDetail;
  if(root.userData.dominionFortress)live.userData.dominionFortress=true;
  if(root.userData.supplyHouse)live.userData.supplyHouse=true;
  if(root.userData.farmerHat)live.userData.farmerHat=true;
