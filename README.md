@@ -475,7 +475,7 @@ Dragon and wyvern wings now use thin scalloped membranes, bronze leading-edge ar
 
 Natural mines share one model and scale with their giant boulder: enlarged timber-supported arched entrances, recessed shafts, rails, ore carts, ore seams and lamps. The entrance remains at the existing resource anchor; rock bulk sits behind it. Deposits where the boulder would obstruct a river, ramp or spawn retain a compact mine. Siege Bastions gain individual masonry courses, reinforced corners, crenellations, riveted gun mounts, barrel bands, recessed muzzles and elevation gears, with textured stone and reflective weathered metal. All unit visuals are another 15% smaller; combat statistics and navigation footprints stay the same.
 
-### Approved banners, fractured mines and dragon flame (20261010-flame-hewer-approved-banners)
+### Approved banners, fractured mines and dragon flame (20261010-flame-hewer-approved-banners-r2)
 
 The banner workshop now offers approved patterns and emblems only. Freehand cells and movable shapes are stripped by the shared normalizer used for browser rendering, old saves and multiplayer profiles; existing freehand emblems become the sun emblem. Named designs can still be saved and equipped, with team colors applied in battle.
 
