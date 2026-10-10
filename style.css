@@ -141,3 +141,5 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
  #formationPane{width:110px}#formationPane button{padding:5px;font-size:10px}
  #constructionPane{padding-left:10px}.command-layout{gap:8px}#actions{margin-top:6px}
 }
+
+.banner-workshop{position:fixed;left:20px;bottom:20px;z-index:20}#game:not([hidden])~.banner-workshop{display:none}.banner-editor{display:flex;gap:24px;align-items:start}.banner-editor label{display:block;margin:8px 0}.banner-editor canvas{max-width:100%;image-rendering:auto}#bannerGrid{touch-action:none;width:256px;height:256px}#bannerDialog{max-height:90dvh;overflow:auto} @media(max-width:600px){.banner-editor{flex-direction:column}.banner-editor #bannerPreview{height:180px;width:120px}}

@@ -1,0 +1,12 @@
+/** Team-colored custom standards, shared by building flags and hand-held cloth. */
+import * as THREE from 'three';
+const textures=new Map();
+export function clearBannerTextures(){for(const texture of textures.values())texture.dispose();textures.clear();}
+function textureFor(player){const B=window.KawBanners;if(!B)return null;const design=B.normalize(player.banner),key=player.color+JSON.stringify(design);if(textures.has(key))return textures.get(key);const canvas=document.createElement('canvas');canvas.width=128;canvas.height=192;B.draw(canvas.getContext('2d'),design,player.color,128,192);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;textures.set(key,texture);return texture;}
+export function updateBanner(entry,e,player,time){const texture=textureFor(player);if(!texture)return;if(entry.name.startsWith('banner-')||entry.name==='world-tower-dominion'){if(!entry.standardMaterials){entry.standardMaterials=[];entry.model.traverse(mesh=>{if(!mesh.isMesh||!['banner-cloth','tower-banner-cloth'].includes(mesh.material.name))return;mesh.material=mesh.material.clone();mesh.material.vertexColors=false;mesh.material.color.set(0xffffff);mesh.material.normalMap=null;mesh.material.roughnessMap=null;entry.standardMaterials.push(mesh.material);});}for(const material of entry.standardMaterials){material.map=texture;material.needsUpdate=!material.userData.bannerApplied;material.userData.bannerApplied=true;}}
+
+ if(!e.building||e.construction||['wall','gate','trap','barricade'].includes(e.type))return;
+ if(!entry.banner){const height=(entry.box.max.y-entry.box.min.y)*entry.factor,width=(entry.box.max.x-entry.box.min.x)*entry.factor,h=Math.max(1.1,Math.min(3,height*.28)),group=new THREE.Group(),pole=new THREE.Mesh(new THREE.CylinderGeometry(.04,.05,h*1.6,6),new THREE.MeshStandardMaterial({color:0x80603e,roughness:.85})),cloth=new THREE.Mesh(new THREE.PlaneGeometry(h*.65,h,3,4),new THREE.MeshStandardMaterial({map:texture,roughness:.93,side:THREE.DoubleSide}));pole.position.y=h*.7;cloth.position.set(h*.32,h,0);group.position.set(-width*.32,height*.66,0);group.add(pole,cloth);entry.root.add(group);entry.banner={group,cloth};}
+ entry.banner.cloth.material.map=texture;entry.banner.cloth.rotation.y=Math.sin(time*1.6+e.id)*.12;
+}
+export function disposeBanner(entry){entry.standardMaterials?.forEach(m=>m.dispose());entry.banner?.group.traverse(m=>{if(m.isMesh){m.geometry.dispose();m.material.dispose();}});}
