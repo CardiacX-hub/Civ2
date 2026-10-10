@@ -489,6 +489,6 @@ The Dominion Bogbreaker is now the Minotaur, with curved banded horns, bull muzz
 
 Dragon breath uses cached textured flame clusters with rolling turbulence, hot cores and detached embers. Both orange and upgraded blue flames retain their existing combat behavior. Normal Dominion dragon projectiles also use the flame texture. Texture generation happens once per flame color; each plume uses a fixed bounded number of billboards.
 
-### Living fire and black chitin (20261010-living-fire-black-chitin)
+### Living fire and black chitin (20261010-living-fire-black-chitin-r2)
 
 Phoenixes and burning units/buildings have animated flame tongues and crackling embers in both graphics modes. Poison retains its green haze. The Minotaur is 35% larger visually without changing collision size or stats. Mine rocks have flat fracture faces and raised mineral flakes. Stag Wasps and Sky Skitterers have black chitin and fine bristles; the venom upgrade retains its green stinger. The Skitterer has a linked swaying body and glossy green slime projectiles. Its damage is unchanged. Decorative hairs are batched onto existing joints.

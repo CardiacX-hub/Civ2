@@ -5,7 +5,7 @@ import {updateBanner,disposeBanner,clearBannerTextures} from './banner-visuals.j
 import {addWindGrass,cliffFace,meadowTexture,prepareWindTree} from './landscape-detail.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {createPipeline,createTerrainMaterial} from './modern-renderer.js';
-const SCALE=.1,VERSION='20261010-living-fire-black-chitin';
+const SCALE=.1,VERSION='20261010-living-fire-black-chitin-r2';
 const liveCanvas=document.createElement('canvas');liveCanvas.id='liveBattlefield';liveCanvas.style.cssText='position:absolute;pointer-events:none;z-index:0;display:none';const source=document.getElementById('world');source.insertAdjacentElement('beforebegin',liveCanvas);source.style.position='relative';source.style.zIndex='1';
 let wetness=0;try{wetness=Math.max(0,Math.min(1,Number(localStorage.getItem('kaw-ground-wetness'))||0));}catch{}const waterTime={value:0};
 let enabled=true;try{enabled=localStorage.getItem('kaw-live-3d')!=='off';}catch{}
