@@ -489,6 +489,21 @@ The Dominion Bogbreaker is now the Minotaur, with curved banded horns, bull muzz
 
 Dragon breath uses cached textured flame clusters with rolling turbulence, hot cores and detached embers. Both orange and upgraded blue flames retain their existing combat behavior. Normal Dominion dragon projectiles also use the flame texture. Texture generation happens once per flame color; each plume uses a fixed bounded number of billboards.
 
-### Living fire and black chitin (20261010-living-fire-black-chitin-r2)
+### Living fire and black chitin (20261010-original-tactics-campaign-r1)
 
 Phoenixes and burning units/buildings have animated flame tongues and crackling embers in both graphics modes. Poison retains its green haze. The Minotaur is 35% larger visually without changing collision size or stats. Mine rocks have flat fracture faces and raised mineral flakes. Stag Wasps and Sky Skitterers have black chitin and fine bristles; the venom upgrade retains its green stinger. The Skitterer has a linked swaying body and glossy green slime projectiles. Its damage is unchanged. Decorative hairs are batched onto existing joints.
+
+## Original battlefield tactics and campaign tools
+
+This update adds new rules and synthesized sounds implemented for Kingdoms at War; it imports no artwork, characters, recordings, or code from another game.
+
+- **Attack alerts:** red minimap pings and clickable alerts center the camera on damaged friendly troops or buildings.
+- **Army groups:** Ctrl + 1–9 stores selected units; 1–9 recalls a stored group, and Shift adds it. The on-screen Store group button supports touch. A stored group takes priority over a construction shortcut with the same number. Idle fighters and selected-order summaries are available beside the battlefield.
+- **Counters:** Troll spears deal 40% extra damage against flyers, artillery deals 40% extra damage against buildings, and paired ranged troops deal 15% extra damage against heavy infantry.
+- **Faction tactics:** Dawnward Standfast requires three nearby infantry (+5% damage, 10% protection). Dominion Battle Surge builds five 2% damage stacks from hits and expires after four seconds without a hit. Verdant Rootward activates after holding ground for three seconds, granting nearby allies 5% protection and slowing ground enemies by 15%.
+- **Signal Stones:** optional in single-player and enabled online. Eight uncontested seconds captures one. Ownership grants nearby vision and 7.2 gold / 4.8 lumber per minute. AI squads contest them. Stones do not change the destroy-Strongholds victory condition.
+- **Device saves:** manual Save game and autosaves every 60 simulation seconds are single-player only. Main-menu Saved games resumes either slot, including cargo, target references and queues. Saves use IndexedDB and do not upload to a server.
+- **Visual match reviews:** single-player snapshots every five seconds retain a rolling window of at most 15 minutes or 8 MB, whichever is reached first. Save replay manually or finish a match to retain it; three reviews are kept on this device. Main-menu Match replays provides playback speed, seeking, current resources, army size, and cumulative worker idle time. Reviews are sampled, not deterministic full-match re-simulations. Orders are disabled during review.
+- **Settings:** original synthesized battle sounds and footsteps, volume, FPS, grass, dynamic shadows, fire detail and building geometry detail. Lower settings reduce decoration without changing combat or resource collection. Existing overall graphics presets remain available.
+
+Development checks: `npm test`, `npm run build:graphics`, and `node tools/check-experience.cjs` (requires Playwright and a local server on port 3076). Existing `tools/check-standards.cjs` verifies both live and Classic rendering on desktop and phone.
