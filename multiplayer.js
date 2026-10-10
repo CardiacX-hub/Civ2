@@ -48,3 +48,6 @@ try{const params=new URLSearchParams(location.search);mp('mpServer').value=param
 mp('mpBotSlot').onchange=chooseMultiplayerBot;mp('mpSaveBot').onclick=()=>configureMultiplayerBot();mp('mpRemoveBot').onclick=()=>configureMultiplayerBot(true);
 
 const localUnitAbility=unitAbility;unitAbility=function(e,aiControlled=false){if(!multiplayerCommand({kind:'unitAbility',id:e.id}))return localUnitAbility(e,aiControlled);return true;};
+
+const localConvertGate=convertWallToGate;convertWallToGate=function(e){if(multiplayerCommand({kind:'addGate',id:e.id}))return true;return localConvertGate(e);};
+const localToggleGate=toggleGate;toggleGate=function(e){if(multiplayerCommand({kind:'toggleGate',id:e.id}))return true;return localToggleGate(e);};

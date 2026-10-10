@@ -419,3 +419,14 @@ Dawnward Strongholds have individually shaded, beveled stone blocks with stagger
 New PC sessions default to High visual quality (higher resolution, four shadow cascades, ambient occlusion and restrained bloom); phones default to Low. Saved preferences remain in effect. Settings → Graphics allows switching to Balanced or Low for slower hardware. Capped anisotropic texture filtering preserves masonry detail at elevated camera angles. Small objects and distant buildings still have finite screen resolution; this is an improvement to the existing browser renderer, not a conversion to a different engine.
 
 Asset authoring helpers are in `tools/masonry-art.js`. Include this file alongside the Frontier, painted-style and Covenant authoring scripts. Export affected live meshes with `node tools/export-live-models.cjs worker,worker-pick,worker-hammer,worker-carry,worker-logs,detailed-buildings`; render the corresponding worker atlases and building images with `tools/render-art.cjs`. Browser validation: `tools/check-masonry.cjs`. These commands use the existing documented Playwright/Chromium setup and local server.
+
+
+### Living landscape (20261010-living-landscape)
+
+Live terrain uses rooted, tapered grass blades with GPU wind animation, varied olive/gold colors, and denser grassy riverbanks. Low quality caps field grass at 8,000 instances; other presets use 24,000, drawn in one material batch with grass shadows disabled. Classic rendering adds sparse animated tufts and bank reeds. Plateau rock faces have subdivided sloping ledges, uneven surfaces and sediment layers; playable tops, ramps and navigation remain aligned.
+
+Strongholds keep the same physical model scale across upgrades, anchored to the level-one asset. Classic tier images use a fixed faction camera and display size so existing walls do not shrink when new towers appear. All units render 10% smaller. The Fire Phoenix has an additional 25% reduction and an original articulated bird model with layered secondary/primary feathers, coverts, warm plumage variation, hooked beak, talons, tail feathers and emissive flame tips.
+
+Walls cost 7.5 gold and 17.5 lumber, exactly half the previous price. Collectors can build Wall Gates for 20 gold / 30 lumber, or select a completed wall and choose Add gate for the same cost. Select a gate to Open gate / Close gate. Open gates allow everyone through; an occupied doorway cannot close. Gate states invalidate route caches and are validated by the multiplayer server. New assets include open/closed gates for all three factions.
+
+Authoring is in `tools/landscape-art.js`; wind grass and cliff detail are in `graphics/landscape-detail.js`. Use the existing exporter/atlas tools to rebuild `phoenix`, `gate`, `gate-open` and Stronghold tier images. Graphics bundles ship with the game, so GitHub Pages needs no asset-generation service.
