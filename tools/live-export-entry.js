@@ -21,6 +21,7 @@ window.KawExportGLB=async function(name,horde=false){
  // Each vertex has one rigid bone influence; authored tool/weapon attachments stay exact.
  const live=new Group();if(root.userData.masonryDetail)live.userData.masonryDetail=root.userData.masonryDetail;
  if(root.userData.woodlandPeon)live.userData.woodlandPeon=root.userData.woodlandPeon;
+ if(root.userData.forestCanopy)live.userData.forestCanopy=root.userData.forestCanopy;
  if(root.userData.goldWorks)live.userData.goldWorks=true;
  if(root.userData.goldOutcrop)live.userData.goldOutcrop=true;
  if(root.userData.dominionFortress)live.userData.dominionFortress=true;

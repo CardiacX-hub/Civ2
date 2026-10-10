@@ -26,3 +26,17 @@ function kawPhoenix(){
 function kawGate(open,faction){const root=new Kt,horde=faction===true,verdant=faction==='covenant',stone=kawMaterial(verdant?0xc8c3a9:horde?0x9a7957:0xb6b7a7,'stone'),wood=kawMaterial(horde?0x603e2e:verdant?0x536853:0x62523f,'wood'),metal=kawMaterial(verdant?0xc3a154:0x788181,'metal',.5);
  for(const side of [-1,1]){ot(root,8,40,12,stone,side*22,20,0);ot(root,10,4,14,stone,side*22,41,0);const leaf=Re(root,side*18,0,0);leaf.rotation.y=open?side*Math.PI*.48:0;for(let i=0;i<5;i++)ot(leaf,3.5,31,2.8,wood,-side*(1.8+i*3.5),15.5,0);for(const y of [7,24])ot(leaf,18,2,4,metal,-side*9,y,.4);if(horde){const tusk=J(root,st('cone',2.2,13,6),metal,side*22,48,0);tusk.rotation.z=side*.18;}if(verdant){for(let i=0;i<5;i++)V(root,3,kawMaterial(0x597542,'cloth'),side*24,8+i*6,4,1,.55,.4);}}
  ot(root,48,5,12,stone,0,37,0);for(const x of [-20,-10,0,10,20])ot(root,5,6,11,stone,x,43,0);return root;}
+
+/** Dense dark woodland canopy made from pointed leaf blades, never foliage spheres. */
+function kawForestTree(name){
+ const root=new Kt,pine=name==='pine',wood=kawMaterial(0x59442f,'wood'),leaves=[0x163c27,0x214a2d,0x2d5833].map(c=>kawMaterial(c,'cloth'));
+ root.userData.forestCanopy={leaves:1100,shape:'pointed-blades',darkGreen:true};
+ J(root,st('cylinder',2.5,6,46,9),wood,0,23,0);
+ for(let i=0;i<12;i++){const a=i*2.4,branch=J(root,st('cylinder',.6,1.8,22,6),wood,Math.cos(a)*9,29+i*2,Math.sin(a)*9);branch.rotation.z=Math.cos(a)*.9;branch.rotation.x=Math.sin(a)*.9;}
+ const blade=new Ce;blade.moveTo(0,-2);blade.lineTo(-1.4,0);blade.lineTo(-1,1.4);blade.lineTo(0,3.1);blade.lineTo(1,1.4);blade.lineTo(1.4,0);blade.closePath();
+ const geometry=new Oe(blade,{depth:.12,bevelEnabled:false,curveSegments:1});
+ let seed=927;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+ // Small overlapping leaves with independent orientations avoid broad spiky whorls.
+ for(let i=0;i<1100;i++){const t=random(),a=random()*Math.PI*2,y=pine?22+t*48:31+t*34,r=(pine?25*(1-t)+3:25*Math.sqrt(Math.max(.03,1-((t-.48)*1.65)**2)))*(i%4===0?.45+random()*.3:.85+random()*.15),leaf=J(root,geometry,leaves[i%3],Math.cos(a)*r,y+Math.sin(i*1.7)*2,Math.sin(a)*r);leaf.rotation.set(.6+random()*1.7,random()*Math.PI*2,(random()-.5)*2);leaf.scale.set(pine?.65:1,1+random()*.45,1);}
+ return root;
+}
