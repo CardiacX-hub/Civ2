@@ -435,7 +435,7 @@ Authoring is in `tools/landscape-art.js`; wind grass and cliff detail are in `gr
 
 Grassy ground now has seamless overlapping blade textures, with evenly distributed wind animated grass instead of isolated tufts. Plateau tops share the grass texture; rivers retain water. Low quality uses fewer animated blades while preserving full ground coverage. Classic rendering bakes dense grass into its terrain cache.
 
-### Dominion fortress, supply homes and shared breeze (20261010-fortress-supply-wind)
+### Dominion fortress, supply homes and shared breeze (20261010-fortress-supply-wind-r2)
 
 The Dominion Stronghold is a modular dark timber fortress with a skull gate, curved tusks, iron bands, red cloth canopies, banners and emissive braziers. Each upgrade retains the previous structure and adds towers or fortified platforms. All four tiers ship as live 3D meshes and Classic sprites.
 
