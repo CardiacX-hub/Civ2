@@ -12,7 +12,7 @@ function kawStrawHat(head){
  head.userData.farmerHat=true;
 }
 function kawDressBuilding(root,name,horde){
- if(!name.startsWith('world-')||['world-gold','world-tree','world-pine','world-mountain','world-trap','world-trap-resin','world-barricade'].includes(name)||name.includes('construction'))return;
+ if(!name.startsWith('world-')||['world-gold-outcrop','world-gold','world-tree','world-pine','world-mountain','world-trap','world-trap-resin','world-barricade'].includes(name)||name.includes('construction'))return;
  const stoneTexture=kawTextures['paint-stone'],facades=[];
  root.traverse(mesh=>{if(!mesh.isMesh||Array.isArray(mesh.material)||mesh.material.map!==stoneTexture)return;const m=mesh.material;if(m.color.r+m.color.g+m.color.b<.9&&!root.userData.verdantArchitecture)return;const a=mesh.geometry.parameters;
  const surface=m.clone();surface.map=kawPaintTexture('masonry');surface.name='coursed-masonry';surface.roughness=.93;surface.bumpMap=surface.map;surface.bumpScale=.12;mesh.material=surface;
