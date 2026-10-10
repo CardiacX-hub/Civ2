@@ -488,3 +488,7 @@ Trees contain 240 lumber instead of 1200, and depleted trees finish falling and 
 The Dominion Bogbreaker is now the Minotaur, with curved banded horns, bull muzzle, cloven hooves, layered spiked armor, a shaggy mane and a double-bladed axe. Its cost, stats, stronghold requirement and knockback ability remain the same. The live model and Classic animation atlas share the same articulated asset.
 
 Dragon breath uses cached textured flame clusters with rolling turbulence, hot cores and detached embers. Both orange and upgraded blue flames retain their existing combat behavior. Normal Dominion dragon projectiles also use the flame texture. Texture generation happens once per flame color; each plume uses a fixed bounded number of billboards.
+
+### Living fire and black chitin (20261010-living-fire-black-chitin)
+
+Phoenixes and burning units/buildings have animated flame tongues and crackling embers in both graphics modes. Poison retains its green haze. The Minotaur is 35% larger visually without changing collision size or stats. Mine rocks have flat fracture faces and raised mineral flakes. Stag Wasps and Sky Skitterers have black chitin and fine bristles; the venom upgrade retains its green stinger. The Skitterer has a linked swaying body and glossy green slime projectiles. Its damage is unchanged. Decorative hairs are batched onto existing joints.

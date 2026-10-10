@@ -117,7 +117,7 @@ function kawBugLimb(parent,a,b,r,material){const direction=parent.position.clone
 function kawBugFang(parent,side,material,x,y,z,size=1){const fang=Re(parent,x,y,z),joint=[side*5*size,-4*size,8*size],end=[side*3*size,-17*size,16*size];kawBugLimb(fang,[0,0,0],joint,2.8*size,material);const direction=fang.position.clone().set(end[0]-joint[0],end[1]-joint[1],end[2]-joint[2]),tip=J(fang,st('cone',2.4*size,direction.length(),7),material,...joint);tip.position.add(direction.clone().multiplyScalar(.5));tip.quaternion.setFromUnitVectors(direction.clone().set(0,1,0),direction.normalize());return fang;}
 function kawBugWing(parent,side,x,y,z,length,material,vein,pointed=false){const hinge=Re(parent,x,y,z),panel=Re(hinge,0,0,0);panel.rotation.x=-Math.PI/2;const shape=new Ce;shape.moveTo(0,0);if(pointed){shape.bezierCurveTo(side*length*.3,15,side*length*.67,12,side*length,0);shape.lineTo(side*length*.76,-9);shape.bezierCurveTo(side*length*.4,-16,side*length*.15,-13,0,0);}else{shape.bezierCurveTo(side*length*.3,13,side*length,16,side*length,-4);shape.bezierCurveTo(side*length*.7,-19,side*length*.2,-16,0,0);}shape.closePath();J(panel,new Oe(shape,{depth:.25,bevelEnabled:false}),material,0,0,0);for(let j=0;j<5;j++){const u=(j+1)/6;kawBugLimb(panel,[0,0,.5],[side*length*u,Math.sin(u*Math.PI)*7-3,.5],.35,vein);kawBugLimb(panel,[side*length*u,0,.5],[side*length*(u+.1),-7,.5],.22,vein);}hinge.userData.sign=side;return hinge;}
 function kawStagWasp(venom=false){
- const root=new Kt,chitin=kawMaterial(0x75482b,'metal',.22),black=kawMaterial(0x171514,'metal',.25),stripe=kawMaterial(0xc29548,'metal',.12),eyes=kawMaterial(0x6d3826,'compound',.2),fang=kawMaterial(0xb9aa83),sting=kawMaterial(venom?0x5ee740:0x343029,'metal',.12),membrane=kawMaterial(0xc2b995,'cloth'),vein=kawMaterial(0x716549),body=Re(root,0,28,0),legs=[],wings=[];
+ const root=new Kt,chitin=kawMaterial(0x17191c,'metal',.22),black=kawMaterial(0x171514,'metal',.25),stripe=kawMaterial(0x25282b,'metal',.12),eyes=kawMaterial(0x191c20,'compound',.2),fang=kawMaterial(0x34383c),sting=kawMaterial(venom?0x5ee740:0x22272a,'metal',.12),membrane=kawMaterial(0xc2b995,'cloth'),vein=kawMaterial(0x716549),body=Re(root,0,28,0),legs=[],wings=[];
  membrane.transparent=true;membrane.opacity=.45;membrane.depthWrite=false;membrane.side=2;membrane.roughness=.35;
  V(body,14,chitin,0,0,0,.85,1,1.2);V(body,10,black,0,5,17,1,.8,.85);
  // Compound eyes have a kidney-shaped silhouette and individually faceted lenses.
@@ -127,6 +127,7 @@ function kawStagWasp(venom=false){
  const stinger=J(abdomen,st('cone',3,22,5),sting,0,-2,-39);stinger.rotation.x=-Math.PI/2;
  for(const side of [-1,1])for(let j=0;j<3;j++){const leg=Re(body,side*10,-4,-9+j*9);kawBugLimb(leg,[0,0,0],[side*11,-8,2],1.4,black);kawBugLimb(leg,[side*11,-8,2],[side*15,-22,5],1,chitin);kawBugLimb(leg,[side*15,-22,5],[side*12,-28,9],.6,black);legs.push(leg);}
  for(const side of [-1,1])for(let j=0;j<2;j++)wings.push(kawBugWing(body,side,side*7,10,-4-j*7,j?43:57,membrane,vein));
+ kawChitinHairs(body,14,0,0,0,70,.85,1,1.2);kawChitinHairs(abdomen,15,0,0,-6,80,.8,.8,1.65);kawChitinHairs(body,10,0,5,17,35,1,.8,.85);root.userData.insectDetail={black:true,hairs:185};
  root.userData.arthropod={body,legs,wings,abdomen,kind:'wasp'};return root;
 }
 function kawBurrowSpider(){
@@ -139,16 +140,17 @@ function kawBurrowSpider(){
  root.userData.arthropod={body,legs,wings:[],kind:'spider'};return root;
 }
 function kawSkyCentipede(){
- const root=new Kt,shell=kawMaterial(0x936847,'metal',.28),trim=kawMaterial(0x452b1b,'metal',.2),dark=kawMaterial(0x33241b),eye=kawMaterial(0xdd582b,'metal',.12),membrane=kawMaterial(0xbe9c77,'cloth'),fang=kawMaterial(0xc5a77c),body=Re(root,0,32,0),segments=[],legs=[],wings=[];
+ const root=new Kt,shell=kawMaterial(0x171a1c,'metal',.28),trim=kawMaterial(0x2c3033,'metal',.2),dark=kawMaterial(0x111416),eye=kawMaterial(0xdd582b,'metal',.12),membrane=kawMaterial(0xbe9c77,'cloth'),fang=kawMaterial(0x596052),body=Re(root,0,32,0),segments=[],legs=[],wings=[];
  membrane.transparent=true;membrane.opacity=.5;membrane.depthWrite=false;membrane.side=2;membrane.roughness=.4;eye.emissive.set(0x6c1606);eye.emissiveIntensity=.35;
- for(let j=0;j<10;j++){const segment=Re(body,Math.sin(j*.5)*7,-j*1.3,-j*8);V(segment,10-j*.35,shell,0,0,0,1,.7,1.1);const ring=J(segment,st('torus',8-j*.25,.8,Math.PI*2),trim,0,1,0);ring.rotation.x=Math.PI/2;for(const side of [-1,1]){const leg=Re(segment,side*7,-2,0);kawBugLimb(leg,[0,0,0],[side*11,-5,3],1.1,dark);kawBugLimb(leg,[side*11,-5,3],[side*15,-13,6],.7,trim);legs.push(leg);const spike=J(segment,st('cone',1.8,9,5),shell,side*7,6,0);spike.rotation.z=-side*.6;}segments.push(segment);}
+ for(let j=0;j<10;j++){const segment=Re(j?segments[j-1]:body,j?(Math.sin(j*.5)-Math.sin((j-1)*.5))*7:0,j?-1.3:0,j?-8:0);V(segment,10-j*.35,shell,0,0,0,1,.7,1.1);const ring=J(segment,st('torus',8-j*.25,.8,Math.PI*2),trim,0,1,0);ring.rotation.x=Math.PI/2;for(const side of [-1,1]){const leg=Re(segment,side*7,-2,0);kawBugLimb(leg,[0,0,0],[side*11,-5,3],1.1,dark);kawBugLimb(leg,[side*11,-5,3],[side*15,-13,6],.7,trim);legs.push(leg);const spike=J(segment,st('cone',1.8,9,5),shell,side*7,6,0);spike.rotation.z=-side*.6;}kawChitinHairs(segment,10-j*.35,0,0,0,22,1,.7,1.1);segments.push(segment);}
  const head=Re(body,0,8,12);V(head,14,shell,0,0,0,1,.8,1);for(const side of [-1,1]){V(head,4,eye,side*7,2,10,1,1,.65);for(let j=0;j<2;j++)V(head,2,eye,side*(4+j*7),7,7);kawBugFang(head,side,fang,side*5,-6,10,1.25);kawBugLimb(head,[side*8,7,3],[side*22,18,10],1,dark);}
  for(const side of [-1,1])for(let j=0;j<2;j++)wings.push(kawBugWing(body,side,side*7,10,-j*17,j?47:61,membrane,trim,true));
  // The sting curls below the final abdominal segment rather than pointing back.
  const tail=segments[segments.length-1],curve=[[0,-1,-4],[0,-5,-10],[0,-12,-14],[0,-21,-13]];for(let i=0;i<curve.length-1;i++)kawBugLimb(tail,curve[i],curve[i+1],3-i*.7,trim);const tip=J(tail,st('cone',1.5,11,5),trim,0,-26,-11);tip.rotation.x=-.25;tip.rotation.z=Math.PI;
+ kawChitinHairs(head,14,0,0,0,40,1,.8,1);root.userData.insectDetail={black:true,hairs:260,linkedSegments:10};
  root.userData.arthropod={body,head,legs,wings,segments,kind:'centipede'};return root;
 }
-function kawAnimateArthropod(root,angle,phase,t){const a=root.userData.arthropod,flight=a.kind!=='spider',strike=phase==='attack'?Math.sin(t*Math.PI):0;root.rotation.y=angle;a.body.rotation.x=-strike*.15;if(flight)root.position.y=6+Math.sin(t*Math.PI*2)*1.5;for(let j=0;j<a.legs.length;j++){a.legs[j].rotation.x=flight?Math.sin(t*Math.PI*2+j*.7)*.07:phase==='walk'?Math.sin(t*Math.PI*2+j*Math.PI)*.28:0;a.legs[j].rotation.z=strike*(j%2?.12:-.12);}for(const wing of a.wings){wing.rotation.z=wing.userData.sign*(.2+Math.sin(t*Math.PI*2)*.32);wing.rotation.y=wing.userData.sign*(a.kind==='wasp'&&phase==='idle'?1:.3);}for(let j=0;j<(a.segments||[]).length;j++)a.segments[j].rotation.y=Math.sin(t*Math.PI*2-j*.5)*.06;if(a.abdomen)a.abdomen.rotation.x=strike*.4;}
+function kawAnimateArthropod(root,angle,phase,t){const a=root.userData.arthropod,flight=a.kind!=='spider',strike=phase==='attack'?Math.sin(t*Math.PI):0;root.rotation.y=angle;a.body.rotation.x=-strike*.15;if(flight)root.position.y=6+Math.sin(t*Math.PI*2)*1.5;for(let j=0;j<a.legs.length;j++){a.legs[j].rotation.x=flight?Math.sin(t*Math.PI*2+j*.7)*.07:phase==='walk'?Math.sin(t*Math.PI*2+j*Math.PI)*.28:0;a.legs[j].rotation.z=strike*(j%2?.12:-.12);}for(const wing of a.wings){wing.rotation.z=wing.userData.sign*(.2+Math.sin(t*Math.PI*2)*.32);wing.rotation.y=wing.userData.sign*(a.kind==='wasp'&&phase==='idle'?1:.3);}for(let j=0;j<(a.segments||[]).length;j++){a.segments[j].rotation.y=Math.sin(t*Math.PI*2-j*.65)*.095;a.segments[j].rotation.x=Math.sin(t*Math.PI*2-j*.5)*.035;};if(a.abdomen)a.abdomen.rotation.x=strike*.4;}
 
 // Original moss-covered rock guardian. Every boulder belongs to a body/limb joint.
 function kawRockGolem(){
@@ -269,3 +271,6 @@ function kawMinotaur(){
  n.upperBody.position.y=43;n.legs.forEach((leg,i)=>{leg.position.set(i?-16:16,27,0);});n.weapon.parent.remove(n.weapon);n.upperBody.add(n.weapon);n.weapon.position.set(0,-12,20);n.weapon.rotation.z=-1.5;
  root.scale.set(1.3,1.3,1.2);root.userData.minotaur={curvedHorns:true,clovenHooves:true,armored:true};return root;
 }
+
+// Sparse tapered bristles share a material and their parent's animated bone.
+function kawChitinHairs(parent,r,x,y,z,count,sx=1,sy=1,sz=1){const hair=kawMaterial(0x32383b,'cloth');for(let i=0;i<count;i++){const a=i*2.399,t=Math.acos(1-2*(i+.5)/count),v=parent.position.clone().set(Math.sin(t)*Math.cos(a)*sx,Math.cos(t)*sy,Math.sin(t)*Math.sin(a)*sz),length=1.8+i%4*.45,origin=parent.position.clone().set(x,y,z).addScaledVector(v,r);const m=J(parent,st('cone',.18,length,3),hair,origin.x+v.x*length*.45,origin.y+v.y*length*.45,origin.z+v.z*length*.45);m.quaternion.setFromUnitVectors(v.clone().set(0,1,0),v.normalize());}}

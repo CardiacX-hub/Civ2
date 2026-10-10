@@ -5,7 +5,7 @@ import {updateBanner,disposeBanner,clearBannerTextures} from './banner-visuals.j
 import {addWindGrass,cliffFace,meadowTexture,prepareWindTree} from './landscape-detail.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {createPipeline,createTerrainMaterial} from './modern-renderer.js';
-const SCALE=.1,VERSION='20261010-minotaur-turbulent-fire';
+const SCALE=.1,VERSION='20261010-living-fire-black-chitin';
 const liveCanvas=document.createElement('canvas');liveCanvas.id='liveBattlefield';liveCanvas.style.cssText='position:absolute;pointer-events:none;z-index:0;display:none';const source=document.getElementById('world');source.insertAdjacentElement('beforebegin',liveCanvas);source.style.position='relative';source.style.zIndex='1';
 let wetness=0;try{wetness=Math.max(0,Math.min(1,Number(localStorage.getItem('kaw-ground-wetness'))||0));}catch{}const waterTime={value:0};
 let enabled=true;try{enabled=localStorage.getItem('kaw-live-3d')!=='off';}catch{}
@@ -55,7 +55,7 @@ function present(c){lastContext=c;const animationTime=c.state.time+(c.state.netw
  for(const [i,m]of(c.state.mountains||[]).entries()){if(!c.inViewport(m.x,m.y,200))continue;const id='m'+i;wanted.add(id);const entry=instantiate(id,'world-mountain',m.half*2.4,false);if(!entry)waiting=true;if(entry){entry.lastUsed=performance.now();entry.root.visible=true;entry.root.position.set(m.x*SCALE,0,m.y*SCALE);}}
  for(const [id,entry]of objects){if(!wanted.has(id)){entry.root.visible=false;if(performance.now()-(entry.lastUsed||0)>45000){releaseEntry(entry);objects.delete(id);}}}
  // Light pool reuses a fixed number of unshadowed emitters; no per-shot allocations.
- const fires=c.state.entities.filter(e=>(e.breath||e.shot?.fire&&e.shot.left>0)&&c.visible(e.x,e.y)&&c.inViewport(e.x,e.y));lights.forEach((light,i)=>{if(!light)return;const e=fires[i];if(e){const shot=e.breath||e.shot,t=e.breath?.5:1-e.shot.left/e.shot.duration;light.color.set(e.breath?.blue?0x69baff:0xffae45);light.position.set((e.x+(shot.x-e.x)*t)*SCALE,(c.renderAltitude(e)+20)*SCALE,(e.y+(shot.y-e.y)*t)*SCALE);}else light.position.set(9999,9999,9999);});
+ const fires=c.state.entities.filter(e=>(e.breath||e.shot?.fire&&e.shot.left>0||e.burn&&!e.burn.poison||e.type==='air2'&&c.state.players[e.owner].faction==='human')&&c.visible(e.x,e.y)&&c.inViewport(e.x,e.y));lights.forEach((light,i)=>{if(!light)return;const e=fires[i];if(e){const shot=e.breath||(e.shot?.left>0?e.shot:null)||e,t=e.breath?.5:shot===e?0:1-shot.left/shot.duration;light.color.set(e.breath?.blue?0x69baff:0xffae45);light.position.set((e.x+(shot.x-e.x)*t)*SCALE,(c.renderAltitude(e)+20)*SCALE,(e.y+(shot.y-e.y)*t)*SCALE);}else light.position.set(9999,9999,9999);});
  // Startup may use Classic once; later streaming must never switch the whole frame.
  if(waiting&&!presented){liveCanvas.style.display='none';window.KawVisual?.suspend(false);return false;}waterTime.value=animationTime;liveCanvas.style.display='block';pipeline.render();presented=true;window.KawVisual?.suspend(true);return true;
  }catch(error){fallback(error);return false;}
