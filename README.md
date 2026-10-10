@@ -482,3 +482,9 @@ The banner workshop now offers approved patterns and emblems only. Freehand cell
 Mine boulders have uneven angular surfaces and branching fracture seams while retaining their integrated entrance and existing navigation footprint. Dominion Rock Hewers are 40% larger than their current appearance. Their rocks resolve damage when they arrive, shatter into stone fragments, and push mobile enemies back up to 40 world units (20 for splash victims), stopping at terrain, obstacles and other units. Buildings are not pushed.
 
 Trees contain 240 lumber instead of 1200, and depleted trees finish falling and disappearing in 0.65 seconds instead of 1.4. Gathering rates and delivery quantities remain unchanged. A Dominion roost at Stronghold level 3 can research Continuous Flame Breath (180 gold/140 lumber, 50 seconds), then Azure Flame Breath (280 gold/220 lumber, 68.75 seconds). Both Dominion Dragons and Dragon Sovereign heroes gain sustained, cancellable attacks; blue flame increases direct breath damage by 30%. Lingering burn damage remains 5/second for four seconds. AI players can research both tiers. Research queuing, cancellation, admin timing and multiplayer validation use the existing systems.
+
+### Minotaur and turbulent dragon fire (20261010-minotaur-turbulent-fire)
+
+The Dominion Bogbreaker is now the Minotaur, with curved banded horns, bull muzzle, cloven hooves, layered spiked armor, a shaggy mane and a double-bladed axe. Its cost, stats, stronghold requirement and knockback ability remain the same. The live model and Classic animation atlas share the same articulated asset.
+
+Dragon breath uses cached textured flame clusters with rolling turbulence, hot cores and detached embers. Both orange and upgraded blue flames retain their existing combat behavior. Normal Dominion dragon projectiles also use the flame texture. Texture generation happens once per flame color; each plume uses a fixed bounded number of billboards.
