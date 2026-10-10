@@ -50,6 +50,7 @@ function kawWoodlandPeon(name){
 /** Rocky rear mass is separate from the accessible mine entrance. */
 function kawGoldOutcrop(){const root=new Kt;root.userData.goldOutcrop=true;
  const rock=kawMaterial(0x686c61,'stone'),strata=kawMaterial(0x91917e,'stone'),moss=kawMaterial(0x52603a,'cloth'),ore=kawMaterial(0xbca158,'metal',.35);
+ const giant=J(root,new qr(46,14,10),rock,0,40,-63);giant.scale.set(1.35,1.05,1.15);giant.rotation.y=.3;for(let j=0;j<14;j++){const a=j*2.4;const seam=J(root,st('cylinder',.6,1.3,14+j%4,5),j%3?strata:ore,Math.sin(a)*43,27+j%5*10,-63+Math.cos(a)*45);seam.rotation.z=Math.sin(a)*.7;}
  for(const [x,y,z,r,sx,sy] of [[-29,28,-69,29,1,1.1],[0,41,-91,38,1,1.3],[35,25,-66,25,1,.95]]){const shape=new qr(r,9,6).toNonIndexed();shape.computeVertexNormals();const lump=J(root,shape,rock,x,y,z);lump.scale.set(sx,sy,.85);lump.rotation.y=x*.023;for(let layer=0;layer<5;layer++){const band=J(root,st('torus',r*.8,1,Math.PI*2),strata,x,y-r*.55+layer*r*.24,z);band.rotation.x=Math.PI/2;band.scale.set(1,.8,1);}for(let i=0;i<9;i++)V(root,3,i%4?moss:ore,x+Math.sin(i*2.4)*r*.75,y+r*.7-i%3*6,z+Math.cos(i*2.4)*r*.65,1,.35,1);}
  for(let i=0;i<12;i++){const a=i*2.4;J(root,new qr(5+i%3,5,3),rock,Math.sin(a)*45,3+i%2,-67+Math.cos(a)*33);}
  return root;

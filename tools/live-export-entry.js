@@ -10,7 +10,7 @@ function exportTexture(map){const size=['paint-masonry','paint-cut-stone'].inclu
 window.KawExportGLB=async function(name,horde=false){
  window.KawSkipRender=true;KawCapture(name,0,'idle',0,144,192,horde);const root=window.KawAssetModel,allNodes=[];root.traverse(n=>allNodes.push(n));
  // Phoenix vanes are rigid to their wing: keep three animated bones, not one per feather.
- const nodes=['phoenix','dragon','wyvern'].includes(name)?[root,...root.userData.wings]:(root.userData.woodlandPeon||root.userData.detailedTroll||root.userData.standardBearer)?(()=>{const n=root.userData.mountedRider?.userData||root.userData,rig=new Set([root,n.upperBody,n.torso,n.head,n.weapon,...n.arms,...n.legs,...(root.userData.horseLegs||[]),root.userData.horseHead,root.userData.cape,root.userData.plume].filter(Boolean));for(const node of [...rig])for(let parent=node.parent;parent;parent=parent.parent)rig.add(parent);return allNodes.filter(node=>rig.has(node));})():allNodes;
+ const nodes=['phoenix','dragon','wyvern'].includes(name)?[root,...root.userData.wings,...(root.userData.tailSegments||[])]:(root.userData.woodlandPeon||root.userData.detailedTroll||root.userData.standardBearer)?(()=>{const n=root.userData.mountedRider?.userData||root.userData,rig=new Set([root,n.upperBody,n.torso,n.head,n.weapon,...n.arms,...n.legs,...(root.userData.horseLegs||[]),root.userData.horseHead,root.userData.cape,root.userData.plume].filter(Boolean));for(const node of [...rig])for(let parent=node.parent;parent;parent=parent.parent)rig.add(parent);return allNodes.filter(node=>rig.has(node));})():allNodes;
  const clips=[];if(!name.startsWith('world-'))for(const phase of ['idle','walk','attack']){const poses=new Map(nodes.map(n=>[n,{position:[],quaternion:[],scale:[]} ])),times=[],duration=phase==='idle'?2.5:phase==='walk'?.588:.55;
   for(let frame=0;frame<=16;frame++){KawCapture(name,0,phase,frame===16&&phase!=='attack'?0:Math.min(15,frame),144,192,horde);root.updateMatrixWorld(true);times.push(duration*frame/16);for(const n of nodes){const pose=poses.get(n);pose.position.push(...n.position.toArray());pose.quaternion.push(...n.quaternion.toArray());pose.scale.push(...n.scale.toArray());}}
   const tracks=[];for(const n of nodes)for(const field of ['position','quaternion','scale']){const values=poses.get(n)[field],size=field==='quaternion'?4:3;if(values.some((v,i)=>Math.abs(v-values[i%size])>.00001))tracks.push(field==='quaternion'?new QuaternionKeyframeTrack(n.uuid+'.quaternion',times,values):new VectorKeyframeTrack(n.uuid+'.'+field,times,values));}
@@ -21,6 +21,7 @@ window.KawExportGLB=async function(name,horde=false){
  // Each vertex has one rigid bone influence; authored tool/weapon attachments stay exact.
  const live=new Group();if(root.userData.masonryDetail)live.userData.masonryDetail=root.userData.masonryDetail;
  if(root.userData.woodlandPeon)live.userData.woodlandPeon=root.userData.woodlandPeon;
+ if(root.userData.tailSegments)live.userData.serpentineTail={segments:root.userData.tailSegments.length};
  if(root.userData.standardBearer)live.userData.standardBearer=true;
  if(root.userData.detailedTroll)live.userData.detailedTroll=true;
  if(root.userData.trollTower)live.userData.trollTower=root.userData.trollTower;
