@@ -20,6 +20,8 @@ window.KawExportGLB=async function(name,horde=false){
  // Convert rigid articulated parts to a shared skeleton and batch by material.
  // Each vertex has one rigid bone influence; authored tool/weapon attachments stay exact.
  const live=new Group();if(root.userData.masonryDetail)live.userData.masonryDetail=root.userData.masonryDetail;
+ if(root.userData.dominionFortress)live.userData.dominionFortress=true;
+ if(root.userData.supplyHouse)live.userData.supplyHouse=true;
  if(root.userData.farmerHat)live.userData.farmerHat=true;
  if(root.userData.verdantArchitecture)live.userData.verdantArchitecture=root.userData.verdantArchitecture;const bones=nodes.map(n=>{const b=new Bone();b.uuid=n.uuid;b.name=n.uuid;b.position.copy(n.position);b.quaternion.copy(n.quaternion);b.scale.copy(n.scale);return b;}),nodeIndex=new Map(nodes.map((n,i)=>[n,i]));
  if(!name.startsWith('world-')){nodes.forEach((n,i)=>{const parent=nodeIndex.get(n.parent);if(parent!==undefined)bones[parent].add(bones[i]);else live.add(bones[i]);});live.updateMatrixWorld(true);}

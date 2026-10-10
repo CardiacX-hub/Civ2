@@ -93,7 +93,7 @@ function kawFinishPaintedModel(root,name,horde){
   if(['orc','devoured'].includes(name))for(const arm of n.arms){kawPlate(arm,16,9,10,iron,0,-9,2);for(const x of [-5,5])V(arm,.9,gold,x,-7,8);}
   if(['ranger','troll','marksman','hunter'].includes(name)){const leather=kawMaterial(0x79573b,'wood');for(const leg of n.legs)kawPlate(leg,7,8,2,leather,0,-8,4);for(const arm of n.arms)ot(arm,7,6,8,leather,0,-10,0);}
  }
- if(name.startsWith('world-')&&!name.startsWith('world-gate')&&!root.userData.verdantArchitecture&&!['world-gold','world-tree','world-pine','world-mountain'].includes(name)&&!name.includes('construction')){
+ if(name.startsWith('world-')&&!name.startsWith('world-gate')&&!root.userData.verdantArchitecture&&!root.userData.dominionFortress&&!root.userData.supplyHouse&&!['world-gold','world-tree','world-pine','world-mountain'].includes(name)&&!name.includes('construction')){
   const kind=name.slice(6).replace(/-level[234]$/,''),wide=kind==='base'?70:['wall','tower'].includes(kind)?0:58;
   if(wide){const stone=kawMaterial(horde?0x655d51:0xc1c1b2),wood=kawMaterial(0x72553a,'wood'),trim=horde?iron:gold;
    // Heavy foundations, inset entrances, lintels and contrasting corner blocks.

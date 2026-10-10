@@ -434,3 +434,11 @@ Authoring is in `tools/landscape-art.js`; wind grass and cliff detail are in `gr
 ### Continuous meadow (20261010-continuous-meadow)
 
 Grassy ground now has seamless overlapping blade textures, with evenly distributed wind animated grass instead of isolated tufts. Plateau tops share the grass texture; rivers retain water. Low quality uses fewer animated blades while preserving full ground coverage. Classic rendering bakes dense grass into its terrain cache.
+
+### Dominion fortress, supply homes and shared breeze (20261010-fortress-supply-wind)
+
+The Dominion Stronghold is a modular dark timber fortress with a skull gate, curved tusks, iron bands, red cloth canopies, banners and emissive braziers. Each upgrade retains the previous structure and adds towers or fortified platforms. All four tiers ship as live 3D meshes and Classic sprites.
+
+Each completed Stronghold provides 20 supply; each completed Supply House (40 gold, 70 lumber; 37.5 seconds with an attending worker) adds 10, up to 200. Every worker and troop uses one supply; the administrative pig uses none. Training reserves supply across all queues. Destroying houses reduces capacity without removing living units: completed production waits for enough supply, and canceling training releases its reservation. Houses appear in collectors' economy construction section (default Shift+H, customizable in Settings). AI players expand housing near the cap. The collector limit remains a separate Harvest Guild upgrade. Multiplayer enforces the same supply rules on the server.
+
+Trees and grass share a layered breeze. Height-weighted tree deformation leaves trunk roots fixed; GPU shader animation and spatially culled grass avoid per-frame mesh rebuilding. Classic trees lean gently around the ground anchor.

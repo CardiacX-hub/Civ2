@@ -47,3 +47,16 @@ export function cliffFace(points,x0,z0,x1,z1,h0,h1,center){
  const vertex=(step,row)=>{const t=step/steps,v=row/layers,x=x0+(x1-x0)*t,z=z0+(z1-z0)*t,h=h0+(h1-h0)*t;const dx=x-center.x,dz=z-center.z,n=Math.hypot(dx,dz)||1;const ledge=(1-v)*22+Math.sin(step*1.3+row*2.1)*2.3*Math.sin(v*Math.PI);return [(x+dx/n*ledge)*.1,h*v*.1,(z+dz/n*ledge)*.1];};
  for(let step=0;step<steps;step++)for(let row=0;row<layers;row++){const a=vertex(step,row),b=vertex(step,row+1),d=vertex(step+1,row+1),e=vertex(step+1,row);points.push(...a,...b,...e,...e,...b,...d);}
 }
+
+/** Shared breeze clock drives grass and tree crowns without moving their roots. */
+export function prepareWindTree(model,time,height){
+ model.traverse(mesh=>{if(!mesh.isMesh)return;
+  const array=Array.isArray(mesh.material),materials=array?mesh.material:[mesh.material];
+  mesh.material=materials.map(source=>{const material=source.clone(),prepare=source.onBeforeCompile,key=source.customProgramCacheKey;
+   material.onBeforeCompile=shader=>{prepare.call(material,shader);shader.uniforms.treeWindTime=time;shader.uniforms.treeWindHeight={value:height};
+    shader.vertexShader='uniform float treeWindTime;uniform float treeWindHeight;\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nfloat crown=clamp(position.y/treeWindHeight,0.0,1.0);vec3 anchor=modelMatrix[3].xyz;float gust=sin(treeWindTime*1.8+anchor.x*.29+anchor.z*.21)*.65+sin(treeWindTime*.73+anchor.z*.12)*.35;transformed.x+=crown*crown*treeWindHeight*.035*gust;transformed.z+=crown*crown*treeWindHeight*.015*cos(treeWindTime*1.2+anchor.x*.18);');
+   };material.customProgramCacheKey=()=>key.call(source)+':rooted-tree-breeze-v1';return material;});
+  if(!array)mesh.material=mesh.material[0];
+ });
+}
