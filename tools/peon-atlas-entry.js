@@ -10,7 +10,7 @@ for(const [color,strength,x,y,z] of [[0xffe2b6,3,-80,130,100],[0xbed9ea,1.7,100,
 camera.position.set(0,82,260);camera.lookAt(0,38,0);
 window.KawPeonSheet=async name=>{
  const asset=await new GLTFLoader().loadAsync('assets/model-'+name+'.glb'),model=asset.scene;
- scene.add(model);camera.position.set(0,82,260);camera.lookAt(0,38,0);if(name.startsWith('banner-')){const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y,center=(bounds.max.y+bounds.min.y)/2;camera.position.set(0,center+height*.18,height/(2*Math.tan(camera.fov*Math.PI/360))*1.25);camera.lookAt(0,center,0);}
+ scene.add(model);camera.position.set(0,82,260);camera.lookAt(0,38,0);if(name==='dragon'){camera.position.set(0,180,330);camera.lookAt(0,22,0);}if(name.startsWith('banner-')){const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y,center=(bounds.max.y+bounds.min.y)/2;camera.position.set(0,center+height*.18,height/(2*Math.tan(camera.fov*Math.PI/360))*1.25);camera.lookAt(0,center,0);}
  const mixer=new THREE.AnimationMixer(model),atlas=document.createElement('canvas');atlas.width=144*16;atlas.height=192*24;
  const g=atlas.getContext('2d');renderer.setSize(144,192,false);
  for(let phase=0;phase<3;phase++){mixer.stopAllAction();const clip=asset.animations.find(a=>a.name===['idle','walk','attack'][phase])||new THREE.AnimationClip('idle',2.5,[]),action=mixer.clipAction(clip).play();

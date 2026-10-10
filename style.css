@@ -143,3 +143,5 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 }
 
 .banner-workshop{position:fixed;left:20px;bottom:20px;z-index:20}#game:not([hidden])~.banner-workshop{display:none}.banner-editor{display:flex;gap:24px;align-items:start}.banner-editor label{display:block;margin:8px 0}.banner-editor canvas{max-width:100%;image-rendering:auto}#bannerGrid{touch-action:none;width:256px;height:256px}#bannerDialog{max-height:90dvh;overflow:auto} @media(max-width:600px){.banner-editor{flex-direction:column}.banner-editor #bannerPreview{height:180px;width:120px}}
+
+#bannerPreview{touch-action:none;cursor:grab}#bannerPreview:active{cursor:grabbing}.banner-shapes{border:1px solid #708062;padding:10px;margin:10px 0}.banner-shapes small{display:block}.banner-shapes input[type=range]{width:100%}
