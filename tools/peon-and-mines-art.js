@@ -50,11 +50,15 @@ function kawWoodlandPeon(name){
 /** Rocky rear mass is separate from the accessible mine entrance. */
 /** One authored mine/boulder assembly: mouth at the resource anchor, bulk behind.
  * A clear entrance apron preserves the existing worker delivery/pathing corridor. */
-function kawGoldOutcrop(){const root=new Kt;root.userData.goldOutcrop=true;root.userData.embeddedMine={mouthWidth:38,sharedScale:true};
+function kawGoldOutcrop(){const root=new Kt;root.userData.goldOutcrop=true;root.userData.embeddedMine={mouthWidth:38,sharedScale:true,fractured:true};
  const rock=kawMaterial(0x686c61,'stone'),strata=kawMaterial(0x91917e,'stone'),moss=kawMaterial(0x52603a,'cloth'),ore=kawMaterial(0xbca158,'metal',.55),wood=kawMaterial(0x775338,'wood'),iron=kawMaterial(0x4c5557,'metal',.65),dark=kawMaterial(0x111813,'stone');
  // Separate side lobes and a keystone surround the recessed opening; no front
  // sphere fills the tunnel. The connected rear mass reads as a single boulder.
- for(const [x,y,z,r,sx,sy,sz]of [[0,40,-66,46,1.3,1.05,1.1],[-36,22,-33,28,.9,1,.9],[35,25,-36,29,.9,1,.9],[-27,21,-6,17,.7,1.25,1],[27,21,-6,17,.7,1.25,1],[0,43,-14,25,1.3,.55,1]]){const lump=J(root,new qr(r,11,8),rock,x,y,z);lump.scale.set(sx,sy,sz);lump.rotation.y=x*.03;}
+ for(const [x,y,z,r,sx,sy,sz]of [[0,40,-66,46,1.3,1.05,1.1],[-36,22,-33,28,.9,1,.9],[35,25,-36,29,.9,1,.9],[-27,21,-6,17,.7,1.25,1],[27,21,-6,17,.7,1.25,1],[0,43,-14,25,1.3,.55,1]]){const geometry=new qr(r,13,10);const positions=geometry.attributes.position;for(let i=0;i<positions.count;i++){const xx=positions.getX(i),yy=positions.getY(i),zz=positions.getZ(i),f=1+.085*Math.sin(xx*.23)*Math.cos(yy*.19)+.045*Math.sin(zz*.31+xx*.1);positions.setXYZ(i,xx*f,yy*f,zz*f);}geometry.computeVertexNormals();const lump=J(root,geometry.toNonIndexed(),rock,x,y,z);lump.scale.set(sx,sy,sz);lump.rotation.y=x*.03;}
+ // Branching fractures follow the rough outer surface of the main mass.
+ const crack=kawMaterial(0x30362f,'stone');const surface=(a,t)=>{const xx=Math.sin(t)*Math.cos(a)*46,yy=Math.cos(t)*46,zz=Math.sin(t)*Math.sin(a)*46,f=1+.085*Math.sin(xx*.23)*Math.cos(yy*.19)+.045*Math.sin(zz*.31+xx*.1);return [xx*f*1.3,40+yy*f*1.05,-66+zz*f*1.1];};
+ const fracture=(a,b,width)=>{const d=root.position.clone().set(b[0]-a[0],b[1]-a[1],b[2]-a[2]),m=J(root,st('cylinder',width*.6,width,d.length(),5),crack,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2);m.quaternion.setFromUnitVectors(d.clone().set(0,1,0),d.normalize());};
+ for(let j=0;j<10;j++){let previous=surface(j*.63,.35);for(let k=1;k<8;k++){const a=j*.63+Math.sin(k*2+j)*.065,t=.35+k*.18,next=surface(a,t);fracture(previous,next,.32);if(k===3||k===5)fracture(next,surface(a+.13,t+.13),.2);previous=next;}}
  // Dark arched recess is inside the stone collar, not a detached black box.
  const arch=new Ce;arch.moveTo(-19,0);arch.lineTo(-19,25);arch.quadraticCurveTo(-18,38,0,38);arch.quadraticCurveTo(18,38,19,25);arch.lineTo(19,0);arch.closePath();J(root,new Oe(arch,{depth:12,bevelEnabled:false,curveSegments:10}),dark,0,0,-10);
  for(const side of [-1,1]){ot(root,5,33,6,wood,side*20,17,5);ot(root,7,3,8,iron,side*20,6,5);ot(root,7,3,8,iron,side*20,29,5);for(const y of [7,28])V(root,.75,ore,side*20,y,9);}
