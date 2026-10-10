@@ -421,9 +421,9 @@ New PC sessions default to High visual quality (higher resolution, four shadow c
 Asset authoring helpers are in `tools/masonry-art.js`. Include this file alongside the Frontier, painted-style and Covenant authoring scripts. Export affected live meshes with `node tools/export-live-models.cjs worker,worker-pick,worker-hammer,worker-carry,worker-logs,detailed-buildings`; render the corresponding worker atlases and building images with `tools/render-art.cjs`. Browser validation: `tools/check-masonry.cjs`. These commands use the existing documented Playwright/Chromium setup and local server.
 
 
-### Living landscape (20261010-living-landscape)
+### Living landscape (20261010-living-landscape-r2)
 
-Live terrain uses rooted, tapered grass blades with GPU wind animation, varied olive/gold colors, and denser grassy riverbanks. Low quality caps field grass at 8,000 instances; other presets use 24,000, drawn in one material batch with grass shadows disabled. Classic rendering adds sparse animated tufts and bank reeds. Plateau rock faces have subdivided sloping ledges, uneven surfaces and sediment layers; playable tops, ramps and navigation remain aligned.
+Live terrain uses rooted, tapered grass blades with GPU wind animation, varied olive/gold colors, and denser grassy riverbanks. Low quality caps field grass at 16,000 tufts; other presets use 60,000. Each tuft has three blades, and 64 spatial batches allow frustum culling with grass shadows disabled. Classic rendering adds sparse animated tufts and bank reeds. Plateau rock faces have subdivided sloping ledges, uneven surfaces and sediment layers; playable tops, ramps and navigation remain aligned.
 
 Strongholds keep the same physical model scale across upgrades, anchored to the level-one asset. Classic tier images use a fixed faction camera and display size so existing walls do not shrink when new towers appear. All units render 10% smaller. The Fire Phoenix has an additional 25% reduction and an original articulated bird model normalized by wingspan, with layered secondary/primary feathers, coverts, warm plumage variation, hooked beak, talons, tail feathers and emissive flame tips.
 
