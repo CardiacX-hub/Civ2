@@ -430,3 +430,7 @@ Strongholds keep the same physical model scale across upgrades, anchored to the 
 Walls cost 7.5 gold and 17.5 lumber, exactly half the previous price. Collectors can build Wall Gates for 20 gold / 30 lumber, or select a completed wall and choose Add gate for the same cost. Select a gate to Open gate / Close gate. Open gates allow everyone through; an occupied doorway cannot close. Gate states invalidate route caches and are validated by the multiplayer server. New assets include open/closed gates for all three factions.
 
 Authoring is in `tools/landscape-art.js`; wind grass and cliff detail are in `graphics/landscape-detail.js`. Use the existing exporter/atlas tools to rebuild `phoenix`, `gate`, `gate-open` and Stronghold tier images. Graphics bundles ship with the game, so GitHub Pages needs no asset-generation service.
+
+### Continuous meadow (20261010-continuous-meadow)
+
+Grassy ground now has seamless overlapping blade textures, with evenly distributed wind animated grass instead of isolated tufts. Plateau tops share the grass texture; rivers retain water. Low quality uses fewer animated blades while preserving full ground coverage. Classic rendering bakes dense grass into its terrain cache.

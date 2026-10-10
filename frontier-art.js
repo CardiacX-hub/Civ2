@@ -1,6 +1,6 @@
 'use strict';
 // All sprites use the same Frontier mesh renderer, PBR light rig, and painted material maps.
-const ART_VERSION='20261010-living-landscape-r2',WORLD_ART_VERSION=ART_VERSION;
+const ART_VERSION='20261010-continuous-meadow',WORLD_ART_VERSION=ART_VERSION;
 const frontierSheets={},frontierWorld={},frontierSheetUsage=new Map();let frontierCleanupTime=0;
 // Wider framing prevents weapons/wings being clipped; restore their world scale.
 const frontierFramingScale={shieldwarden:320/205,trapper:300/205,'cov-shellguard':350/205,'cov-archer':270/205,'cov-resin':350/205,'cov-captain':280/205,'cov-burrower':250/205,bogbreaker:330/205,carrion:340/205,'cov-moth':340/205,'cov-wasp':1,'cov-wasp-venom':1,'cov-centipede':1,knight:280/205,marksman:280/205,witch:280/205,devoured:370/255,shaman:285/205,gryphon:340/205,wyvern:340/205,phoenix:340/270,dragon:340/270,pig:280/205};
