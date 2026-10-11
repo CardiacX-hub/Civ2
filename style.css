@@ -157,3 +157,18 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 /* Army buttons remain reachable with a collapsed phone command panel. */
 #armyGroups{position:absolute;z-index:11;left:230px;bottom:10px;display:flex;gap:4px;flex-wrap:wrap;max-width:calc(100% - 245px);padding:5px;background:#17271ee8;border:1px solid #847650}#armyGroups button{padding:6px 9px;font-size:12px}#armyGroups .active-group{border-color:#d6efaa;background:#355438}#incomeForecast{font-size:11px;flex-basis:100%;line-height:1.5}#resourceWarnings{display:flex;gap:4px;flex-wrap:wrap}#resourceWarnings button{color:#ffe5a0}#unitRoleGuide{font-size:11px;padding:7px;border-top:1px solid #887a50}#unitRoleGuide p{margin:4px 0}.unit-role-details{font-size:10px;line-height:1.35;color:#e3d1a8;display:block;flex-basis:100%;padding:4px}#teamPingControls,#teamPingNotices{display:flex;gap:4px;flex-wrap:wrap;align-items:center}#teamPingNotices{flex-basis:100%}#convoyObjective{position:absolute;z-index:8;top:12px;right:12px;padding:8px;max-width:300px;background:#172a20ed;border:1px solid #998250;display:flex;flex-direction:column;gap:5px;font-size:12px}#convoyObjective[hidden]{display:none}@media(max-width:760px){#armyGroups{left:5px;right:5px;bottom:49px;max-width:none;flex-wrap:nowrap;overflow-x:auto}#armyGroups button{min-width:48px;min-height:36px;white-space:nowrap}#battleTools{bottom:105px!important;max-height:110px}#convoyObjective{max-width:195px;right:5px;top:5px;font-size:11px}#unitRoleGuide{font-size:12px}}@media(min-width:761px){#battleTools{bottom:64px}}
 #tacticalIntel{flex-basis:100%;max-width:700px;background:#16271ee6;padding:4px 7px;border:1px solid #6a7951}#tacticalIntel summary{cursor:pointer;font-size:11px}#tacticalIntel #incomeForecast{display:inline}#tacticalIntel[open]>section,#tacticalIntel[open]>div{margin-top:6px}
+
+/* Compact PC controls keep the battlefield dominant; phone targets remain touch sized. */
+@media(min-width:1000px) and (pointer:fine){
+ #game footer{height:180px;max-height:23dvh;min-height:140px}
+ .action-section{grid-template-columns:repeat(auto-fit,minmax(82px,1fr));gap:3px}
+ #actions .action-section button,#buildActions .action-section button,#actions .build-action,#buildActions .build-action{padding:3px 5px;font-size:10px;min-height:27px}
+ .build-action img{width:22px;height:24px}#actions kbd,#buildActions kbd{margin:0;font-size:8px}
+ #formationPane button{padding:3px;font-size:9px}#actions .unit-role-details,#buildActions .unit-role-details{font-size:8px;line-height:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+@media(min-width:1000px) and (pointer:fine){
+ #actions button small,#buildActions button small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:11px}
+ #actions button,#buildActions button{max-height:52px;overflow:hidden}
+ #battleTools{align-items:flex-start}#battleTools>button{padding:4px 7px;min-height:27px;font-size:10px}
+}
+@media(min-width:1000px) and (pointer:fine){#actions .build-action small,#buildActions .build-action small{white-space:normal;font-size:9px}}

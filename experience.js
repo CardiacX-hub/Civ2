@@ -10,9 +10,9 @@
  async function store(key,value){const db=await dbPromise;return new Promise((resolve,reject)=>{const t=db.transaction('records','readwrite');t.objectStore('records').put(value,key);t.oncomplete=resolve;t.onerror=()=>reject(t.error);});}
  async function get(key){const db=await dbPromise;return new Promise((resolve,reject)=>{const r=db.transaction('records').objectStore('records').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
  const tools=make('section',null,document.querySelector('#game main'));tools.id='battleTools';
- button('Idle fighters',tools,()=>{selected=state.entities.filter(e=>e.owner===0&&!e.building&&e.type!=='worker'&&units[e.type]?.damage>0&&(!e.order||['hold','stop'].includes(e.order.kind)));updateUI();});
- button('Save game',tools,()=>save('manual'));
- button('Save replay',tools,()=>saveReplay());
+ const saves=make('fieldset',null,$('keySettings'));make('legend','Saves & replays',saves);
+ button('Save game',saves,()=>save('manual'));
+ button('Save replay',saves,()=>saveReplay());
  const groupBar=make('section',null,document.querySelector('#game main'));groupBar.id='armyGroups';groupBar.setAttribute('aria-label','Army control groups');let storing=false;const storeButton=button('Store group',groupBar,()=>{storing=!storing;storeButton.setAttribute('aria-pressed',storing);refreshGroups();});
  function group(n,append=false){if(storing){groups[n]=selected.filter(e=>e.owner===0).map(e=>e.id);storing=false;storeButton.setAttribute('aria-pressed','false');toast('Group '+n+' stored');refreshGroups();}else if(groups[n]){const members=state.entities.filter(e=>groups[n].includes(e.id)&&e.hp>0&&e.owner===0);selected=append?[...new Set([...selected,...members])]:members;updateUI();}}
  const groupButtons=[];
