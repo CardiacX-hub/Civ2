@@ -4,13 +4,13 @@
  const button=(text,parent,fn)=>{const b=make('button',text,parent);b.type='button';b.onclick=fn;return b;};
  const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))||fallback;}catch{return fallback;}};
  const save=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));}catch{}};
- const options={resources:[[100,'100 each · standard'],[300,'300 each'],[600,'600 each']],speed:[[.75,'Slow · 0.75×'],[1,'Normal · 1×'],[1.5,'Fast · 1.5×']],supply:[[50,'50'],[100,'100'],[200,'200']],victory:[['strongholds','Destroy opposing Strongholds'],['elimination','Eliminate all opposing units and buildings'],['domination','Hold every Signal Stone for 120 seconds']]};
+ const options={resources:[[100,'100 each · standard'],[300,'300 each'],[600,'600 each']],speed:[[.75,'Slow · 0.75×'],[1,'Normal · 1×'],[1.5,'Fast · 1.5×']],supply:[[50,'50'],[100,'100'],[200,'200']],victory:[['strongholds','Destroy opposing Strongholds'],['elimination','Eliminate all opposing units and buildings'],['domination','Hold every Signal Stone for 120 seconds'],['convoy','Escort three supply convoys to their depots']]};
  const labels={resources:'Starting gold and lumber',speed:'Game speed',supply:'Maximum supply',victory:'Victory condition'};
  function select(id,label,parent,choices,value){const l=make('label',label,parent),s=make('select',null,l);s.id=id;for(const [v,text]of choices){const o=make('option',text,s);o.value=v;}s.value=value;return s;}
  $('menu').append($('bannerWorkshop'));$('bannerWorkshop').style.position='static';
  const settings=KawRules.normalize(read('kaw-skirmish',KawRules.defaults));
  window.KawSkirmish={settings};
- const dialog=make('dialog',null,document.body);dialog.id='skirmishSetup';make('h2','Skirmish setup',dialog);make('p','Configure your next battle. Supply Houses still raise supply up to the selected maximum. Domination also ends when only one side has a Stronghold.',dialog);
+ const dialog=make('dialog',null,document.body);dialog.id='skirmishSetup';make('h2','Skirmish setup',dialog);make('p','Configure your next battle. Supply Houses still raise supply up to the selected maximum. Domination also ends when only one side has a Stronghold. Convoy race: escort automatic wagons to their marked depots; three deliveries win.',dialog);
  for(const key of Object.keys(options)){const s=select('skirmish-'+key,labels[key],dialog,options[key],settings[key]);s.onchange=()=>{settings[key]=key==='victory'?s.value:+s.value;save('kaw-skirmish',settings);};}
  const teams=make('fieldset',null,dialog);make('legend','Single-player teams',teams);const teamChoices=[[0,'Free for all'],[1,'Team 1'],[2,'Team 2'],[3,'Team 3'],[4,'Team 4'],[5,'Team 5'],[6,'Team 6']],savedTeams=read('kaw-skirmish-teams',{});
  for(let i=0;i<6;i++){const s=select('skirmish-team-'+i,i?'Opponent '+i:'Your team',teams,teamChoices,savedTeams[i]||0);s.onchange=()=>{savedTeams[i]=+s.value;save('kaw-skirmish-teams',savedTeams);};}

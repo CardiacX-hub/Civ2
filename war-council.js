@@ -6,7 +6,7 @@
   return {resources:[100,300,600].includes(input.resources)?input.resources:100,
    speed:[.75,1,1.5].includes(input.speed)?input.speed:1,
    supply:[50,100,200].includes(input.supply)?input.supply:200,
-   victory:['strongholds','elimination','domination'].includes(input.victory)?input.victory:'strongholds'};
+   victory:['strongholds','elimination','domination','convoy'].includes(input.victory)?input.victory:'strongholds'};
  }
  const teamKey=owner=>state.players[owner].team?'team:'+state.players[owner].team:'player:'+owner;
  function contender(owner){return state.entities.some(e=>sameTeam(e.owner,owner)&&e.hp>0&&(state.rules?.victory==='elimination'||e.type==='base'));}
@@ -14,6 +14,7 @@
   const mode=state.rules?.victory||'strongholds',living=new Set();
   for(const e of state.entities)if(e.hp>0&&(mode==='elimination'||e.type==='base'))living.add(teamKey(e.owner));
   if(living.size<=1)return {winners:[...living],reason:mode};
+  if(mode==='convoy'&&state.convoyRace?.winner)return {winners:[state.convoyRace.winner],reason:'convoy'};
   if(mode==='domination'&&state.domination?.winner)return {winners:[state.domination.winner],reason:'domination'};
   return null;
  }
@@ -25,7 +26,7 @@
   if(held&&contender(posts[0].owner)){state.domination.held+=dt;if(state.domination.held>=120)state.domination.winner=held;}
  }
  const oldCap=supplyCap;supplyCap=owner=>Math.min(state.rules?.supply||200,oldCap(owner));
- const oldEntity=entity;entity=function(...args){const e=oldEntity(...args);if(state.telemetryActive&&!e.building&&e.type!=='pig'){
+ const oldEntity=entity;entity=function(...args){const e=oldEntity(...args);if(state.telemetryActive&&!e.building&&e.type!=='pig'&&e.type!=='convoy'){
   const s=matchStats(e.owner);s.trainedByType??={};s.trainedByType[e.type]=(s.trainedByType[e.type]||0)+1;
  }return e;};
  const deaths=resolveCombatDeaths;resolveCombatDeaths=function(){for(const e of state.entities)if(e.hp<=0&&!e.deathResolved&&!e.building){const s=matchStats(e.owner);s.lostByType??={};s.lostByType[e.type]=(s.lostByType[e.type]||0)+1;}return deaths();};

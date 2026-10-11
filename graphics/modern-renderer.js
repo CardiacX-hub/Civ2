@@ -1,6 +1,7 @@
 /** Live-geometry pipeline. This module is a migration kit / rendering lab;
  * sprite matches use visual-quality.js, because sprites have no normal/depth buffers. */
 import * as THREE from 'three';
+import {lightingStandard,surfaceStandard} from './appearance-standards.js';
 import {CSM} from 'three/addons/csm/CSM.js';
 import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
@@ -21,13 +22,13 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
  // Quality presets budget the actual render resolution, including 1× desktop
  // displays. Never reduce the drawing buffer just because the camera zooms out.
  renderer.setPixelRatio(p.dpr);
- renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
+ renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=lightingStandard.exposure;
  renderer.info.autoReset=false;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- const scene=new THREE.Scene();scene.background=new THREE.Color('#607e89');scene.fog=new THREE.Fog('#607e89',200,500);const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.35;room.dispose();pmrem.dispose();
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#607e89');scene.fog=new THREE.Fog('#607e89',200,500);const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=lightingStandard.environment;room.dispose();pmrem.dispose();
  const camera=cameraType==='orthographic'?new THREE.OrthographicCamera(-50,50,40,-40,.5,600):new THREE.PerspectiveCamera(42,1,.5,600);camera.position.set(90,100,145);camera.lookAt(0,15,0);
  // Hemisphere light provides restrained fill; the sun remains the dominant source.
- scene.add(new THREE.HemisphereLight(0xc7e3ff,0x4a4333,1.1));
- const csm=new CSM({camera,parent:scene,cascades:p.cascades,maxFar:p.distance,mode:'practical',shadowMapSize:Math.min(p.shadow,renderer.capabilities.maxTextureSize),lightDirection:new THREE.Vector3(-1,-1,-.5).normalize(),lightIntensity:3.1,lightNear:1,lightFar:650,shadowBias:-.0002});
+ scene.add(new THREE.HemisphereLight(0xc7e3ff,0x4a4333,lightingStandard.fill));
+ const csm=new CSM({camera,parent:scene,cascades:p.cascades,maxFar:p.distance,mode:'practical',shadowMapSize:Math.min(p.shadow,renderer.capabilities.maxTextureSize),lightDirection:new THREE.Vector3(-1,-1,-.5).normalize(),lightIntensity:lightingStandard.sun,lightNear:1,lightFar:650,shadowBias:-.0002});
  csm.fade=true;for(const light of csm.lights){light.shadow.normalBias=.025;light.color.set(0xffecd0);}
  const target=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType});
  // Resolve subpixel wing edges, foliage and roof trim before screen-space AA.
@@ -45,7 +46,7 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
   trackedMaterials.add(material);material.userData.visual={sss,rim};
   // Preserve mortar and roof detail at grazing camera angles with capped filtering.
   for(const map of [material.map,material.normalMap,material.roughnessMap])if(map){map.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),quality==='low'?2:8);map.needsUpdate=true;}
-  material.roughness=THREE.MathUtils.clamp(material.roughness,.08,1);
+  surfaceStandard(material);material.roughness=THREE.MathUtils.clamp(material.roughness,.08,1);
   csm.setupMaterial(material);const csmCompile=material.onBeforeCompile;
   material.onBeforeCompile=shader=>{
    csmCompile(shader);Object.assign(shader.uniforms,{wetness:weather.wetness,weathering:weather.weathering,rimStrength:weather.rimStrength,sssStrength:{value:sss},assetRim:{value:rim}});
