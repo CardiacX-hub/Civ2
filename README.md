@@ -575,3 +575,22 @@ Verification: `npm test`, `npm run build:graphics`, `CHECK_URL=http://localhost:
 - Units retain safe route waypoints near obstacles, steer less sharply through traffic, and fall back to their clear waypoint direction when avoidance would push them into rocks. Local 3D motion is smoothed without moving the simulation or changing hit detection.
 - Hard and Extreme react and raid sooner; Extreme can build three infantry production buildings. Existing scouting, counter recruitment, artillery/air technology, retreats and economy rules remain active.
 - Validation: `npm test`, `CHECK_URL=http://localhost:3083 node tools/check-experience.cjs`, `CHECK_URL=http://localhost:3083 node tools/check-strategy.cjs`, and `CHECK_URL=http://localhost:3083 node tools/check-battlefield-polish.cjs`. The mine regression exercises five collectors repeatedly delivering from one natural boulder mine.
+
+## Army, replay and performance improvements (20261011-army-and-replay-r5)
+
+- Army stances: **Aggressive** automatically pursues enemies within sight; **Defensive** limits automatic pursuit to 180 world units around its anchor; **Hold position** stops and fires only within weapon range. Explicit movement and attack orders retain player control. Moving updates the defensive anchor. Change stance shortcuts in Settings (defaults Shift+A, Shift+D and Shift+S).
+- Patrol supports up to eight waypoints and returns through them. Choose Patrol, set the first destination, then choose Patrol again and Shift-click additional points. A normal new order or Stop cancels the route. The same validated commands run on the multiplayer server.
+- Worker, building and army warnings have separate alert categories and sound pitches. Worker warnings cannot be swallowed by a nearby army alert; minimap pulses carry an alert symbol.
+- Optional combat feedback displays actual HP changes: damage in orange, healing in green, protected damage in blue with a diamond. Existing fire, venom, slow, stun and aura markers remain. Toggle feedback and reduced motion in Settings. Faction selection cards now explain their existing strengths and weaknesses.
+- AI mixes infantry, ranged troops, siege and flyers into an advancing formation, regroups scattered forces, and assigns support to guard the leader. Plans use observed or recently scouted targets, preserve retreating troops, and leave room for economy raids and base defense.
+- Saved visual replays include major-battle and Stronghold-destruction markers. Click a marker to jump the timeline and camera to that event. Events honor the recorded player's visibility. Replay speed remains 0.5×, 1×, 2× or 4×. The recorder remains bounded to 180 snapshots and 8 MB.
+- Rigid animated unit parts share GPU instancing batches by geometry, material and shadow flags. Single-weight rigid skins are split back into bone-attached parts with the same UVs, normals and pose. Each limb retains its world transform and geometry detail; blended skins and transparent meshes retain their ordinary rendering path. Batch capacity grows in powers of two, unused batches expire, and session cleanup releases instance buffers.
+
+For a repeatable live-renderer performance report, start the server, then run:
+
+```bash
+CHECK_URL=http://localhost:3083 BENCH_UNITS=300 BENCH_SECONDS=10 BENCH_OUTPUT=/tmp/kaw-quality.json node tools/benchmark-quality.cjs
+FORMATIONS=1 node tools/benchmark-battles.cjs
+```
+
+The browser report includes frame percentiles, simulation time versus wall time, draw calls, triangles, post-GC heap growth, and troops that made no movement progress while still away from their goal. It uses Chromium's software GPU in this environment; results are diagnostic and are not a prediction of a player's GPU performance. Compare matching hardware, viewport, quality and unit counts. Heap growth also includes the bounded replay recorder and newly cached assets; one sample cannot prove a leak. Navigation, stances, patrol routes, coordinated AI, batching transforms and buffer ownership have automated regression tests. `tools/check-army-polish.cjs` exercises the desktop/phone controls and saves, loads and seeks real replay event markers.

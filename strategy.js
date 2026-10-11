@@ -79,6 +79,21 @@
     if(building==='roost' && p.counterPlan==='siege' && counted('air2')<2) return 'air2';
     return fallback;
   }
+  // Keep infantry, ranged troops and siege together. Only scouted targets inform plans.
+  function coordinateArmy(owner,own,observed,seen,base) {
+    const p=state.players[owner];if(state.time<(p.coordinationAt||0))return;p.coordinationAt=state.time+6;
+    if(observed.some(t=>!t.building&&units[t.type]?.damage>0&&Math.hypot(t.x-base.x,t.y-base.y)<500)){p.attackWave=null;return;}
+    const troops=own.filter(e=>!e.building&&!e.convoy&&e.type!=='worker'&&!['scout','medic','engineer'].includes(e.type)&&!isBannerBearer(e)&&!e.aiEngaged&&!(e.raidUntil>state.time)&&e.hp/e.max>.6&&units[e.type]?.damage>0);
+    if(troops.length<8||!troops.some(e=>e.type==='siege'||isFlying(e)))return;
+    const leader=troops.find(e=>['melee','devoured','cavalier','beetle','bogbreaker'].includes(e.type))||troops[0];
+    const target=seen.filter(e=>e.building).sort((a,b)=>Math.hypot(a.x-leader.x,a.y-leader.y)-Math.hypot(b.x-leader.x,b.y-leader.y))[0];if(!target)return;
+    const center={x:troops.reduce((n,e)=>n+e.x,0)/troops.length,y:troops.reduce((n,e)=>n+e.y,0)/troops.length};
+    const scattered=troops.some(e=>!isFlying(e)&&Math.hypot(e.x-center.x,e.y-center.y)>420),goal=scattered?center:target;
+    p.attackWave={phase:scattered?'regroup':'advance',targetId:target.id,at:state.time};
+    const slots=formationSlots(troops,goal,'box'),key='ai-wave-'+owner+'-'+Math.floor(state.time/6),anchor=slots.get(leader.id);
+    for(const e of troops){const slot=slots.get(e.id),point=openMovePoint(e,slot);queueTask(e,{kind:'attackMove',...point,formation:{key,leaderId:leader.id,dx:point.x-anchor.x,dy:point.y-anchor.y,finalX:point.x,finalY:point.y}});}
+    for(const support of own.filter(e=>['medic','engineer'].includes(e.type)||isBannerBearer(e)))if(!support.aiEngaged)KawBattle.command(support,'guard',{targetId:leader.id});
+  }
   function adaptiveAI(owner, intel) {
     const p=state.players[owner], {own,observed,seen}=intel, base=own.find(e=>e.type==='base'&&!e.construction);
     if(!base) return;
@@ -100,12 +115,13 @@
         KawBattle.command(e,'retreat');e.aiEngaged=true;e.fallbackUntil=state.time+4;
       }
     }
+    coordinateArmy(owner,own,observed,seen,base);
     if(state.time<(p.raidAt||0)) return;
     p.raidAt=state.time+10;
-    const target=seen.filter(e=>e.type==='worker'||e.type==='depot'||e.type==='goldmine').sort((a,b)=>b.at-a.at)[0];
+    const target=seen.filter(e=>e.type==='worker'||e.type==='depot'||e.type==='goldmine').sort((a,b)=>b.at-a.at||Math.hypot(a.x-(army[0]?.x||base.x),a.y-(army[0]?.y||base.y))-Math.hypot(b.x-(army[0]?.x||base.x),b.y-(army[0]?.y||base.y)))[0];
     const raiders=army.filter(e=>e!==scout && !e.aiEngaged && e.hp/e.max>.7 && !isBannerBearer(e)).slice(0,p.personality==='raider'?4:2);
     if(target && army.length>=6 && !threats.some(t=>Math.hypot(t.x-base.x,t.y-base.y)<450)) {
-      for(const e of raiders) queueTask(e,{kind:'attackMove',...openMovePoint(e,{x:target.x,y:target.y})});
+      for(const e of raiders){queueTask(e,{kind:'attackMove',...openMovePoint(e,{x:target.x,y:target.y})});e.raidUntil=state.time+12;}
     }
     if(state.rules?.victory==='convoy') {
       const wagon=own.find(e=>e.convoy && e.hp>0);

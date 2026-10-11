@@ -51,7 +51,7 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
   material.onBeforeCompile=shader=>{
    csmCompile(shader);Object.assign(shader.uniforms,{wetness:weather.wetness,weathering:weather.weathering,rimStrength:weather.rimStrength,sssStrength:{value:sss},assetRim:{value:rim}});
    shader.vertexShader='varying vec3 visualWorld;\n'+shader.vertexShader;
-   shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>','visualWorld=(modelMatrix*vec4(transformed,1.0)).xyz;\n#include <project_vertex>');
+   shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>','vec4 visualPosition=vec4(transformed,1.0);\n#ifdef USE_INSTANCING\nvisualPosition=instanceMatrix*visualPosition;\n#endif\nvisualWorld=(modelMatrix*visualPosition).xyz;\n#include <project_vertex>');
    shader.fragmentShader='varying vec3 visualWorld; uniform float wetness,weathering,rimStrength,sssStrength,assetRim;\n'+shader.fragmentShader;
    shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=mix(roughnessFactor,max(.08,roughnessFactor*.45),wetness);');
    shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\nfloat wear=weathering*metalnessFactor*(.5+.5*sin(visualWorld.x*.37+sin(visualWorld.z*.71)));metalnessFactor*=1.-wear;diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.23,.095,.035),wear*.3);diffuseColor.rgb*=1.-wetness*.12;');

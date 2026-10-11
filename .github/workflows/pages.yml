@@ -19,6 +19,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Install locked rendering dependencies
+        run: npm ci
+      - name: Build graphics bundles
+        run: npm run build:graphics
       - name: Test game simulation
         run: node tools/ci-tests.cjs
       - uses: actions/configure-pages@v5
