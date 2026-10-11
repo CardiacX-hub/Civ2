@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {createServer}=require('../server.js');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+(async()=>{
+ const server=createServer({tick:true});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const url='http://127.0.0.1:'+server.address().port;
+ const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox','--enable-unsafe-swiftshader']});
+ try{const host=await browser.newPage({viewport:{width:1440,height:900}}),guest=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true}),errors=[];
+  for(const p of [host,guest]){p.on('pageerror',e=>errors.push(e.message));await p.goto(url);await p.waitForFunction(()=>window.KawFrontline&&window.KawBattlefield);await p.evaluate(()=>KawBattlefield.setEnabled(false));await p.click('#multiplayerMenu');}
+  await host.selectOption('#mp-rule-resources','300');await host.selectOption('#mp-rule-speed','0.75');await host.selectOption('#mp-rule-supply','100');await host.selectOption('#mp-rule-victory','domination');await host.check('#mpAiTakeover');await host.click('#mpHost');await host.waitForFunction(()=>multiplayer.session&&multiplayer.room);const code=await host.locator('#mpRoomCode').innerText();
+  await guest.fill('#mpName','Phone guest');await guest.selectOption('#mpFaction','horde');await guest.fill('#mpJoinCode',code);await guest.click('#mpJoin');await guest.waitForFunction(()=>multiplayer.room?.members.length===2);await guest.click('#mpReady');await host.waitForFunction(()=>multiplayer.room.members.every(m=>m.ready));
+  await host.click('#mpReadyCheck');await guest.waitForFunction(()=>!multiplayer.room.members.find(m=>m.id===multiplayer.you).ready);assert.match(await guest.locator('#mpStatus').innerText(),/Ready check/);await guest.click('#mpReady');await host.waitForFunction(()=>multiplayer.room.members.every(m=>m.ready));await host.click('#mpStartBattle');await guest.waitForFunction(()=>multiplayer.active);assert.equal(await guest.evaluate(()=>state.rules.resources),300);assert.equal(await guest.evaluate(()=>state.rules.supply),100);assert.equal(await guest.evaluate(()=>state.rules.victory),'domination');
+  const room=server.lobbies.get(code);room.engine.state.count=0;await guest.route('**/api/lobbies/*',route=>route.abort());await guest.evaluate(()=>{multiplayer.retryAt=0;return pollMultiplayer();});await guest.waitForFunction(()=>multiplayer.errors>0);await guest.locator('#connectionWarning').waitFor({state:'visible'});
+  room.members[1].lastSeen=Date.now()-16000;server.lobbies.step();await host.waitForFunction(()=>multiplayer.room.members[1].aiControl);assert.match(await host.locator('#connectionWarning').innerText(),/AI control/);assert.equal(room.engine.state.players[1].ai,true);
+  await guest.unroute('**/api/lobbies/*');await guest.evaluate(()=>{multiplayer.retryAt=0;return pollMultiplayer();});await guest.waitForFunction(()=>multiplayer.errors===0);assert.equal(room.engine.state.players[1].ai,false);assert.equal(room.members[1].aiControl,false);assert.deepEqual(errors,[]);console.log({host:'desktop',guest:'phone',rules:true,readyCheck:true,reconnectCountdown:true,temporaryAI:true,controlRestored:true,errors});
+ }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
+})().catch(e=>{console.error(e);process.exitCode=1;});
