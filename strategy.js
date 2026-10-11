@@ -4,7 +4,7 @@
 (() => {
   const roles = {
     worker: ['Collector', 'Builds, repairs and delivers resources.', 'Vulnerable to every fighter.'],
-    melee: ['Front line', 'Protects ranged troops and closes on artillery.', 'Vulnerable to kiting and concentrated ranged fire.'],
+    melee: ['Front line', 'Protects ranged troops; +15% damage against archers and marksmen at close range.', 'Vulnerable to kiting and concentrated ranged fire.'],
     ranged: ['Ranged support', 'Paired ranged units gain 15% damage against heavy infantry.', 'Needs a front line against melee attackers.'],
     sniper: ['Heavy ranged damage', 'Paired ranged units punish heavy infantry.', 'Low health; vulnerable to flanking.'],
     siege: ['Siege artillery', '+40% damage against buildings.', 'Slow; protect against melee and flyers.'],
@@ -13,14 +13,14 @@
     medic: ['Healer', 'Keeps nearby friendly troops fighting.', 'Needs protection from focused attacks.'],
     engineer: ['Siege support', 'Repairs friendly machinery.', 'Needs an escort.'],
     trapper: ['Area control', 'Traps punish advancing enemies.', 'Vulnerable while repositioning.'],
-    cavalier: ['Heavy assault', 'Armored front line for breaking ranged positions.', 'Paired ranged troops counter heavy armor.'],
-    devoured: ['Heavy assault', 'Armored front line for breaking ranged positions.', 'Paired ranged troops counter heavy armor.'],
+    cavalier: ['Heavy assault', 'Armored assault; +15% damage against ranged infantry.', 'Paired ranged troops counter heavy armor.'],
+    devoured: ['Heavy assault', 'Armored assault; +15% damage against ranged infantry.', 'Paired ranged troops counter heavy armor.'],
     beetle: ['Heavy assault', 'Armored front line.', 'Artillery punishes rooted Verdant formations.'],
     bogbreaker: ['Close assault', 'Strong close-range pressure.', 'Can be kited by ranged troops.'],
     convoy: ['Supply convoy', 'Escort to its marked depot to score.', 'Cannot attack; vulnerable without an escort.']
   };
   function role(type, faction) {
-    if (type === 'ranged' && faction === 'horde') return ['Anti-air spears', '+40% damage against flying units.', 'Needs protection against melee.'];
+    if (type === 'ranged' && faction === 'horde') return ['Spear support', '+40% damage against flyers; +25% against cavalry and iron beasts.', 'Needs protection against melee.'];
     if (type.startsWith('banner')) return ['Aura bearer', 'Supports nearby allies with its selected aura.', 'Only one aura is active; protect the bearer.'];
     if (type.startsWith('hero')) return ['Hero', 'Special abilities and an aura support the army.', 'Focused fire and isolation are dangerous.'];
     if (units[type]?.flying) return ['Flying attacker', 'Crosses cliffs and bypasses ground obstacles.', 'Dominion ranged spears deal extra damage to flyers.'];

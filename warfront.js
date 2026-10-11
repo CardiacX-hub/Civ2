@@ -35,11 +35,11 @@
   if(goal&&length>=needed-2){o.x=goal.x;o.y=goal.y;}else{o.x=e.x;o.y=e.y;}
   f.column=true;
  }
- const formationSpeed=effectiveSpeed;effectiveSpeed=function(e){return formationSpeed(e)*(e.order?.formation?.leaderId===e.id?e.order.formation.pace||1:1);};
+ const formationSpeed=effectiveSpeed;effectiveSpeed=function(e){const f=e.order?.formation,base=formationSpeed(e);return f&&!isFlying(e)&&f.groupSpeed&&['move','attackMove'].includes(e.order.kind)?Math.min(base,f.groupSpeed)*(f.leaderId===e.id?f.pace||1:1):base;};
  function tick(dt){
   const living=new Map(state.entities.filter(e=>e.hp>0).map(e=>[e.id,e])),groups=new Map();
   for(const e of living.values()){const f=e.order?.formation;if(f){const key=e.owner+':'+f.leaderId+':'+f.key;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);}}
-  for(const members of groups.values()){const leader=members[0]?.order?.formation?.leaderId;members.rank=new Map(members.filter(e=>e.id!==leader&&!isFlying(e)).sort((a,b)=>a.id-b.id).map((e,i)=>[e.id,i+1]));}
+  for(const members of groups.values()){const ground=members.filter(e=>!isFlying(e)),speed=ground.length?Math.min(...ground.map(formationSpeed)):0;for(const e of members)e.order.formation.groupSpeed=speed;const leader=members[0]?.order?.formation?.leaderId;members.rank=new Map(members.filter(e=>e.id!==leader&&!isFlying(e)).sort((a,b)=>a.id-b.id).map((e,i)=>[e.id,i+1]));}
   for(const e of state.entities){if(e.hp<=0||e.building)continue;const o=e.order,f=o?.formation;if(f) followFormation(e,o,f,living,groups);
    if(!o||!['repairBridge','bombardBridge'].includes(o.kind))continue;const b=state.siegeBridges?.find(b=>b.id===o.bridgeId);if(!b||o.kind==='bombardBridge'&&b.hp<=0||o.kind==='repairBridge'&&b.hp>=b.max){finishTask(e);continue;}const r=state.rivers[b.river],distance=Math.hypot(e.x-b.x,e.y-b.y),range=o.kind==='repairBridge'?r.width/2+45:units.siege.range*(e.deployed?1.25:1);if(distance>range){const sign=e.x<b.x?-1:1;move(e,b.x+sign*(r.width/2+35),b.y,dt);continue;}if(o.kind==='repairBridge'){b.hp=Math.min(b.max,b.hp+25*dt);e.action={kind:'repair',until:state.time+.4,duration:.4};if(b.hp===b.max)changedBridge(b,true);}else if(e.cool<=0&&(!e.deployReady||e.deployReady<=state.time)){b.hp=Math.max(0,b.hp-units.siege.damage*(e.deployed?1.35:1));e.cool=2.4;e.facing=Math.atan2(b.y-e.y,b.x-e.x);e.action={kind:'attack',until:state.time+.55,duration:.55};e.shot={rock:true,x:b.x,y:b.y,fromX:e.x,fromY:e.y,fromHeight:18,toHeight:0,left:.65,duration:.65};burst(b.x,b.y,'blast',e.owner,.65);if(!b.hp){changedBridge(b,false);finishTask(e);}}}
  }
