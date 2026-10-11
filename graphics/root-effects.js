@@ -1,0 +1,22 @@
+/** Bounded 3D pools for ground-traveling roots, phoenix ashes and specialist wards.
+ * No physics objects or shadow maps are allocated per projectile. */
+import * as T from 'three';
+export function createRootEffects(pipeline){
+ const group=new T.Group();group.name='specialist-effects';pipeline.scene.add(group);
+ const wood=new T.MeshStandardMaterial({color:0x765136,roughness:.9}),tip=new T.MeshStandardMaterial({color:0x557d3c,roughness:.65}),ashMaterial=new T.MeshStandardMaterial({color:0x3b3e3b,roughness:1}),ember=new T.MeshStandardMaterial({color:0xe89136,emissive:0xf86d18,emissiveIntensity:.7}),wardMaterial=new T.MeshBasicMaterial({color:0x8ed5f5,transparent:true,opacity:.45,depthWrite:false}),chainMaterial=new T.MeshStandardMaterial({color:0x7f8d8c,metalness:.7,roughness:.35});
+ const geometry=new T.ConeGeometry(.45,3,7),ashGeometry=new T.SphereGeometry(2.4,10,6),emberGeometry=new T.SphereGeometry(.16,6,4),ringGeometry=new T.TorusGeometry(1,.025,4,48),chainGeometry=new T.CylinderGeometry(.07,.07,1,5);
+ const roots=[],ashes=[],wards=[],chains=[];
+ const add=(g,m)=>{const mesh=new T.Mesh(g,m);mesh.visible=false;mesh.castShadow=false;mesh.userData.noShadow=true;group.add(mesh);return mesh;};
+ return {
+  update(c){for(const pool of [roots,ashes,wards,chains])for(const entry of pool)for(const m of entry.meshes)m.visible=false;
+   let index=0;for(const r of c.state.rootBursts||[]){if(index>=32||!c.inViewport(r.x,r.y,250)&&!c.inViewport(r.fromX,r.fromY,250)||!c.visible(r.x,r.y)&&!c.visible(r.fromX,r.fromY))continue;
+    const entry=roots[index]??=( {meshes:Array.from({length:17},(_,i)=>add(geometry,i<12?wood:tip))}),progress=Math.max(0,Math.min(1,(c.state.time-r.at)/(r.impactAt-r.at))),dx=r.x-r.fromX,dy=r.y-r.fromY;
+    for(let i=0;i<12;i++){const t=(i+1)/12,m=entry.meshes[i],x=r.fromX+dx*t+Math.sin(i*2.1)*4,y=r.fromY+dy*t;const pt=i/12,px=r.fromX+dx*pt+Math.sin((i-1)*2.1)*4,py=r.fromY+dy*pt,a=new T.Vector3(px*.1,c.terrainHeight(px,py)*.1+.08,py*.1),b=new T.Vector3(x*.1,c.terrainHeight(x,y)*.1+.08,y*.1),direction=b.clone().sub(a);m.visible=t<=progress;m.position.copy(a.add(b).multiplyScalar(.5));m.scale.set(.8,direction.length()/3,.8);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),direction.normalize());}
+    const eruption=Math.max(0,Math.sin(Math.min(1,Math.max(0,c.state.time-r.impactAt)/.65)*Math.PI));for(let i=0;i<5;i++){const m=entry.meshes[12+i],x=r.x+(i-2)*7,y=r.y+Math.sin(i*2.4)*5;m.visible=progress>=1&&eruption>.01;m.scale.set(.9,eruption*(i===2?1.4:1),.9);m.position.set(x*.1,c.terrainHeight(x,y)*.1+1.5*m.scale.y,y*.1);m.rotation.set(.15*(i-2),0,.12*(i-2));}index++;
+   }
+   index=0;for(const a of c.state.phoenixAshes||[]){if(index>=64||!c.inViewport(a.x,a.y,60)||a.owner!==0&&!c.visible(a.x,a.y))continue;const entry=ashes[index]??=({meshes:[add(ashGeometry,ashMaterial),...Array.from({length:8},()=>add(emberGeometry,ember))]});entry.meshes.forEach((m,i)=>{m.visible=true;const angle=i*2.399,x=a.x+(i?Math.cos(angle)*16:0),y=a.y+(i?Math.sin(angle)*8:0);m.position.set(x*.1,c.terrainHeight(x,y)*.1+(i?.09:.08),y*.1);m.scale.set(i?1:1,i?.5:.07,i?1:.55);});index++;}
+   index=0;for(const e of c.state.entities){if(index>=24||!c.inViewport(e.x,e.y,180)||e.owner!==0&&!c.visible(e.x,e.y))continue;if(e.aegisUntil>c.state.time||e.rooted&&e.type==='rootColossus'){const entry=wards[index]??=({meshes:[add(ringGeometry,wardMaterial)]}),m=entry.meshes[0],radius=e.aegisUntil>c.state.time?14:3;m.visible=true;m.rotation.x=Math.PI/2;m.scale.setScalar(radius);m.position.set(e.x*.1,c.terrainHeight(e.x,e.y)*.1+.15,e.y*.1);index++;}}
+   index=0;for(const e of c.state.entities){if(index>=12||!e.chainCast||e.chainCast.until<=c.state.time||!c.visible(e.x,e.y))continue;const t=c.state.entities.find(t=>t.id===e.chainCast.targetId);if(!t||!c.visible(t.x,t.y))continue;const entry=chains[index]??=({meshes:[add(chainGeometry,chainMaterial)]}),m=entry.meshes[0],a=new T.Vector3(e.x*.1,c.terrainHeight(e.x,e.y)*.1+2,e.y*.1),b=new T.Vector3(t.x*.1,c.terrainHeight(t.x,t.y)*.1+1.5,t.y*.1),d=b.clone().sub(a);m.visible=true;m.position.copy(a.add(b).multiplyScalar(.5));m.scale.set(1,d.length(),1);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());index++;}
+  },dispose(){group.removeFromParent();for(const g of [geometry,ashGeometry,emberGeometry,ringGeometry,chainGeometry])g.dispose();for(const m of [wood,tip,ashMaterial,ember,wardMaterial,chainMaterial])m.dispose();}
+ };
+}

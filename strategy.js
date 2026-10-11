@@ -3,6 +3,7 @@
  * No presentation or networking code runs inside this module. */
 (() => {
   const roles = {
+    siegeMarshal:['Siege protector','Deploy Aegis: 35% ranged protection for nearby artillery.','Slow; vulnerable to flanks.'],stormLancer:['Mounted disruption','Clear-ground charge deals 65 damage and interrupts for 1s.','Needs open ground; spears counter cavalry.'],chainbreaker:['Displacement','Hooks pull a ground fighter out of formation.','Clear ground and short range required.'],ashShaman:['Assault support','Ash Veil protects; Blood Pact trades health for allied damage.','Fragile when spending its own health.'],rootColossus:['Root artillery','Roots travel underground and erupt under ground targets. Root Down boosts damage.','Cannot hit flyers; rooted stance is vulnerable to artillery.'],bloomWeaver:['Living field support','Plants destructible healing blooms or poisonous pods.','Plants need 1.5s to mature and can be destroyed.'],
     worker: ['Collector', 'Builds, repairs and delivers resources.', 'Vulnerable to every fighter.'],
     melee: ['Front line', 'Protects ranged troops; +15% damage against archers and marksmen at close range.', 'Vulnerable to kiting and concentrated ranged fire.'],
     ranged: ['Ranged support', 'Paired ranged units gain 15% damage against heavy infantry.', 'Needs a front line against melee attackers.'],

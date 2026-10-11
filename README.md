@@ -15,6 +15,19 @@ Selected troops now show numbered destinations and dotted routes for their curre
 
 Unit role cards explain counters: close assault units gain 15% damage against ranged infantry, Dominion spears gain 25% against cavalry and iron beasts, and existing anti-air, coordinated ranged and siege bonuses remain. Click attack alerts to focus their location. Sounds are synthesized original effects with separate wood/metal gathering impacts, weapon timbres and faction acknowledgments. Battle reports include a fighter-count graph, peak army size, spending, Stronghold upgrades and major losses. Graphics presets are Performance, Balanced and High; the optional FPS display helps compare them. Grass uses larger pointed leaves, 256-pixel textures and filtered mipmaps with the same instanced triangle budget.
 
+New faction specialists have original painted models, animated sprites and portraits:
+
+| Faction | Unit / production building | Stronghold | Power |
+| --- | --- | --- | --- |
+| Dawnward | Siege Marshal / Siege Works | 2 | Deploy Aegis: 35% ranged protection for artillery within 140 for 8 seconds. |
+| Dawnward | Storm Lancer / Infantry Lodge | 3 | Clear-ground charge: 65 impact damage and a one-second interruption. |
+| Dominion | Chainbreaker / Infantry Lodge | 2 | Hooked Chain: pull a ground enemy along clear terrain, dealing 25 damage. |
+| Dominion | Ash Shaman / Hero Sanctum | 2 | Ash Veil smoke; Blood Pact trades 40 health for 15% nearby allied damage for 8 seconds. |
+| Verdant | Root Colossus / Infantry Lodge | 3 | Roots travel underground and erupt under ground targets. Root Down grants 20% damage, longer snaring and 20% vulnerability to artillery. Move uproots it. |
+| Verdant | Bloom Weaver / Hero Sanctum | 2 | Plant destructible healing blooms or poisonous pods. Plants mature in 1.5 seconds, last 25 seconds, and share a 12-second planting cooldown; maximum six per faction. |
+
+Standard Bearers are 50% larger visually. Dawnward phoenixes become glowing ashes on death and revive after two simulation seconds at half health. Enemy ground units within the ash pile trample it and prevent revival; allied units, buildings and flyers do not. Pending ashes retain the phoenix's supply reservation. Ashes, roots, cooldowns and planting modes are authoritative in online play and retained by saved matches. Destroyed phoenixes still count as losses; rebirth does not count as a newly trained fighter.
+
 - Stronghold: collectors.
 - Infantry Lodge: durable melee, balanced ranged, and fragile high-damage ranged infantry.
 - Siege Works: slow artillery with splash damage.

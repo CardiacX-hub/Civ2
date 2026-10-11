@@ -1,7 +1,7 @@
 /* Shared, original battlefield systems. Browser and lobby server run these rules. */
 (() => {
  let sequence=0;
- function group(troops,destination,kind,append){if(troops.length<2||append)return;const front=troops.filter(e=>formationRole(e)===0),leader=(front.length?front:troops).slice().sort((a,b)=>Math.hypot(a.x-destination.x,a.y-destination.y)-Math.hypot(b.x-destination.x,b.y-destination.y))[0],slots=formationSlots(troops,destination,kind),anchor=slots.get(leader.id),key=leader.id+':'+(++sequence);leader.breadcrumbs=[];for(const e of troops){const slot=slots.get(e.id);e.pendingFormation={key,leaderId:leader.id,dx:slot.x-anchor.x,dy:slot.y-anchor.y,finalX:slot.x,finalY:slot.y};}}
+ function group(troops,destination,kind,append){troops=troops.filter(e=>units[e.type]?.speed>0);if(troops.length<2||append)return;const front=troops.filter(e=>formationRole(e)===0),leader=(front.length?front:troops).slice().sort((a,b)=>Math.hypot(a.x-destination.x,a.y-destination.y)-Math.hypot(b.x-destination.x,b.y-destination.y))[0],slots=formationSlots(troops,destination,kind),anchor=slots.get(leader.id),key=leader.id+':'+(++sequence);leader.breadcrumbs=[];for(const e of troops){const slot=slots.get(e.id);e.pendingFormation={key,leaderId:leader.id,dx:slot.x-anchor.x,dy:slot.y-anchor.y,finalX:slot.x,finalY:slot.y};}}
  const originalQueue=queueTask;queueTask=function(e,task,append=false){if(['move','attackMove'].includes(task.kind)){if(e.pendingFormation){task={...task,formation:e.pendingFormation};e.pendingFormation=null;}e.deployed=false;}else e.pendingFormation=null;return originalQueue(e,task,append);};
  const originalMove=move;move=function(e,x,y,dt,arrival){const distance=originalMove(e,x,y,dt,arrival);return e.order?.formation?.traveling?Math.max(8,distance):distance;};
  function init(){state.siegeBridges=[];for(let ri=0;ri<(state.rivers||[]).length;ri++){const r=state.rivers[ri];for(const y of r.bridges)state.siegeBridges.push({id:'bridge-'+ri+'-'+Math.round(y),river:ri,x:riverCenter(r,y),y,hp:900,max:900});}for(let i=0;i<state.players.length;i++)state.players[i].personality??=['balanced','raider','fortifier'][i%3];}
@@ -50,4 +50,97 @@
  function drawConvoy(c,e,p){c.save();c.rotate((e.facing||0)*.12);const wood=c.createLinearGradient(-18,-26,18,4);wood.addColorStop(0,'#bd9863');wood.addColorStop(1,'#4a3323');c.fillStyle=wood;c.fillRect(-19,-24,38,20);c.strokeStyle='#ddbe82';c.lineWidth=1;for(let i=0;i<5;i++){c.beginPath();c.moveTo(-18,-22+i*4);c.lineTo(18,-22+i*4);c.stroke();}for(const x of [-16,16]){c.fillStyle='#483124';c.beginPath();c.ellipse(x,1,7,9,0,0,7);c.fill();c.strokeStyle='#b3a17b';c.stroke();for(let i=0;i<6;i++){const a=i*Math.PI/3+state.time*(e.walkUntil>state.time?3:0);c.beginPath();c.moveTo(x,1);c.lineTo(x+Math.cos(a)*6,1+Math.sin(a)*8);c.stroke();}}c.fillStyle=p.color;c.fillRect(-11,-37,23,13);c.strokeStyle='#e9d5ad';c.strokeRect(-11,-37,23,13);c.restore();}
  function draw(c){for(const e of state.entities)if(e.impactAt!==undefined&&state.time>=e.impactAt&&state.time<e.impactAt+.15&&(e.owner===0||visible(e.x,e.y))){const f=(state.time-e.impactAt)/.15;c.save();c.globalAlpha=1-f;c.strokeStyle='#fff2be';c.lineWidth=2;c.beginPath();c.arc(e.x,e.y-renderAltitude(e)-15,3+f*12,0,7);c.stroke();c.restore();}for(const b of state.siegeBridges||[])if(visible(b.x,b.y)){c.save();c.translate(b.x,b.y);c.font='11px sans-serif';c.textAlign='center';c.fillStyle=b.hp>0?'#ece2bb':'#e88372';c.fillText(b.hp>0?'Bridge '+Math.ceil(b.hp)+'/900':'Broken bridge · repairable',0,-16);if(!b.hp){c.strokeStyle='#685441';c.lineWidth=6;c.beginPath();c.moveTo(-28,-7);c.lineTo(-8,9);c.moveTo(8,-9);c.lineTo(28,7);c.stroke();}c.restore();}}
  globalThis.KawWarfront={init,tick,group,deploy,bridgeOrder,draw,drawConvoy};
+})();
+
+/* Original faction specialists. Shared authoritative rules, with bounded effects. */
+(() => {
+ const roster={siegeMarshal:['human','Siege Marshal','forge',2],stormLancer:['human','Storm Lancer','barracks',3],chainbreaker:['horde','Chainbreaker','barracks',2],ashShaman:['horde','Ash Shaman','altar',2],rootColossus:['covenant','Root Colossus','barracks',3],bloomWeaver:['covenant','Bloom Weaver','altar',2]};
+ const definitions={siegeMarshal:{gold:180,wood:120,hp:300,damage:14,range:30,speed:65,time:18},stormLancer:{gold:210,wood:100,hp:280,damage:26,range:30,speed:120,time:18},chainbreaker:{gold:160,wood:90,hp:300,damage:24,range:30,speed:80,time:16},ashShaman:{gold:170,wood:120,hp:190,damage:17,range:170,speed:80,time:18},rootColossus:{gold:260,wood:180,hp:520,damage:36,range:190,speed:55,time:24},bloomWeaver:{gold:160,wood:130,hp:170,damage:12,range:150,speed:85,time:18},bloomPod:{gold:0,wood:0,hp:60,damage:0,range:0,speed:0,time:0}};
+ for(const [type,d]of Object.entries(definitions))units[type]={...d,time:d.time*PRODUCTION_TIME_SCALE};
+ for(const [type,[race,name]]of Object.entries(roster))names[race][type]=name;
+ names.covenant.bloomPod='Living Bloom';
+ const options=troopOptions;troopOptions=function(building,race){return [...options(building,race),...Object.entries(roster).filter(([,r])=>r[0]===race&&r[2]===building).map(([type])=>type)];};
+ const requirement=unitStrongholdRequirement;unitStrongholdRequirement=function(type,owner=0){return roster[type]?.[3]??requirement(type,owner);};
+ const appearance=unitAppearance;unitAppearance=function(type,race,owner=0){return definitions[type]?'specialist-'+type:appearance(type,race,owner);};
+ const scale=unitVisualScale;unitVisualScale=function(e){return scale(e)*(isBannerBearer(e)?1.5:e.type==='rootColossus'?1.65:e.type==='stormLancer'?1.45:e.type==='bloomPod'?.7:roster[e.type]?1.15:1);};
+ const cost=supplyCost;supplyCost=function(type){return type==='bloomPod'?0:cost(type);};
+ const used=supplyUsed;supplyUsed=function(owner,reservations=true){return used(owner,reservations)+(state.phoenixAshes||[]).filter(a=>a.owner===owner&&!a.trampled).length;};
+ Object.assign(unitAbilities,{
+  siegeMarshal:{name:'Deploy Aegis',description:'Protect artillery within 140 from ranged attacks by 35% for 8s · 20s cooldown',cooldown:20},
+  stormLancer:{name:'Storm Charge',description:'Charge an enemy 70–330 away along clear ground · 65 impact damage and 1s interruption · 18s cooldown',cooldown:18},
+  chainbreaker:{name:'Hooked Chain',description:'Pull a visible ground fighter within 230 along clear ground · 25 damage · 16s cooldown',cooldown:16},
+  ashShaman:{name:'Ash Veil',description:'Smoke protects nearby allies from ranged fire for 6s · Blood Pact costs 40 health for +15% allied damage for 8s · shared 20s cooldown',cooldown:20},
+  rootColossus:{name:'Root Down / Uproot',description:'Root in place: +20% root damage and longer root snare; takes +20% artillery damage · Move uproots',cooldown:1},
+  bloomWeaver:{name:'Plant Healing Bloom',description:'Destructible bloom heals 6 health/s within 110 for 25s; poison pods activate on ground enemies · shared 12s cooldown',cooldown:12}
+ });
+ // Plants and rebirth are not purchases; leave production telemetry unchanged.
+ function spawnEffectUnit(type,owner,x,y){const tracking=state.telemetryActive;state.telemetryActive=false;try{return entity(type,owner,x,y);}finally{state.telemetryActive=tracking;}}
+ const ability=unitAbility;unitAbility=function(e,aiControlled=false,mode){
+  if(!roster[e.type])return ability(e,aiControlled);
+  if(!state||paused||state.count>0||state.ended||e.hp<=0||e.building||e.owner!==0&&!aiControlled||(e.unitAbilityReady||0)>state.time)return false;
+  const type=e.type,def=unitAbilities[type];if(aiControlled&&type==='rootColossus'&&e.rooted)return false;if(aiControlled&&!mode&&type==='bloomWeaver'&&nearbyEnemies(e,150).length)mode='poison';if(aiControlled&&!mode&&type==='ashShaman'&&e.hp>e.max*.65&&state.entities.filter(t=>sameTeam(t.owner,e.owner)&&!t.building&&t.hp>0&&Math.hypot(t.x-e.x,t.y-e.y)<=140).length>=4)mode='pact';
+  if(mode!==undefined&&!((type==='ashShaman'&&mode==='pact')||(type==='bloomWeaver'&&mode==='poison')))return false;
+  if(type==='stormLancer'){
+   const target=nearbyEnemies(e,330).find(t=>!t.building&&!isFlying(t)&&Math.hypot(t.x-e.x,t.y-e.y)>70);
+   if(!target)return false;const d=Math.hypot(target.x-e.x,target.y-e.y),x=target.x+(e.x-target.x)/d*(target.size+e.size+5),y=target.y+(e.y-target.y)/d*(target.size+e.size+5);
+   if(!clearWallLine(e,x,y))return false;queueTask(e,{kind:'attack',target});e.charge={target,until:state.time+2.5};
+  }else if(type==='chainbreaker'){
+   const target=nearbyEnemies(e,230).find(t=>!t.building&&!isFlying(t)&&t.type!=='bloomPod');if(!target)return false;
+   const d=Math.hypot(target.x-e.x,target.y-e.y)||1,point={x:e.x+(target.x-e.x)/d*(e.size+target.size+16),y:e.y+(target.y-e.y)/d*(e.size+target.size+16)};
+   if(!clearWallLine(target,point.x,point.y))return false;dealAbilityDamage(e,target,25);target.chainPull={x:point.x,y:point.y,until:state.time+1,sourceId:e.id};e.chainCast={targetId:target.id,until:state.time+1};
+  }else if(type==='siegeMarshal'){queueTask(e,{kind:'hold'});e.aegisUntil=state.time+8;
+  }else if(type==='ashShaman'){
+   if(mode==='pact'){if(e.hp<=40)return false;e.hp-=40;for(const t of state.entities)if(sameTeam(t.owner,e.owner)&&!t.building&&t.hp>0&&Math.hypot(t.x-e.x,t.y-e.y)<=140)t.bloodPactUntil=state.time+8;burst(e.x,e.y,'magic',e.owner,.5);}else createSmoke(e,110,6);
+  }else if(type==='rootColossus'){e.rooted=!e.rooted;if(e.rooted)queueTask(e,{kind:'hold'});
+  }else if(type==='bloomWeaver'){
+   if(state.entities.filter(t=>t.owner===e.owner&&t.type==='bloomPod'&&t.hp>0).length>=6)return false;
+   const x=e.x+Math.cos(e.facing||0)*48,y=e.y+Math.sin(e.facing||0)*48;if(x<12||y<12||x>SIZE-12||y>SIZE-12||blockedGroundPoint(x,y,9)||state.entities.some(t=>t.hp>0&&!isFlying(t)&&Math.hypot(t.x-x,t.y-y)<t.size+13))return false;
+   const bloom=spawnEffectUnit('bloomPod',e.owner,x,y);bloom.bloomMode=mode==='poison'?'poison':'heal';bloom.maturesAt=state.time+1.5;bloom.expires=state.time+25;bloom.order={kind:'hold'};bloom.manualPassive=true;
+  }
+  e.unitAbilityReady=state.time+def.cooldown;e.action={kind:'attack',duration:.6,until:state.time+.6};return true;
+ };
+ const protection=rangedProtection;rangedProtection=function(target,attacker){let result=protection(target,attacker);if(target.type==='siege'&&(units[attacker.type]?.range||buildings[attacker.type]?.range||0)>=100&&state.entities.some(e=>sameTeam(e.owner,target.owner)&&e.type==='siegeMarshal'&&e.hp>0&&e.aegisUntil>state.time&&Math.hypot(e.x-target.x,e.y-target.y)<=140))result*=.65;return result;};
+ const speed=effectiveSpeed;effectiveSpeed=function(e){return e.rooted&&e.type==='rootColossus'?0:speed(e);};
+ const queue=queueTask;queueTask=function(e,o,append=false){if(e.type==='bloomPod')return;if(!append&&['move','attackMove'].includes(o.kind)){e.rooted=false;e.aegisUntil=null;}return queue(e,o,append);};
+ const aura=battleAuraMultiplier;battleAuraMultiplier=function(e){return aura(e)*(e.bloodPactUntil>state.time?1.15:1);};
+ const oldSupport=supportTick;supportTick=function(e,dt){
+  if(['move','attackMove'].includes(e.order?.kind)){e.rooted=false;if(e.type==='siegeMarshal')e.aegisUntil=null;}
+  if(e.chainPull){const pull=e.chainPull;if(pull.until<=state.time||Math.hypot(e.x-pull.x,e.y-pull.y)<4){e.chainPull=null;e.stunUntil=state.time+.5;}else{const d=Math.hypot(pull.x-e.x,pull.y-e.y),step=Math.min(240*dt,d),x=e.x+(pull.x-e.x)/d*step,y=e.y+(pull.y-e.y)/d*step;if(clearWallLine(e,x,y)){e.x=x;e.y=y;e.walkUntil=state.time+.1;}else e.chainPull=null;return true;}}
+  if(e.type==='bloomPod'){
+   if(e.expires<=state.time){e.hp=0;e.deathResolved=true;return true;}if(e.maturesAt>state.time)return true;
+   if(e.bloomMode==='poison'){const foe=nearbyEnemies(e,50).find(t=>!t.building&&!isFlying(t));if(foe){for(const t of nearbyEnemies(e,75).filter(t=>!t.building&&!isFlying(t)))t.burn={left:4,owner:e.owner,poison:true};e.hp=0;e.deathResolved=true;burst(e.x,e.y,'magic',e.owner,.5);}}
+   else for(const ally of state.entities)if(sameTeam(ally.owner,e.owner)&&!ally.building&&ally.hp>0&&Math.hypot(ally.x-e.x,ally.y-e.y)<=110)ally.hp=Math.min(ally.max,ally.hp+6*dt);
+   return true;
+  }
+  if(e.type==='rootColossus'&&e.order?.kind==='attack'&&isFlying(e.order.target))return true;
+  if(e.type==='rootColossus'&&!(e.stunUntil>state.time)&&!e.manualPassive&&!['stop','move'].includes(e.order?.kind)){
+   const target=e.order?.kind==='attack'?e.order.target:nearbyEnemies(e,e.rooted?190:250).find(t=>!isFlying(t));
+   if(target?.hp>0&&!isFlying(target)&&!target.hiddenInMine&&Math.hypot(e.x-target.x,e.y-target.y)<=units[e.type].range+target.size){
+    if(e.cool<=0){state.rootBursts??=[];const duration=Math.max(.35,Math.min(.9,Math.hypot(e.x-target.x,e.y-target.y)/300));state.rootBursts.push({owner:e.owner,sourceId:e.id,targetId:target.id,fromX:e.x,fromY:e.y,x:target.x,y:target.y,at:state.time,impactAt:state.time+duration,damage:36*(e.rooted?1.2:1)*battleAuraMultiplier(e)*(1+bannerAura(e,'bannerDamage')),snare:e.rooted?2:1});if(state.rootBursts.length>64)state.rootBursts.shift();e.cool=1.6;e.facing=Math.atan2(target.y-e.y,target.x-e.x);e.action={kind:'attack',duration:.6,until:state.time+.6};}return true;
+   }if(e.rooted)return true;
+  }return oldSupport(e,dt);
+ };
+ const readStats=characterStats;characterStats=function(e){const rows=readStats(e);if(e.type==='rootColossus'){const interval=rows.find(r=>r[0]==='Attack interval');if(interval)interval[1]='1.6s';const damage=rows.find(r=>r[0]==='Damage');if(damage)damage[1]=(Number(damage[1])*(e.rooted?1.2:1)).toFixed(1);rows.push(['Root stance',e.rooted?'Rooted · +20% damage':'Walking'],['Root attack','Ground targets · 1.6s interval']);}if(e.type==='air2'&&state.players[e.owner].faction==='human')rows.push(['Rebirth','2s ashes · returns at 50% health · ground enemies can trample']);return rows;};
+ const acquire=nearestCombatTarget;nearestCombatTarget=function(e,range=null){if(e.type!=='rootColossus')return acquire(e,range);return nearbyEnemies(e,range??250).filter(t=>!isFlying(t)).sort((a,b)=>Math.hypot(a.x-e.x,a.y-e.y)-Math.hypot(b.x-e.x,b.y-e.y))[0]||null;};
+ const deaths=resolveCombatDeaths;resolveCombatDeaths=function(){
+  state.phoenixAshes??=[];
+  for(const e of state.entities)if(e.hp<=0&&!e.deathResolved&&e.type==='air2'&&state.players[e.owner].faction==='human'){burst(e.x,e.y,'smoke',e.owner);state.phoenixAshes.push({id:e.id,owner:e.owner,x:e.x,y:e.y,at:state.time,reviveAt:state.time+2,facing:e.facing});}
+  deaths();state.ruins=(state.ruins||[]).filter(r=>!(r.type==='air2'&&state.players[r.owner].faction==='human'));
+ };
+ function tickSpecialists(dt){
+  state.phoenixAshes??=[];state.rootBursts??=[];
+  for(const ash of state.phoenixAshes){if(state.entities.some(t=>t.hp>0&&!t.building&&!isFlying(t)&&!t.hiddenInMine&&!sameTeam(t.owner,ash.owner)&&Math.hypot(t.x-ash.x,t.y-ash.y)<=22+t.size)){ash.trampled=true;burst(ash.x,ash.y,'dust',ash.owner,.4);}else if(state.time>=ash.reviveAt){const phoenix=spawnEffectUnit('air2',ash.owner,ash.x,ash.y);phoenix.hp=phoenix.max*.5;phoenix.facing=ash.facing;phoenix.order={kind:'hold'};phoenix.rebornAt=state.time;ash.trampled=true;burst(ash.x,ash.y,'blast',ash.owner,.7);}}
+  state.phoenixAshes=state.phoenixAshes.filter(a=>!a.trampled);
+  for(const root of state.rootBursts){if(!root.hit&&state.time>=root.impactAt){root.hit=true;const target=state.entities.find(t=>t.id===root.targetId&&t.hp>0&&!isFlying(t)&&!t.hiddenInMine&&Math.hypot(t.x-root.x,t.y-root.y)<targetRadius(t));if(target){dealAbilityDamage({owner:root.owner},target,root.damage);target.lastDamageType='rootColossus';if(!target.building)target.webSlowUntil=state.time+root.snare;}burst(root.x,root.y,'wood',root.owner,.4);}}
+  state.rootBursts=state.rootBursts.filter(r=>state.time-r.impactAt<.65);
+ }
+ function targetRadius(t){return 60+t.size;}
+ const oldTick=KawWarfront.tick;KawWarfront.tick=function(dt){oldTick(dt);tickSpecialists(dt);};
+ // AI can finish a rebirth by approaching visible ashes, without hidden-map knowledge.
+ const oldAI=ai;ai=function(schedule=false){oldAI(schedule);for(let owner=0;owner<state.players.length;owner++){const p=state.players[owner];if(!p.ai||(p.ashHuntAt||0)>state.time)continue;p.ashHuntAt=state.time+1;const ash=(state.phoenixAshes||[]).find(a=>!sameTeam(a.owner,owner)&&canSee(owner,a.x,a.y));if(!ash)continue;const fighter=state.entities.filter(e=>e.owner===owner&&e.hp>0&&!e.building&&!isFlying(e)&&e.type!=='worker'&&units[e.type].damage>0&&Math.hypot(e.x-ash.x,e.y-ash.y)<450).sort((a,b)=>Math.hypot(a.x-ash.x,a.y-ash.y)-Math.hypot(b.x-ash.x,b.y-ash.y))[0];if(fighter)queueTask(fighter,{kind:'move',x:ash.x,y:ash.y});}};
+ const draw=KawWarfront.draw;KawWarfront.draw=function(c){draw(c);if(window.KawBattlefield?.active)return;c.save();
+  for(const ash of state.phoenixAshes||[])if(ash.owner===0||visible(ash.x,ash.y)){const y=ash.y-terrainHeight(ash.x,ash.y);c.fillStyle='#393c3b';c.beginPath();c.ellipse(ash.x,y,22,9,0,0,7);c.fill();c.fillStyle='#f69c46';for(let i=0;i<7;i++)c.fillRect(ash.x+Math.cos(i*2.4)*16,y+Math.sin(i*2.4)*6,2,2);c.font='10px sans-serif';c.fillText('Revive '+Math.max(0,ash.reviveAt-state.time).toFixed(1)+'s',ash.x,y-15);}
+  for(const r of state.rootBursts||[])if(visible(r.x,r.y)||visible(r.fromX,r.fromY)){const progress=Math.min(1,(state.time-r.at)/(r.impactAt-r.at));c.strokeStyle='#705232';c.lineWidth=4;c.beginPath();c.moveTo(r.fromX,r.fromY);for(let i=1;i<=12*progress;i++){const t=i/12;c.lineTo(r.fromX+(r.x-r.fromX)*t+Math.sin(i*2.1)*4,r.fromY+(r.y-r.fromY)*t-terrainHeight(r.fromX+(r.x-r.fromX)*t,r.fromY+(r.y-r.fromY)*t));}c.stroke();if(progress>=1){const h=30*Math.sin(Math.min(1,(state.time-r.impactAt)/.65)*Math.PI);for(let i=-2;i<=2;i++){c.beginPath();c.moveTo(r.x+i*7-4,r.y);c.lineTo(r.x+i*7,r.y-h);c.lineTo(r.x+i*7+4,r.y);c.fillStyle='#7c6438';c.fill();}}}
+  c.restore();};
+ globalThis.KawSpecialists={roster,tick:tickSpecialists};
 })();

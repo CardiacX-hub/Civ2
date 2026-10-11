@@ -9,10 +9,11 @@
    victory:['strongholds','elimination','domination','convoy','survival'].includes(input.victory)?input.victory:'strongholds'};
  }
  const teamKey=owner=>state.players[owner].team?'team:'+state.players[owner].team:'player:'+owner;
- function contender(owner){return state.entities.some(e=>sameTeam(e.owner,owner)&&e.hp>0&&(state.rules?.victory==='elimination'||e.type==='base'));}
+ function contender(owner){return state.rules?.victory==='elimination'&&(state.phoenixAshes||[]).some(a=>sameTeam(a.owner,owner)&&!a.trampled)||state.entities.some(e=>sameTeam(e.owner,owner)&&e.hp>0&&(state.rules?.victory==='elimination'||e.type==='base'));}
  function outcome(){
   const mode=state.rules?.victory||'strongholds',living=new Set();
   for(const e of state.entities)if(e.hp>0&&(mode==='elimination'||e.type==='base'))living.add(teamKey(e.owner));
+  if(mode==='elimination')for(const a of state.phoenixAshes||[])if(!a.trampled)living.add(teamKey(a.owner));
   if(mode==='survival'&&state.time>=900){const humanTeams=new Set(state.players.flatMap((p,i)=>!p.initialAI&&contender(i)?[teamKey(i)]:[]));return {winners:[...humanTeams],reason:'survival'};}
   if(living.size<=1)return {winners:[...living],reason:mode};
   if(mode==='convoy'&&state.convoyRace?.winner)return {winners:[state.convoyRace.winner],reason:'convoy'};
