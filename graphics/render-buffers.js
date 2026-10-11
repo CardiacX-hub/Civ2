@@ -6,7 +6,8 @@ import {applyDeformation} from './vertex-deformation.js';
  * Restore every scene/material/render state even if a render throws. */
 export function createRenderBuffers(renderer,scene,camera){
  const makeTarget=()=>{const target=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType,depthBuffer:true});target.depthTexture=new THREE.DepthTexture(1,1,THREE.UnsignedIntType);target.texture.generateMipmaps=false;return target;};
- const surface=makeTarget(),opaque=makeTarget(),cache=new Map(),saved=[];let frame=0;
+ const surface=makeTarget(),opaque=makeTarget();surface.texture.magFilter=surface.texture.minFilter=THREE.NearestFilter;
+ const cache=new Map(),saved=[];let frame=0;
  function override(source,depth){const key=source.uuid+':'+depth;if(cache.has(key)){const entry=cache.get(key);entry.used=frame;return entry.material;}
   const material=depth?new THREE.MeshDepthMaterial({depthPacking:THREE.BasicDepthPacking}):new THREE.MeshNormalMaterial({normalMap:source.normalMap,normalScale:source.normalScale?.clone(),bumpMap:source.bumpMap,bumpScale:source.bumpScale});
   material.side=source.side;material.flatShading=!!source.userData.kawWater||!!source.flatShading;material.alphaMap=source.alphaMap;material.alphaTest=source.alphaTest;material.map=source.map;material.blending=THREE.NoBlending;material.toneMapped=false;material.fog=false;

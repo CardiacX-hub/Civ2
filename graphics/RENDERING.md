@@ -14,8 +14,8 @@ or a particular frame rate.
 2. Use the live 3D renderer. Settings → Graphics detail independently controls
    shadows, texture filtering, wind grass, GTAO/bloom, SSR, atmosphere, and DOF.
 3. SSR, atmosphere and DOF default off to preserve the existing gameplay budget.
-   Enable SSR and atmosphere for the full pipeline; keep DOF off for overhead
-   battles so distant units remain readable. Options persist between sessions.
+   Enable SSR and atmosphere for the full pipeline; DOF is restricted to explicitly cinematic cameras;
+   gameplay cameras stay sharp even if an old saved preference enables it. Options persist between sessions.
 4. Build the bundles again after editing graphics sources. GitHub Pages publishes
    these bundles; it cannot resolve bare `three` imports in source modules.
 
@@ -135,6 +135,7 @@ height falloff, drifting density, Beer–Lambert transmission, Henyey–Greenste
 forward scattering, and visibility from the far sun cascade. Six samples are
 used by low/balanced, twelve by high. This is a bounded fullscreen integration,
 not a temporally accumulated volumetric grid or multiple-scattering solution.
+Extinction is capped at 12% to preserve battlefield contrast.
 It supports orthographic and perspective projection. ACES filmic tone mapping,
 subtle HDR bloom and SMAA use maintained Three addons. Camera matrices are bound
 by reference, not captured at pass construction, so resizing stays correct.
@@ -146,8 +147,10 @@ graphics.effects.atmosphere.uniforms.density.value = .0015;
 graphics.setDepthOfField({enabled:true, focus:160, aperture:.000015, maxblur:.006});
 ```
 
-DOF is adjustable and intentionally restrained; it uses the addon Bokeh pass.
-Enable it for cinematic views and disable it during competitive play.
+DOF uses the addon Bokeh pass and is adjustable only on a pipeline created with
+`cinematic:true`. Calling setDepthOfField on a gameplay pipeline cannot enable
+blur. SSR surface masks use nearest filtering to avoid bleeding reflections over
+unit and building silhouettes.
 
 ## Budgets and validation
 

@@ -34,6 +34,8 @@ export function createAtmospherePass(buffers,camera,csm,{steps=8,density=.003}={
  void main(){vec4 source=texture2D(tDiffuse,vUv);float depth=texture2D(tDepth,vUv).r;vec3 end=viewPoint(vUv,min(depth,.9999)),begin=viewPoint(vUv,0.);float distance=min(350.,length(end-begin)),stepLength=distance/float(${Math.max(4,Math.min(16,Math.round(steps)))});vec3 direction=normalize(end-begin);float transmission=1.;vec3 scatter=vec3(0.);
   float mu=dot(normalize(mat3(cameraWorld)*direction),normalize(sunDirection));float g=.45,phase=(1.-g*g)/(12.56637*pow(max(.01,1.+g*g-2.*g*mu),1.5));
   for(int i=0;i<${Math.max(4,Math.min(16,Math.round(steps)))};i++){vec3 p=begin+direction*(float(i)+.5)*stepLength;vec3 world=(cameraWorld*vec4(p,1.)).xyz;float height=exp(-max(0.,world.y)*.035);float cloud=.8+.2*sin(world.x*.035+sin(world.z*.04+time*.08));float attenuation=exp(-density*height*cloud*stepLength);vec3 illumination=fogColor*.35+sunColor*visibility(world)*phase*2.5;scatter+=transmission*(1.-attenuation)*illumination;transmission*=attenuation;}
-  gl_FragColor=vec4(source.rgb*transmission+scatter,source.a);
+  // Cap extinction to retain readable unit edges at long RTS zoom distances.
+  float hazeStrength=min(1.,.12/max(1.-transmission,.0001));
+  gl_FragColor=vec4(source.rgb*mix(1.,transmission,hazeStrength)+scatter*hazeStrength,source.a);
  }`});pass.name='Height atmosphere and shadowed sun shafts';pass.uniforms.tDepth.value=buffers.opaque.depthTexture;pass.uniforms.inverseProjection.value=camera.projectionMatrixInverse;pass.uniforms.projection.value=camera.projectionMatrix;pass.uniforms.cameraWorld.value=camera.matrixWorld;pass.uniforms.shadowMatrix.value=light.shadow.matrix;pass.update=(time,shadows=true)=>{pass.uniforms.time.value=time;pass.uniforms.sunColor.value.copy(light.color).multiplyScalar(light.intensity*.35);pass.uniforms.shadowMap.value=light.shadow.map?.texture||null;pass.uniforms.hasShadow.value=shadows&&light.shadow.map?1:0;};return pass;
 }
