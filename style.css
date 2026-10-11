@@ -198,3 +198,17 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 /* Two compact resource rows fit inside the existing 46px desktop header. */
 @media(min-width:951px) and (pointer:fine){#game #resources{display:grid;grid-template-columns:repeat(2,max-content);justify-content:center;column-gap:10px;row-gap:3px}}
 @media(min-width:951px) and (max-width:1200px) and (pointer:fine){#game header{gap:4px}#game header .brand{display:none}#game header>button{font-size:9px;padding:4px 8px}}
+
+/* Category tabs replace the long building catalogue with four readable cards. */
+#buildActions .construction-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;margin-bottom:6px}
+#buildActions .construction-tabs button{min-width:0!important;padding:5px 2px;min-height:30px;font-size:10px!important;text-align:center;max-height:none}
+#buildActions .construction-tabs button[aria-pressed=true]{background:#46553b;border-color:#e0bf79;color:#fff0c8}
+#buildActions .action-section{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+#buildActions .action-section h3{grid-column:1/-1;margin:0 0 3px;font-size:9px}
+#buildActions .build-action{display:flex;align-items:center;gap:5px;min-width:0!important;text-align:left;min-height:45px;max-height:none;padding:5px}
+#buildActions .build-action>span{min-width:0;flex:1}#buildActions .build-action small{white-space:normal!important;line-height:12px}
+#buildActions .build-action img{width:28px;height:32px;flex-shrink:0}
+@media(min-width:1000px) and (pointer:fine){.orders:has(#constructionPane:not([hidden])){grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)}#buildActions{margin-top:4px}.construction-heading small{display:none}}
+@media(pointer:coarse),(max-width:700px){#buildActions .construction-tabs button{min-height:44px}#buildActions .build-action{min-height:58px!important}#buildActions .action-section h3{display:none}}
+#buildActions .action-section{margin:0}#buildActions .action-section h3{display:none}
+@media(pointer:coarse),(max-width:700px){#constructionPane .construction-heading{display:none}#buildActions{margin-top:0}}

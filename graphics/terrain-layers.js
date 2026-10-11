@@ -10,7 +10,7 @@ export function createTerrainLayers(size=256){
   const hash=(a,b)=>{a=((a%frequency)+frequency)%frequency;b=((b%frequency)+frequency)%frequency;let h=Math.imul(a+seed*97,374761393)^Math.imul(b+seed*31,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967295;};
   const a=hash(ix,iy),b=hash(ix+1,iy),c=hash(ix,iy+1),d=hash(ix+1,iy+1);return (a+(b-a)*sx)*(1-sy)+(c+(d-c)*sx)*sy;};
  const leaf=(x,y)=>{const u=((x*12)%1+1)%1,v=((y*12)%1+1)%1,w=.44*Math.sin(v*Math.PI),edge=w-Math.abs(u-.5);return Math.max(0,Math.min(1,edge*24))*(.5+.3*Math.exp(-Math.abs(u-.5)*45)+.2*Math.pow(Math.max(0,Math.cos((v-Math.abs(u-.5)*.7)*36)),10));};
- const height=(x,y,l)=>Math.min(.99,.36+.25*noise(x,y,4,l+1)+.20*noise(x,y,16,l+7)+.12*noise(x,y,64,l+19)+(l===0?leaf(x,y)*.10:0));
+ const height=(x,y,l)=>Math.min(.99,.36+.25*noise(x,y,4,l+1)+.20*noise(x,y,16,l+7)+(l===0?.035:.12)*noise(x,y,64,l+19)+(l===0?leaf(x,y)*.10:0));
  for(let l=0;l<3;l++)for(let y=0;y<size;y++)for(let x=0;x<size;x++){
   const i=((l*size+y)*size+x)*4,h=height(x/size,y/size,l),dx=height((x+1)/size,y/size,l)-height((x-1)/size,y/size,l),dy=height(x/size,(y+1)/size,l)-height(x/size,(y-1)/size,l);
   const inv=1/Math.hypot(dx*1.2,dy*1.2,1),n={x:-dx*1.2*inv,y:-dy*1.2*inv,z:inv};

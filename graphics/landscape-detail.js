@@ -24,10 +24,10 @@ export function meadowTexture(){
 export function addWindGrass(pipeline,c,time){
  const geometry=createLeafGrassGeometry(),material=createLeafGrassMaterial();pipeline.prepareMaterial(material,{sss:.24,rim:.06});
  const chunks=new Map(),dummy=new THREE.Object3D(),palette=c.state.map==='canyon'?[0xad8d59,0x987b4d,0xb69b6b,0x8c724a]:[0x315f2e,0x264e26,0x3a6830,0x224923];
- const add=(x,z,i,bank=false)=>{if(x<0||z<0||x>c.SIZE||z>c.SIZE||c.riverAt(x,z))return;dummy.position.set(x*.1,c.terrainHeight(x,z)*.1+.02,z*.1);dummy.rotation.y=i*2.399;dummy.scale.set(.75+i%5*.09,(bank?1.35:.65)+i%7*.085,.8);dummy.updateMatrix();const key=Math.floor(x/(c.SIZE/8))+':'+Math.floor(z/(c.SIZE/8));if(!chunks.has(key))chunks.set(key,{matrices:[],tints:[]});const chunk=chunks.get(key);chunk.matrices.push(dummy.matrix.clone());chunk.tints.push(new THREE.Color(palette[i%palette.length]));};
+ const add=(x,z,i,bank=false)=>{if(x<0||z<0||x>c.SIZE||z>c.SIZE||c.riverAt(x,z))return;dummy.position.set(x*.1,c.terrainHeight(x,z)*.1+.02,z*.1);dummy.rotation.y=i*2.399;dummy.scale.set(1+i%5*.10,(bank?1.35:.65)+i%7*.085,1.05);dummy.updateMatrix();const key=Math.floor(x/(c.SIZE/8))+':'+Math.floor(z/(c.SIZE/8));if(!chunks.has(key))chunks.set(key,{matrices:[],tints:[]});const chunk=chunks.get(key);chunk.matrices.push(dummy.matrix.clone());chunk.tints.push(new THREE.Color(palette[i%palette.length]));};
  // Even, jittered coverage prevents bare patches. Spatial chunks remain cullable.
  // Short field blades preserve silhouettes; taller reeds are restricted to banks.
- const spacing=window.KawVisual?.quality==='low'?18:14;
+ const spacing=window.KawVisual?.quality==='low'?14:window.KawVisual?.quality==='high'?10:12;
  let index=0;for(let z=spacing/2;z<c.SIZE;z+=spacing)for(let x=spacing/2;x<c.SIZE;x+=spacing){
   const i=index++,jitter=spacing*.18;
   add(x+Math.sin(i*12.9898)*jitter,z+Math.sin(i*7.233)*jitter,i);
