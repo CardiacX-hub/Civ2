@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '24'
       - name: Test game simulation
-        run: npm test
+        run: node tools/ci-tests.cjs
       - uses: actions/configure-pages@v5
       - name: Prepare browser game
         run: |
