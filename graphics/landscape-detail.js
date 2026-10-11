@@ -1,5 +1,6 @@
 /** Instanced, deterministic landscape detail. These decorations never alter navigation. */
 import * as THREE from 'three';
+import {attachDeformation,attachShadowDeformation} from './vertex-deformation.js';
 /** Seamless overlapping blades cover the soil even beyond the geometry detail range.
  * Wrapped strokes prevent tile seams; baked detail costs no per-frame CPU work. */
 export function meadowTexture(){
@@ -37,9 +38,7 @@ export function addWindGrass(pipeline,c,time){
  // Two uneven grass/reed lines follow each actual bank, leaving bridge approaches open.
  for(const river of c.state.rivers||[])for(let z=river.points[0].y;z<=river.points.at(-1).y;z+=7){if(river.bridges.some(y=>Math.abs(y-z)<65))continue;for(const side of [-1,1])for(let k=0;k<3;k++){const x=c.riverCenter(river,z)+side*(river.width/2+5+k*6);add(x,z+Math.sin(z+k)*3,Math.floor(z)+k,true);}}
  for(const {matrices,tints} of chunks.values()){const mesh=pipeline.addInstances(geometry,material,matrices);tints.forEach((color,i)=>mesh.setColorAt(i,color));mesh.instanceColor.needsUpdate=true;mesh.castShadow=false;mesh.userData.noShadow=true;mesh.userData.kawGrass=true;}
- const prepare=material.onBeforeCompile,key=material.customProgramCacheKey;
- material.onBeforeCompile=shader=>{prepare(shader);shader.uniforms.grassTime=time;shader.vertexShader='uniform float grassTime;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvec3 grassAnchor=instanceMatrix[3].xyz;float bend=position.y*position.y;transformed.x+=bend*(sin(grassTime*1.8+grassAnchor.x*.29+grassAnchor.z*.21)*.17+sin(grassTime*.73+grassAnchor.z*.12)*.09);transformed.z+=bend*cos(grassTime*1.2+grassAnchor.x*.18)*.09;');};
- material.customProgramCacheKey=()=>key()+':rooted-wind-grass-v1';material.needsUpdate=true;
+ attachDeformation(material,{key:'rooted-grass-v2',uniforms:{grassTime:time},declarations:'uniform float grassTime;',code:'vec3 grassAnchor=instanceMatrix[3].xyz;float bend=position.y*position.y;transformed.x+=bend*(sin(grassTime*1.8+grassAnchor.x*.29+grassAnchor.z*.21)*.17+sin(grassTime*.73+grassAnchor.z*.12)*.09);transformed.z+=bend*cos(grassTime*1.2+grassAnchor.x*.18)*.09;'});
 }
 /** Subdivided sloping cliff faces with uneven ledges; tops stay aligned to the playable plateau. */
 export function cliffFace(points,x0,z0,x1,z1,h0,h1,center){
@@ -53,10 +52,8 @@ export function prepareWindTree(model,time,height){
  model.traverse(mesh=>{if(!mesh.isMesh)return;
   const array=Array.isArray(mesh.material),materials=array?mesh.material:[mesh.material];
   mesh.material=materials.map(source=>{const material=source.clone(),prepare=source.onBeforeCompile,key=source.customProgramCacheKey;
-   material.onBeforeCompile=shader=>{prepare.call(material,shader);shader.uniforms.treeWindTime=time;shader.uniforms.treeWindHeight={value:height};
-    shader.vertexShader='uniform float treeWindTime;uniform float treeWindHeight;\n'+shader.vertexShader;
-    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nfloat crown=clamp(position.y/treeWindHeight,0.0,1.0);vec3 anchor=modelMatrix[3].xyz;float gust=sin(treeWindTime*1.8+anchor.x*.29+anchor.z*.21)*.65+sin(treeWindTime*.73+anchor.z*.12)*.35;transformed.x+=crown*crown*treeWindHeight*.035*gust;transformed.z+=crown*crown*treeWindHeight*.015*cos(treeWindTime*1.2+anchor.x*.18);');
-   };material.customProgramCacheKey=()=>key.call(source)+':rooted-tree-breeze-v1';return material;});
-  if(!array)mesh.material=mesh.material[0];
+   material.onBeforeCompile=shader=>prepare.call(material,shader);material.customProgramCacheKey=()=>key.call(source);
+   attachDeformation(material,{key:'rooted-tree-v2',uniforms:{treeWindTime:time,treeWindHeight:{value:height}},declarations:'uniform float treeWindTime,treeWindHeight;',code:'float crown=clamp(position.y/treeWindHeight,0.0,1.0);vec3 anchor=modelMatrix[3].xyz;float gust=sin(treeWindTime*1.8+anchor.x*.29+anchor.z*.21)*.65+sin(treeWindTime*.73+anchor.z*.12)*.35;transformed.x+=crown*crown*treeWindHeight*.035*gust;transformed.z+=crown*crown*treeWindHeight*.015*cos(treeWindTime*1.2+anchor.x*.18);'});return material;});
+  if(!array)mesh.material=mesh.material[0];attachShadowDeformation(mesh);
  });
 }

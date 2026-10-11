@@ -1,5 +1,5 @@
-/** Live-geometry pipeline. This module is a migration kit / rendering lab;
- * sprite matches use visual-quality.js, because sprites have no normal/depth buffers. */
+/** Live battlefield HDR pipeline. Screen-space effects require actual geometry;
+ * the optional classic sprite renderer continues to use visual-quality.js. */
 import * as THREE from 'three';
 import {lightingStandard,surfaceStandard} from './appearance-standards.js';
 import {CSM} from 'three/addons/csm/CSM.js';
@@ -12,6 +12,8 @@ import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {SMAAPass} from 'three/addons/postprocessing/SMAAPass.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {createRenderBuffers} from './render-buffers.js';
+import {createReflectionPass,createAtmospherePass} from './screen-effects.js';
 import {createTerrainMaterial} from './terrain-material.js';
 export {createTerrainMaterial};
 export {AnimationMixer,Matrix4,Vector3} from 'three';
@@ -35,9 +37,12 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
  target.samples=Math.min(quality==='low'?2:4,renderer.capabilities.maxSamples||0);
  const composer=new EffectComposer(renderer,target);composer.addPass(new RenderPass(scene,camera));
  const ao=new GTAOPass(scene,camera,1,1);ao.enabled=p.ao;ao.blendIntensity=.65;ao.updateGtaoMaterial({radius:3,distanceExponent:1.8,thickness:1});composer.addPass(ao);
+ const buffers=createRenderBuffers(renderer,scene,camera),resolution={value:new THREE.Vector2(1,1)};
+ const reflections=createReflectionPass(buffers,camera,{steps:quality==='high'?32:16});reflections.enabled=detail.reflections===true;composer.addPass(reflections);
+ const atmosphere=createAtmospherePass(buffers,camera,csm,{steps:quality==='high'?12:6,density:.0015});atmosphere.enabled=detail.atmosphere===true;composer.addPass(atmosphere);
  const bloom=new UnrealBloomPass(new THREE.Vector2(1,1),.12,.35,1.2);bloom.enabled=p.bloom;composer.addPass(bloom);
- // DOF is deliberately off in RTS play. Enable only for a menu/cinematic camera.
- const dof=new BokehPass(scene,camera,{focus:160,aperture:.000015,maxblur:.006});dof.enabled=cinematic;composer.addPass(dof);
+ // DOF is opt-in: keep the overhead competitive camera sharp by default.
+ const dof=new BokehPass(scene,camera,{focus:160,aperture:.000015,maxblur:.006});dof.enabled=cinematic||detail.dof===true;composer.addPass(dof);
  composer.addPass(new OutputPass());const aa=new SMAAPass();composer.addPass(aa);
  const weather={wetness:{value:0},weathering:{value:.12},rimStrength:{value:.12}};
  const trackedMaterials=new Set(),emitters=[],casterPosition=new THREE.Vector3();let width=0,height=0;
@@ -66,10 +71,10 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
  function addLOD(levels){const lod=new THREE.LOD();for(const {object,distance} of levels)lod.addLevel(object,distance);prepare(lod);return lod;}
  function addInstances(geometry,material,matrices){prepareMaterial(material);const mesh=new THREE.InstancedMesh(geometry,material,matrices.length);matrices.forEach((m,i)=>mesh.setMatrixAt(i,m));mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();return prepare(mesh);}
  function emissiveLight(position,color,intensity=8,distance=30){if(emitters.length>=8)return null;const light=new THREE.PointLight(color,intensity,distance,2);light.position.copy(position);light.castShadow=false;scene.add(light);emitters.push(light);return light;}
- function resize(){const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);if(w===width&&h===height)return;width=w;height=h;renderer.setSize(w,h,false);composer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();csm.updateFrustums();}
- function render(){bloom.enabled=p.bloom&&window.KawHUD?.settings.reduced!==true;renderer.info.reset();resize();renderer.shadowMap.enabled=window.KawExperience?.settings.shadows!==false;scene.traverse(o=>{if(o.isMesh&&o.visible){o.getWorldPosition(casterPosition);o.castShadow=!o.userData.noShadow&&casterPosition.distanceTo(camera.position)<p.distance;}});csm.update();for(const e of emitters)e.visible=e.position.distanceTo(camera.position)<p.distance;composer.render();}
- function dispose(){csm.remove();csm.dispose();const textures=new Set();for(const m of trackedMaterials){for(const value of Object.values(m))if(value?.isTexture)textures.add(value);m.dispose();}for(const t of textures)t.dispose();scene.traverse(o=>{if(o.geometry?.userData.lowDetail&&o.geometry.userData.lowDetail!==o.geometry)o.geometry.userData.lowDetail.dispose();o.geometry?.dispose();if(o.isSkinnedMesh)o.skeleton.dispose();});for(const pass of composer.passes)pass.dispose?.();composer.dispose();environment.dispose();renderer.dispose();}
- return {renderer,scene,camera,csm,effects:{ao,bloom,dof,aa},weather,prepare,prepareMaterial,loadAsset,addLOD,addInstances,emissiveLight,render,resize,dispose};
+ function resize(){const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);if(w===width&&h===height)return;width=w;height=h;renderer.setSize(w,h,false);composer.setSize(w,h);resolution.value.set(Math.round(w*p.dpr),Math.round(h*p.dpr));buffers.resize(Math.max(1,Math.round(w*p.dpr*.5)),Math.max(1,Math.round(h*p.dpr*.5)));camera.aspect=w/h;camera.updateProjectionMatrix();csm.updateFrustums();}
+ function render(time=0){bloom.enabled=p.bloom&&window.KawHUD?.settings.reduced!==true;renderer.info.reset();resize();renderer.shadowMap.enabled=detail.shadows!=='off'&&globalThis.KawExperience?.settings.shadows!==false;scene.traverse(o=>{if(o.isMesh&&o.visible){o.getWorldPosition(casterPosition);o.castShadow=!o.userData.noShadow&&casterPosition.distanceTo(camera.position)<p.distance;}});camera.updateMatrixWorld();csm.update();for(const e of emitters)e.visible=e.position.distanceTo(camera.position)<p.distance;if(reflections.enabled||atmosphere.enabled||[...trackedMaterials].some(m=>m.userData.kawWater))buffers.capture(reflections.enabled);atmosphere.update(time,renderer.shadowMap.enabled);composer.render();}
+ function dispose(){scene.traverse(o=>{if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])trackedMaterials.add(m);});buffers.dispose();csm.remove();csm.dispose();const textures=new Set();for(const m of trackedMaterials){for(const value of Object.values(m))if(value?.isTexture)textures.add(value);for(const t of m.userData.ownedTextures||[])textures.add(t);m.dispose();}for(const t of textures)t.dispose();scene.traverse(o=>{if(o.geometry?.userData.lowDetail&&o.geometry.userData.lowDetail!==o.geometry)o.geometry.userData.lowDetail.dispose();o.geometry?.dispose();o.customDepthMaterial?.dispose();if(o.isSkinnedMesh)o.skeleton.dispose();});for(const pass of composer.passes)pass.dispose?.();composer.dispose();environment.dispose();renderer.dispose();}
+ return {renderer,scene,camera,csm,effects:{ao,reflections,atmosphere,bloom,dof,aa},buffers,resolution,setSun({direction,intensity,color}={}){if(direction?.lengthSq()>1e-8)csm.lightDirection.copy(direction).normalize();for(const light of csm.lights){if(intensity!==undefined)light.intensity=Math.max(0,intensity);if(color!==undefined)light.color.set(color);}atmosphere.uniforms.sunDirection.value.copy(csm.lightDirection).negate();if(color!==undefined)atmosphere.uniforms.sunColor.value.set(color);csm.update();},setDepthOfField({enabled=false,focus=160,aperture=.000015,maxblur=.006}={}){dof.enabled=enabled;dof.uniforms.focus.value=Math.max(.5,focus);dof.uniforms.aperture.value=THREE.MathUtils.clamp(aperture,0,.0001);dof.uniforms.maxblur.value=THREE.MathUtils.clamp(maxblur,0,.015);},weather,prepare,prepareMaterial,loadAsset,addLOD,addInstances,emissiveLight,render,resize,dispose};
 }
 /** Original calibration scene: shaded armor, foliage, instanced trees and wet ground. */
 export function createDemo(canvas,options){const p=createPipeline(canvas,options),metal=new THREE.MeshPhysicalMaterial({color:0xadb8bd,metalness:.9,roughness:.3,clearcoat:.2});

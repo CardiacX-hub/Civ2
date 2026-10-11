@@ -1,6 +1,8 @@
 # Civ2 — Kingdoms at War
 
 
+Rendering setup, shader modules, texture formats, controls and performance budgets: [RTS rendering guide](graphics/RENDERING.md).
+
 A browser RTS with live 3D models and an optional Classic renderer. Run `npm start`, then open the served game on port 3000. Run `npm test` for simulation smoke tests.
 
 Choose the human **Dawnward**, the orc/troll **The Dominion**, or the wilderness clans of **The Verdant Covenant**, customize banners, and play against up to five AI opponents. Each side begins with a stronghold and four collectors. Victory requires destroying every opposing stronghold; losing your own ends the game.

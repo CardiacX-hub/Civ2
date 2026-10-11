@@ -1,12 +1,52 @@
 import * as THREE from 'three';
-/** Vertex normals provide slope; world-space masks avoid seams between chunks.
- * Replace the procedural path mask with your own authored splat texture if needed. */
-export function createTerrainMaterial(pipeline,{grass=0x4a6436,dirt=0x79664e,rock=0x727474}={}){
- const material=new THREE.MeshStandardMaterial({color:grass,roughness:.95});pipeline.prepareMaterial(material,{rim:0});
+import {createTerrainLayers} from './terrain-layers.js';
+/** Height-priority splatting + signed triplanar projection. Array textures reduce
+ * sampler pressure: three PBR layers need three samplers, rather than nine.
+ * UV scale is inverse world tile size, so adjoining terrain chunks stay seamless. */
+export function createTerrainMaterial(pipeline,{grass=0x4a6436,dirt=0x79664e,rock=0x727474,layers=null,splatmap=null,tileScale=.18,heightBlend=.18,mapSize=400}={}){
+ const maps=layers||(pipeline.terrainLayers??=createTerrainLayers());
+ const material=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});pipeline.prepareMaterial(material,{rim:0});
+ material.userData.ownedTextures=layers?[]:Object.values(maps);
  const compile=material.onBeforeCompile;
- material.onBeforeCompile=shader=>{compile(shader);shader.uniforms.terrainGrass={value:new THREE.Color(grass)};shader.uniforms.terrainDirt={value:new THREE.Color(dirt)};shader.uniforms.terrainRock={value:new THREE.Color(rock)};
- shader.vertexShader='varying float terrainSlope;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <beginnormal_vertex>','#include <beginnormal_vertex>\nterrainSlope=1.-abs(normalize(mat3(modelMatrix)*objectNormal).y);');
- shader.fragmentShader='varying float terrainSlope;uniform vec3 terrainGrass,terrainDirt,terrainRock;\n'+shader.fragmentShader;
- shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\nfloat pathMask=smoothstep(.15,.65,.5+.5*sin(visualWorld.x*.025+sin(visualWorld.z*.019)));diffuseColor.rgb*=mix(mix(terrainGrass,terrainDirt,pathMask*.35),terrainRock,smoothstep(.35,.75,terrainSlope))/max(terrainGrass,vec3(.001));');};
- material.customProgramCacheKey=()=> 'kaw-terrain-v1';return material;
+ material.onBeforeCompile=shader=>{
+  compile(shader);Object.assign(shader.uniforms,{terrainAlbedo:{value:maps.albedoHeight},terrainNormal:{value:maps.normal},terrainOrm:{value:maps.orm},terrainScale:{value:tileScale},heightBlend:{value:Math.max(.01,heightBlend)},terrainSplat:{value:splatmap},terrainMapSize:{value:mapSize},terrainTint:{value:new THREE.Color(grass).multiplyScalar(2.5).addScalar(.55)}});
+  shader.vertexShader='varying vec3 terrainWorldNormal;\n'+shader.vertexShader;
+  shader.vertexShader=shader.vertexShader.replace('#include <beginnormal_vertex>','#include <beginnormal_vertex>\nterrainWorldNormal=normalize(mat3(modelMatrix)*objectNormal);');
+  shader.fragmentShader=`varying vec3 terrainWorldNormal;
+   uniform highp sampler2DArray terrainAlbedo,terrainNormal,terrainOrm;
+   uniform vec3 terrainTint;uniform sampler2D terrainSplat;uniform float terrainScale,heightBlend,terrainMapSize;
+   vec4 triSample(highp sampler2DArray tex,vec3 p,vec3 n,vec3 w,float layer){
+    return texture(tex,vec3(p.zy*vec2(sign(n.x),1.),layer))*w.x+
+     texture(tex,vec3(p.xz*vec2(sign(n.y),1.),layer))*w.y+
+     texture(tex,vec3(p.xy*vec2(-sign(n.z),1.),layer))*w.z;}
+   vec3 triNormal(vec3 p,vec3 n,vec3 w,float layer){
+    vec3 x=texture(terrainNormal,vec3(p.zy*vec2(sign(n.x),1.),layer)).xyz*2.-1.;
+    vec3 y=texture(terrainNormal,vec3(p.xz*vec2(sign(n.y),1.),layer)).xyz*2.-1.;
+    vec3 z=texture(terrainNormal,vec3(p.xy*vec2(-sign(n.z),1.),layer)).xyz*2.-1.;
+    return normalize(vec3(x.z*sign(n.x),x.y,x.x*sign(n.x))*w.x+
+     vec3(y.x*sign(n.y),y.z*sign(n.y),y.y)*w.y+
+     vec3(-z.x*sign(n.z),z.y,z.z*sign(n.z))*w.z);}
+   `+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+   vec3 tn=normalize(terrainWorldNormal),tw=pow(abs(tn),vec3(4.));tw/=max(dot(tw,vec3(1.)),.0001);
+   vec3 tp=visualWorld*terrainScale;
+   vec4 ta=triSample(terrainAlbedo,tp,tn,tw,0.),tb=triSample(terrainAlbedo,tp,tn,tw,1.),tc=triSample(terrainAlbedo,tp,tn,tw,2.);
+   float slope=1.-abs(tn.y);float rocky=smoothstep(.18,.65,slope);
+   vec3 masks=vec3((1.-rocky)*(.5+.22*sin(visualWorld.x*.04)*sin(visualWorld.z*.033)),(1.-rocky)*(.5-.22*sin(visualWorld.x*.04)*sin(visualWorld.z*.033)),rocky);
+   ${splatmap?'masks=texture2D(terrainSplat,visualWorld.xz/terrainMapSize).rgb;':''}
+   // Highest (height + coverage) layer wins; transition width softens boundaries.
+   vec3 priority=vec3(ta.a,tb.a,tc.a)+masks;float peak=max(priority.x,max(priority.y,priority.z));
+   vec3 blend=max(priority-peak+heightBlend,vec3(0.))*masks;blend/=max(dot(blend,vec3(1.)),.0001);
+   diffuseColor.rgb=(ta.rgb*blend.x+tb.rgb*blend.y+tc.rgb*blend.z)*terrainTint;
+   vec3 terrainProperties=triSample(terrainOrm,tp,tn,tw,0.).rgb*blend.x+triSample(terrainOrm,tp,tn,tw,1.).rgb*blend.y+triSample(terrainOrm,tp,tn,tw,2.).rgb*blend.z;
+  `);
+  shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(terrainProperties.r*(1.-wetness*.55),.08,1.);');
+  shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\nmetalnessFactor=terrainProperties.g;');
+  shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+   vec3 terrainDetail=triNormal(tp,tn,tw,0.)*blend.x+triNormal(tp,tn,tw,1.)*blend.y+triNormal(tp,tn,tw,2.)*blend.z;
+   normal=normalize(mat3(viewMatrix)*terrainDetail);
+  `);
+  shader.fragmentShader=shader.fragmentShader.replace('#include <aomap_fragment>','#include <aomap_fragment>\nreflectedLight.indirectDiffuse*=terrainProperties.b;reflectedLight.indirectSpecular*=terrainProperties.b;');
+ };
+ material.customProgramCacheKey=()=>`height-triplanar-pbr-v2:${!!splatmap}`;return material;
 }
