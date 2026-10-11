@@ -6,13 +6,14 @@
   return {resources:[100,300,600].includes(input.resources)?input.resources:100,
    speed:[.75,1,1.5].includes(input.speed)?input.speed:1,
    supply:[50,100,200].includes(input.supply)?input.supply:200,
-   victory:['strongholds','elimination','domination','convoy'].includes(input.victory)?input.victory:'strongholds'};
+   victory:['strongholds','elimination','domination','convoy','survival'].includes(input.victory)?input.victory:'strongholds'};
  }
  const teamKey=owner=>state.players[owner].team?'team:'+state.players[owner].team:'player:'+owner;
  function contender(owner){return state.entities.some(e=>sameTeam(e.owner,owner)&&e.hp>0&&(state.rules?.victory==='elimination'||e.type==='base'));}
  function outcome(){
   const mode=state.rules?.victory||'strongholds',living=new Set();
   for(const e of state.entities)if(e.hp>0&&(mode==='elimination'||e.type==='base'))living.add(teamKey(e.owner));
+  if(mode==='survival'&&state.time>=900){const humanTeams=new Set(state.players.flatMap((p,i)=>!p.initialAI&&contender(i)?[teamKey(i)]:[]));return {winners:[...humanTeams],reason:'survival'};}
   if(living.size<=1)return {winners:[...living],reason:mode};
   if(mode==='convoy'&&state.convoyRace?.winner)return {winners:[state.convoyRace.winner],reason:'convoy'};
   if(mode==='domination'&&state.domination?.winner)return {winners:[state.domination.winner],reason:'domination'};

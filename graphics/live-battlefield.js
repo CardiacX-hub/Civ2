@@ -1,6 +1,7 @@
 /** Live renderer consumes simulation snapshots; it never mutates gameplay entities.
  * Orthographic projection deliberately matches the existing screen/input coordinates. */
 import * as THREE from 'three';
+import {prepareRiver} from './water-surface.js';
 import {expandRigidSkin} from './rigid-skin.js';
 import {createUnitBatches} from './unit-batches.js';
 import {polishModel,disposePolish} from './battlefield-polish.js';
@@ -10,7 +11,7 @@ import {addWindGrass,cliffFace,meadowTexture,prepareWindTree} from './landscape-
 import {SimplifyModifier} from 'three/addons/modifiers/SimplifyModifier.js';
 import {clone as cloneRig} from 'three/addons/utils/SkeletonUtils.js';
 import {createPipeline,createTerrainMaterial} from './modern-renderer.js';
-const SCALE=.1,VERSION='20261011-army-and-replay-r5';
+const SCALE=.1,VERSION='20261011-commander-and-water-r6';
 const liveCanvas=document.createElement('canvas');liveCanvas.id='liveBattlefield';liveCanvas.style.cssText='position:absolute;pointer-events:none;z-index:0;display:none';const source=document.getElementById('world');source.insertAdjacentElement('beforebegin',liveCanvas);source.style.position='relative';source.style.zIndex='1';
 let wetness=0;try{wetness=Math.max(0,Math.min(1,Number(localStorage.getItem('kaw-ground-wetness'))||0));}catch{}const waterTime={value:0};
 let enabled=true;try{enabled=localStorage.getItem('kaw-live-3d')!=='off';}catch{}
@@ -43,7 +44,7 @@ function buildTerrain(c){const n=c.N,step=c.CELL,vertices=[],indices=[],uv=[];fo
  for(const [points,material] of [[topPoints,plateauMaterial],[cliffPoints,rockMaterial]])if(points.length){const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(points,3));const coords=[];for(let i=0;i<points.length;i+=3)coords.push(material===rockMaterial?(points[i]+points[i+2])/20:points[i]/(c.SIZE*SCALE),material===rockMaterial?points[i+1]/8:(points[i+2]+points[i+1])/(c.SIZE*SCALE));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(coords,2));geometry.computeVertexNormals();pipeline.prepare(new THREE.Mesh(geometry,material));}
 
  const waterVertices=[],waterIndices=[];for(const r of c.state.rivers||[]){const start=waterVertices.length/3;for(const p of r.points)for(const sign of [-1,1])waterVertices.push((p.x+sign*r.width/2)*SCALE,.08,p.y*SCALE);for(let i=0;i<r.points.length-1;i++){const k=start+i*2;waterIndices.push(k,k+2,k+1,k+1,k+2,k+3);}}
- if(waterVertices.length){const wg=new THREE.BufferGeometry();wg.setAttribute('position',new THREE.Float32BufferAttribute(waterVertices,3));wg.setIndex(waterIndices);wg.computeVertexNormals();const mat=new THREE.MeshPhysicalMaterial({color:0x316c7b,roughness:.18,metalness:.15,clearcoat:.8,side:THREE.DoubleSide});river=new THREE.Mesh(wg,mat);pipeline.prepare(river);river.castShadow=false;river.userData.noShadow=true;const compile=mat.onBeforeCompile,cacheKey=mat.customProgramCacheKey;mat.onBeforeCompile=shader=>{compile(shader);shader.uniforms.waterTime=waterTime;shader.fragmentShader='uniform float waterTime;\n'+shader.fragmentShader;shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\nnormal=normalize(normal+vec3(sin(visualWorld.x*1.8+waterTime*1.5)*.06,0.,cos(visualWorld.z*2.-waterTime*2.)*.06));');};mat.customProgramCacheKey=()=>cacheKey()+':water';mat.needsUpdate=true;}
+ if(waterVertices.length){const wg=new THREE.BufferGeometry();wg.setAttribute('position',new THREE.Float32BufferAttribute(waterVertices,3));wg.setIndex(waterIndices);wg.computeVertexNormals();const mat=new THREE.MeshPhysicalMaterial({color:0x316c7b,roughness:.12,metalness:0,clearcoat:.55,clearcoatRoughness:.16,ior:1.333,side:THREE.DoubleSide});river=new THREE.Mesh(wg,mat);pipeline.prepare(river);river.castShadow=false;river.userData.noShadow=true;prepareRiver(mat,waterTime);}
  const timber=new THREE.MeshStandardMaterial({color:0x80613d,roughness:.88});pipeline.prepareMaterial(timber,{rim:0});const logs=[];function log(x,y,z,length){const mesh=new THREE.Mesh(new THREE.CylinderGeometry(.35,.38,length,8),timber);mesh.rotation.z=Math.PI/2;mesh.position.set(x*SCALE,y*SCALE,z*SCALE);mesh.castShadow=true;mesh.receiveShadow=true;pipeline.scene.add(mesh);logs.push(mesh);}
  for(const r of c.state.rivers||[])for(const y of r.bridges){const x=c.riverCenter(r,y);for(let i=0;i<14;i++)log(x,4,y-52+i*8,14);}
  for(const p of c.state.plateaus||[])for(let i=0;i<21;i++){const z=p.y+p.h-80+i*8;log(p.rampX,c.terrainHeight(p.rampX,z)+1,z,12.4);}

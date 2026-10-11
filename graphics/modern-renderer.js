@@ -17,13 +17,13 @@ export {createTerrainMaterial};
 export {AnimationMixer,Matrix4,Vector3} from 'three';
 export const presets={low:{dpr:1,shadow:1024,cascades:2,distance:180,ao:false,bloom:false},balanced:{dpr:1.25,shadow:2048,cascades:3,distance:260,ao:true,bloom:true},high:{dpr:1.5,shadow:4096,cascades:4,distance:350,ao:true,bloom:true}};
 export function createPipeline(canvas,{quality='balanced',cinematic=false,cameraType='perspective'}={}){
- const p=presets[quality]||presets.balanced;
+ const p={...(presets[quality]||presets.balanced)};const detail=globalThis.KawGraphicsDetail?.settings||{};if(detail.shadows==='low'){p.shadow=1024;p.distance=180;}if(detail.shadows==='medium'){p.shadow=2048;p.distance=260;}if(detail.effects===false){p.ao=false;p.bloom=false;}
  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'high-performance'});
  // Quality presets budget the actual render resolution, including 1× desktop
  // displays. Never reduce the drawing buffer just because the camera zooms out.
  renderer.setPixelRatio(p.dpr);
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=lightingStandard.exposure;
- renderer.info.autoReset=false;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.info.autoReset=false;renderer.shadowMap.enabled=detail.shadows!=='off';renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  const scene=new THREE.Scene();scene.background=new THREE.Color('#607e89');scene.fog=new THREE.Fog('#607e89',200,500);const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=lightingStandard.environment;room.dispose();pmrem.dispose();
  const camera=cameraType==='orthographic'?new THREE.OrthographicCamera(-50,50,40,-40,.5,600):new THREE.PerspectiveCamera(42,1,.5,600);camera.position.set(90,100,145);camera.lookAt(0,15,0);
  // Hemisphere light provides restrained fill; the sun remains the dominant source.
@@ -43,7 +43,7 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
  const trackedMaterials=new Set(),emitters=[],casterPosition=new THREE.Vector3();let width=0,height=0;
  function prepareMaterial(material,{sss=0,rim=.12}={}){
   if(!material?.isMeshStandardMaterial||trackedMaterials.has(material))return material;
-  trackedMaterials.add(material);material.userData.visual={sss,rim};
+  trackedMaterials.add(material);if(material.map)material.map.anisotropy=detail.textures==='high'?Math.min(8,renderer.capabilities.getMaxAnisotropy()):2;material.userData.visual={sss,rim};
   // Preserve mortar and roof detail at grazing camera angles with capped filtering.
   for(const map of [material.map,material.normalMap,material.roughnessMap])if(map){map.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),quality==='low'?2:8);map.needsUpdate=true;}
   surfaceStandard(material);material.roughness=THREE.MathUtils.clamp(material.roughness,.08,1);
