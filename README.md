@@ -507,3 +507,16 @@ This update adds new rules and synthesized sounds implemented for Kingdoms at Wa
 - **Settings:** original synthesized battle sounds and footsteps, volume, FPS, grass, dynamic shadows, fire detail and building geometry detail. Lower settings reduce decoration without changing combat or resource collection. Existing overall graphics presets remain available.
 
 Development checks: `npm test`, `npm run build:graphics`, and `node tools/check-experience.cjs` (requires Playwright and a local server on port 3076). Existing `tools/check-standards.cjs` verifies both live and Classic rendering on desktop and phone.
+
+## Borderlands, teams and siege update (20261011-borderlands-teams-siege-r1)
+
+- Squads maintain formation offsets during travel and regroup at their destination. Melee units lead; ranged units stay behind. Followers use the leader's trail where terrain interrupts the formation.
+- Selection shows armor, base damage and active combat conditions. Hits produce contact-timed flashes and subtle model reactions.
+- **Deploy artillery** trades mobility for 35% more damage and 25% more range after 1.5 seconds of setup. A new movement order cancels deployment. **Bombard bridge** closes a crossing when its 900 health runs out; **Repair bridge** restores it with collectors. Select the command, then right-click the crossing on PC or tap it on a phone. **Repair defenses** also repairs gates, walls and towers.
+- Choose Balanced, Fortifier or Raider for each AI. Fortifiers protect their base with a reserve and towers; raiders prioritize exposed collectors and outposts. Difficulty still controls the existing economy and reaction rules.
+- Online lobbies support teams 1–6 or free-for-all. Allies share vision and cannot attack one another. Up to eight read-only spectators can join, including after a match starts; protected lobbies still require the passcode. Spectators see the entire battle. Connection quality displays measured polling latency, with automatic retries and **Reconnect now**. Saved session credentials reserve disconnected seats for five minutes. Matches remain in memory, so a server restart ends them.
+- **Map editor** creates a 4000 × 4000 battlefield with up to six starts, forests, gold mines, rock peaks, hills with ramps, rivers and bridges. **Validate** checks clear starting areas and ground connectivity, and warns about missing or uneven nearby resources. Save maps on this device or export/import bounded, data-only JSON. Custom maps currently support local play against AI, rather than online lobby sharing.
+- **Original campaign** offers three missions: First Light (economy and recruitment), Ember Road (convoy escort against three waves), and Living Crossing (hold a contested river objective). Completion is saved on this device; normal saved games also preserve mission state.
+- Settings includes independent ambiance, adaptive music, acknowledgment tones and volume controls. All new audio is synthesized locally from original oscillators and noise; it uses no recordings from another game. The convoy is an original procedural model.
+
+Verification: `npm test`; `CHECK_URL=http://localhost:3077 node tools/check-borderlands.cjs`; `CHECK_URL=http://localhost:3077 node tools/check-experience.cjs`. Browser checks use Chromium and the Playwright installation documented by those scripts.
