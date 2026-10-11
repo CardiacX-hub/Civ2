@@ -195,3 +195,6 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 #game #resources{font-size:10px;gap:10px;line-height:1.2}#game #resources span{white-space:nowrap}
 @media(min-width:951px) and (pointer:fine){#game header{gap:9px}#game #resources{gap:10px}.brand strong{font-size:10px}}
 @media(pointer:coarse),(max-width:700px){#game #resources{font-size:9px;gap:6px;flex-wrap:wrap}#game #armySelectors button{min-width:92px}}
+/* Two compact resource rows fit inside the existing 46px desktop header. */
+@media(min-width:951px) and (pointer:fine){#game #resources{display:grid;grid-template-columns:repeat(2,max-content);justify-content:center;column-gap:10px;row-gap:3px}}
+@media(min-width:951px) and (max-width:1200px) and (pointer:fine){#game header{gap:4px}#game header .brand{display:none}#game header>button{font-size:9px;padding:4px 8px}}
