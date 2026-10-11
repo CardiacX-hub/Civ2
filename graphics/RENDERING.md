@@ -114,7 +114,10 @@ Misses retain environment lighting. Hidden/offscreen geometry cannot reflect;
 this is not ray tracing, a planar reflection camera or a GI solution.
 
 `vertex-deformation.js` shares deformation between beauty, shadow, opaque-depth
-and normal passes. `landscape-detail.js` bends grass quadratically from the root
+and normal passes. `leaf-grass.js` builds broad, veined leaf blades with restrained clearcoat and
+soft thin-surface shading. Six leaves per clump retain the original 24-triangle
+budget; broad overlapping clumps and the terrain grass layer cover the meadow.
+`landscape-detail.js` bends grass quadratically from the root
 and uses height-weighted tree crown gusts. All use simulation time, so pause,
 replay and reduced-motion settings remain consistent. CustomDepthMaterial keeps
 tree shadow silhouettes in the same pose. For new foliage, attach the deformation

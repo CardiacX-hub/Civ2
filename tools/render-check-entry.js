@@ -2,3 +2,4 @@ export {createPipeline,createTerrainMaterial} from '../graphics/modern-renderer.
 export {prepareRiver} from '../graphics/water-surface.js';
 export {attachDeformation,attachShadowDeformation} from '../graphics/vertex-deformation.js';
 export * as THREE from 'three';
+export {addWindGrass} from '../graphics/landscape-detail.js';
