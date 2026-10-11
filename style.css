@@ -180,3 +180,8 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 #resourceManagement{font-size:11px;background:#18291eee;border:1px solid #6a7951;padding:4px 7px;max-width:360px}#resourceManagement summary{cursor:pointer}#resourceManagement>div{max-height:220px;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}#resourceManagement>div>div{padding:5px 0;border-top:1px solid #556344}#resourceManagement button{font-size:11px;padding:5px}#attackPriorities{grid-column:1/-1;font-size:11px;padding:4px;border:1px solid #687650}#attackPriorities label{display:block;margin:5px 0}#graphicsComponents label{display:flex;justify-content:space-between;gap:12px;margin:8px 0}@media(pointer:coarse){#resourceManagement button{min-height:40px}#resourceManagement>div{max-height:150px}}
 /* Match results, including rematch voting, must sit above every battlefield HUD. */
 #end{z-index:60}#toast{z-index:70}#battleTools{pointer-events:none}#battleTools>*{pointer-events:auto}#game.spectating #battleTools *{pointer-events:none}
+
+/* Control groups occupy a compact dock row rather than covering the battlefield. */
+#game #armyGroups{position:static;flex:0 0 27px;min-height:27px;max-width:100%;width:100%;display:flex;flex-wrap:nowrap;gap:3px;padding:2px 4px;overflow-x:auto;overflow-y:hidden;border:0;border-top:1px solid #526052;border-radius:0;background:#15221c;align-items:center}
+#game #armyGroups button{flex-shrink:0;font-size:10px;padding:2px 6px;min-height:21px;height:21px;min-width:38px}
+#bridgePowers{display:flex;gap:4px;flex-wrap:wrap}#bridgePowers h3{flex-basis:100%;font-size:10px;color:#d9bd82;margin:3px 0}

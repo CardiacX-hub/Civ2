@@ -7,9 +7,10 @@ export function createTerrainMaterial(pipeline,{grass=0x4a6436,dirt=0x79664e,roc
  const maps=layers||(pipeline.terrainLayers??=createTerrainLayers());
  const material=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});pipeline.prepareMaterial(material,{rim:0});
  material.userData.ownedTextures=layers?[]:Object.values(maps);
+ const tint=new THREE.Color(grass),baseTint=new THREE.Color(0x4e702d);tint.r/=baseTint.r;tint.g/=baseTint.g;tint.b/=baseTint.b;
  const compile=material.onBeforeCompile;
  material.onBeforeCompile=shader=>{
-  compile(shader);Object.assign(shader.uniforms,{terrainWind:pipeline.weather?.windTime||{value:0},terrainAlbedo:{value:maps.albedoHeight},terrainNormal:{value:maps.normal},terrainOrm:{value:maps.orm},terrainScale:{value:tileScale},heightBlend:{value:Math.max(.01,heightBlend)},terrainSplat:{value:splatmap},terrainMapSize:{value:mapSize},terrainTint:{value:new THREE.Color(grass).multiplyScalar(2.5).addScalar(.55)}});
+  compile(shader);Object.assign(shader.uniforms,{terrainWind:pipeline.weather?.windTime||{value:0},terrainAlbedo:{value:maps.albedoHeight},terrainNormal:{value:maps.normal},terrainOrm:{value:maps.orm},terrainScale:{value:tileScale},heightBlend:{value:Math.max(.01,heightBlend)},terrainSplat:{value:splatmap},terrainMapSize:{value:mapSize},terrainTint:{value:tint}});
   shader.vertexShader='varying vec3 terrainWorldNormal;\n'+shader.vertexShader;
   shader.vertexShader=shader.vertexShader.replace('#include <beginnormal_vertex>','#include <beginnormal_vertex>\nterrainWorldNormal=normalize(mat3(modelMatrix)*objectNormal);');
   shader.fragmentShader=`varying vec3 terrainWorldNormal;
@@ -38,7 +39,7 @@ export function createTerrainMaterial(pipeline,{grass=0x4a6436,dirt=0x79664e,roc
    // Highest (height + coverage) layer wins; transition width softens boundaries.
    vec3 priority=vec3(ta.a,tb.a,tc.a)+masks;float peak=max(priority.x,max(priority.y,priority.z));
    vec3 blend=max(priority-peak+heightBlend,vec3(0.))*masks;blend/=max(dot(blend,vec3(1.)),.0001);
-   diffuseColor.rgb=(ta.rgb*blend.x+tb.rgb*blend.y+tc.rgb*blend.z)*terrainTint;
+   diffuseColor.rgb=ta.rgb*terrainTint*blend.x+tb.rgb*blend.y+tc.rgb*blend.z;
    vec3 terrainProperties=triSample(terrainOrm,grassUV,tn,tw,0.).rgb*blend.x+triSample(terrainOrm,tp,tn,tw,1.).rgb*blend.y+triSample(terrainOrm,tp,tn,tw,2.).rgb*blend.z;
   `);
   shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(terrainProperties.r*(1.-wetness*.55),.08,1.);');

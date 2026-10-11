@@ -1,19 +1,17 @@
-/** Broad, low leaf blades give the meadow the same dielectric sheen as foliage.
+/** Small, individually scattered leaf blades give the meadow the same dielectric sheen as foliage.
  * One shared geometry/material is instanced in cullable chunks; no alpha cards. */
 import * as THREE from 'three';
 export function createLeafGrassGeometry(){
- const positions=[],colors=[],uv=[],indices=[],bands=2;
- for(let leaf=0;leaf<6;leaf++){
-  const base=positions.length/3,angle=leaf*2.399,dx=Math.sin(angle),dz=Math.cos(angle),length=.85+(leaf%3)*.13;
-  for(let row=0;row<=bands;row++){
-   const t=row/bands,width=.29*Math.sin(Math.PI*t)+.012;
-   for(const side of [-1,1]){
-    const along=.10+t*length;
-    positions.push(dx*along+dz*side*width,Math.sin(t*Math.PI*.72)*(.52+leaf%3*.07),dz*along-dx*side*width);
-    colors.push(.65+t*.30,.78+t*.20,.50+t*.24);uv.push((side+1)/2,t);
-   }
+ const positions=[],colors=[],uv=[],indices=[];
+ // Twelve separate pointed leaves, two triangles each: retain the old 24-triangle budget.
+ for(let leaf=0;leaf<12;leaf++){
+  const base=positions.length/3,angle=leaf*2.399,dx=Math.sin(angle),dz=Math.cos(angle),length=.36+(leaf%3)*.045,anchorX=Math.sin(leaf*7.13)*.85,anchorZ=Math.cos(leaf*5.37)*.85;
+  for(const [t,side] of [[0,0],[.5,-1],[.5,1],[1,0]]){
+   const width=.085,along=t*length;
+   positions.push(anchorX+dx*along+dz*side*width,Math.sin(t*Math.PI*.72)*(.23+leaf%3*.035),anchorZ+dz*along-dx*side*width);
+   colors.push(.65+t*.30,.78+t*.20,.50+t*.24);uv.push(.5+side*.5,t);
   }
-  for(let row=0;row<bands;row++){const i=base+row*2;indices.push(i,i+1,i+2,i+1,i+3,i+2);}
+  indices.push(base,base+1,base+2,base+1,base+3,base+2);
  }
  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geometry.setIndex(indices);geometry.computeVertexNormals();return geometry;
 }

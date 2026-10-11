@@ -13,7 +13,7 @@
  const saves=make('fieldset',null,$('keySettings'));make('legend','Saves & replays',saves);
  button('Save game',saves,()=>save('manual'));
  button('Save replay',saves,()=>saveReplay());
- const groupBar=make('section',null,document.querySelector('#game main'));groupBar.id='armyGroups';groupBar.setAttribute('aria-label','Army control groups');let storing=false;const storeButton=button('Store group',groupBar,()=>{storing=!storing;storeButton.setAttribute('aria-pressed',storing);refreshGroups();});
+ const groupBar=make('section',null,document.querySelector('#game'));groupBar.id='armyGroups';document.querySelector('#game footer').before(groupBar);groupBar.setAttribute('aria-label','Army control groups');let storing=false;const storeButton=button('Store group',groupBar,()=>{storing=!storing;storeButton.setAttribute('aria-pressed',storing);refreshGroups();});
  function group(n,append=false){if(storing){groups[n]=selected.filter(e=>e.owner===0).map(e=>e.id);storing=false;storeButton.setAttribute('aria-pressed','false');toast('Group '+n+' stored');refreshGroups();}else if(groups[n]){const members=state.entities.filter(e=>groups[n].includes(e.id)&&e.hp>0&&e.owner===0);selected=append?[...new Set([...selected,...members])]:members;updateUI();}}
  const groupButtons=[];
  for(let n=1;n<=9;n++){const b=button(String(n)+' · empty',groupBar,()=>group(n));b.dataset.group=n;b.title='Select group '+n+'. Store group then tap here to save your selection.';groupButtons.push(b);}
