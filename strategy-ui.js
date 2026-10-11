@@ -2,7 +2,7 @@
 (() => {
   const make=(tag,text,parent)=>{const e=document.createElement(tag);if(text)e.textContent=text;parent?.append(e);return e;};
   const button=(text,parent,fn)=>{const e=make('button',text,parent);e.type='button';e.onclick=fn;return e;};
-  const intel=make('details',null,$('battleTools'));intel.id='tacticalIntel';intel.open=!matchMedia('(max-width:760px)').matches;const summary=make('summary',null,intel);const forecast=make('span',null,summary);forecast.id='incomeForecast';forecast.setAttribute('aria-label','Resource income forecast');
+  const intel=make('details',null,document.querySelector('#game main'));intel.id='tacticalIntel';intel.open=false;const summary=make('summary',null,intel);const forecast=make('span',null,summary);forecast.id='incomeForecast';forecast.setAttribute('aria-label','Resource income forecast');
   const rates=make('span','Income: measuring deliveries… · Map pings',forecast);
   const warnings=make('div',null,intel);warnings.id='resourceWarnings';
   const roles=make('section',null,document.querySelector('.selection'));roles.id='unitRoleGuide';

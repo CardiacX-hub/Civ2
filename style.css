@@ -185,3 +185,13 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 #game #armyGroups{position:static;flex:0 0 27px;min-height:27px;max-width:100%;width:100%;display:flex;flex-wrap:nowrap;gap:3px;padding:2px 4px;overflow-x:auto;overflow-y:hidden;border:0;border-top:1px solid #526052;border-radius:0;background:#15221c;align-items:center}
 #game #armyGroups button{flex-shrink:0;font-size:10px;padding:2px 6px;min-height:21px;height:21px;min-width:38px}
 #bridgePowers{display:flex;gap:4px;flex-wrap:wrap}#bridgePowers h3{flex-basis:100%;font-size:10px;color:#d9bd82;margin:3px 0}
+
+/* Income touches the upper-left edge; closed details keep map coverage minimal. */
+#game #tacticalIntel{position:absolute;top:0;left:0;z-index:12;margin:0;padding:3px 6px;max-width:min(430px,100%);border-radius:0;font-size:10px;line-height:1.3}
+#game #tacticalIntel summary,#game #incomeForecast{font-size:10px;line-height:1.3}
+#game #workQueue{top:26px}#game #workQueue[hidden]{display:none!important}
+#game #armySelectors{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+#game #armySelectors button{font-size:9px;padding:1px 6px;min-height:19px;height:19px;line-height:15px;white-space:nowrap}
+#game #resources{font-size:10px;gap:10px;line-height:1.2}#game #resources span{white-space:nowrap}
+@media(min-width:951px) and (pointer:fine){#game header{gap:9px}#game #resources{gap:10px}.brand strong{font-size:10px}}
+@media(pointer:coarse),(max-width:700px){#game #resources{font-size:9px;gap:6px;flex-wrap:wrap}#game #armySelectors button{min-width:92px}}
