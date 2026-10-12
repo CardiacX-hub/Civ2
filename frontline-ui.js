@@ -63,3 +63,22 @@
  const army=KawBattle.command;KawBattle.command=function(e,kind,p){const result=army(e,kind,p);if(result&&tutorial.active&&e.owner===0&&kind==='retreat')tutorial.events.add('retreat');return result;};
  window.KawFrontline={conditions,renderBalance,get balance(){return records;},play};
 })();
+
+/* Full command help lives outside scrolling panels and the fog canvas. */
+(() => {
+ const tip=document.createElement('div');tip.id='commandHelp';tip.role='tooltip';tip.hidden=true;document.body.append(tip);
+ const style=document.createElement('style');style.textContent='#commandHelp{position:fixed;z-index:100000;pointer-events:none;max-width:min(340px,calc(100vw - 24px));padding:12px 14px;border:1px solid #b3a274;background:#131c20f5;color:#f5f2e8;border-radius:7px;box-shadow:0 5px 24px #0009;font:13px/1.5 Inter, sans-serif;white-space:pre-line}#commandHelp[hidden]{display:none}';document.head.append(style);
+ let current=null;
+ function hide(){if(current)current.removeAttribute('aria-describedby');current=null;tip.hidden=true;}
+ function show(b){
+  if(!b||!b.closest('#game'))return hide();
+  const label=b.querySelector('span')?.childNodes[0]?.textContent||b.textContent;
+  const description=b.getAttribute('title')||b.dataset.help||[label,...Array.from(b.querySelectorAll('small'),n=>n.textContent)].join('\n');
+  if(!description.trim())return hide();hide();current=b;tip.textContent=description+(b.disabled?'\nCurrently unavailable. Check the listed requirements and resources.':'');tip.hidden=false;b.setAttribute('aria-describedby',tip.id);
+  const r=b.getBoundingClientRect(),t=tip.getBoundingClientRect();tip.style.left=Math.max(12,Math.min(innerWidth-t.width-12,r.left))+'px';tip.style.top=Math.max(12,r.top-t.height-10<12?Math.min(innerHeight-t.height-12,r.bottom+10):r.top-t.height-10)+'px';
+ }
+ document.addEventListener('pointerover',e=>{if(e.pointerType!=='touch')show(e.target.closest('button'));});
+ document.addEventListener('pointerout',e=>{if(current&&!current.contains(e.relatedTarget))hide();});
+ document.addEventListener('focusin',e=>show(e.target.closest('button')));
+ document.addEventListener('focusout',hide);document.addEventListener('pointerdown',hide);document.addEventListener('keydown',e=>{if(e.key==='Escape')hide();});window.addEventListener('resize',hide);document.addEventListener('scroll',hide,true);
+})();

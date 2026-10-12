@@ -8,6 +8,9 @@ export function surfaceStandard(material){
  if((material.opacity??1)<.85){material.roughness=clamp(material.roughness,.25,.8);return material;}
  if(/stone|masonry|rock|bark|wood|cloth/i.test(material.name||'')){
   material.metalness=0;material.roughness=clamp(material.roughness,.78,.98);
+ }else if(material.isMeshPhysicalMaterial){
+  // Preserve authored water, scale and leaf highlights that reveal curved anatomy.
+  material.roughness=clamp(material.roughness,.12,.85);
  }else if((material.metalness||0)>=.4){
   material.roughness=clamp(material.roughness,.32,.62);
  }else{material.roughness=clamp(material.roughness,.7,.96);}

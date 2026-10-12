@@ -17,12 +17,15 @@ import {createReflectionPass,createAtmospherePass} from './screen-effects.js';
 import {createTerrainMaterial} from './terrain-material.js';
 export {createTerrainMaterial};
 export {AnimationMixer,Matrix4,Vector3} from 'three';
-export const presets={low:{dpr:1,shadow:1024,cascades:2,distance:180,ao:false,bloom:false},balanced:{dpr:1.25,shadow:2048,cascades:3,distance:260,ao:true,bloom:true},high:{dpr:1.5,shadow:4096,cascades:4,distance:350,ao:true,bloom:true}};
+export const presets={low:{dpr:1,shadow:1024,cascades:2,distance:180,ao:false,bloom:false},balanced:{dpr:1.25,shadow:2048,cascades:3,distance:260,ao:true,bloom:true},high:{dpr:2,shadow:4096,cascades:4,distance:350,ao:true,bloom:true}};
 export function createPipeline(canvas,{quality='balanced',cinematic=false,cameraType='perspective'}={}){
  const p={...(presets[quality]||presets.balanced)};const detail=globalThis.KawGraphicsDetail?.settings||{};if(detail.shadows==='low'){p.shadow=1024;p.distance=180;}if(detail.shadows==='medium'){p.shadow=2048;p.distance=260;}if(detail.effects===false){p.ao=false;p.bloom=false;}
  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'high-performance'});
  // Quality presets budget the actual render resolution, including 1× desktop
  // displays. Never reduce the drawing buffer just because the camera zooms out.
+ // Preserve native display detail, with a two-million-pixel base budget on very large screens.
+ const pixels=Math.max(1,canvas.clientWidth*canvas.clientHeight);
+ p.dpr=Math.min(Math.max(p.dpr,quality==='low'?1:Math.min(2,globalThis.devicePixelRatio||1)),Math.max(1,Math.sqrt(8000000/pixels)));
  renderer.setPixelRatio(p.dpr);
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=lightingStandard.exposure;
  renderer.info.autoReset=false;renderer.shadowMap.enabled=detail.shadows!=='off';renderer.shadowMap.type=THREE.PCFSoftShadowMap;
