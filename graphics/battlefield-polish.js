@@ -21,7 +21,7 @@ export function polishModel(entry,e,c,time){
    for(const n of neighbors){const dx=(n.x-e.x)*.1,dz=(n.y-e.y)*.1,length=Math.hypot(dx,dz)/2+.04;const bridge=new THREE.Mesh(new THREE.BoxGeometry(length,1.1,1.3),material);bridge.position.set(dx/4,.75,dz/4);bridge.rotation.y=-Math.atan2(dz,dx);bridge.castShadow=bridge.receiveShadow=true;entry.polish.add(bridge);}
   }
  }
- if(e.type==='siege'&&race==='horde'){
+ if(e.type==='siege'&&race==='horde'&&entry.name!=='specialist-rockHewer'){
   if(!entry.polish){entry.polish=new THREE.Group();entry.root.add(entry.polish);const wood=new THREE.MeshStandardMaterial({map:woodGrain(),bumpMap:woodGrain(),bumpScale:.035,roughness:.83});
    entry.model.traverse(m=>{if(!m.isMesh)return;const list=Array.isArray(m.material)?m.material:[m.material];m.material=list.map(mat=>{if(!mat.color||mat.metalness>.4)return mat;const color=mat.color;if(color.r>color.b*1.3&&color.g>color.b*1.1){const copy=mat.clone();copy.map=copy.bumpMap=woodGrain();copy.bumpScale=.025;entry.polishMaterials??=[];entry.polishMaterials.push(copy);return copy;}return mat;});if(!Array.isArray(list)||m.material.length===1)m.material=m.material[0];});
    const arm=new THREE.Group();arm.position.set(0,1.25,0);const beam=new THREE.Mesh(new THREE.BoxGeometry(.24,.24,3.8),wood);beam.position.z=1.4;arm.add(beam);const cup=new THREE.Mesh(new THREE.SphereGeometry(.35,12,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x4c3020,roughness:.95,side:THREE.DoubleSide}));cup.rotation.x=Math.PI;cup.position.set(0,.1,3.2);arm.add(cup);entry.polish.add(arm);entry.slingArm=arm;

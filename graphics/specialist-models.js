@@ -1,9 +1,11 @@
 /** Original procedural faction art. Shared meshes serve live models and sprite atlases.
  * Geometry is merged by material within articulated groups; animation keeps weapons attached. */
 import * as T from 'three';
+import {createRockHewerModel} from './rock-hewer-model.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 export const specialistTypes=['siegeMarshal','stormLancer','chainbreaker','ashShaman','rootColossus','bloomWeaver','bloomPod'];
 export function createSpecialistModel(type){
+ if(type==='rockHewer')return createRockHewerModel();
  const combat=type==='ancientTreantCombat';if(combat)type='ancientTreant';const rooted=type==='rootColossusRooted';if(rooted)type='rootColossus';
  const root=new T.Group();root.name=type;const joints=[],textureCache=new Map();
  function mat(color,kind='cloth',metalness=0,emissive){
