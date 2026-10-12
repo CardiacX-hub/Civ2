@@ -43,7 +43,7 @@
   for(const e of state.entities){if(e.hp<=0||e.building)continue;const o=e.order,f=o?.formation;if(f) followFormation(e,o,f,living,groups);
    if(!o||!['repairBridge','bombardBridge'].includes(o.kind))continue;const b=state.siegeBridges?.find(b=>b.id===o.bridgeId);if(!b||o.kind==='bombardBridge'&&b.hp<=0||o.kind==='repairBridge'&&b.hp>=b.max){finishTask(e);continue;}const r=state.rivers[b.river],distance=Math.hypot(e.x-b.x,e.y-b.y),range=o.kind==='repairBridge'?r.width/2+45:units.siege.range*(e.deployed?1.25:1);if(distance>range){const sign=e.x<b.x?-1:1;move(e,b.x+sign*(r.width/2+35),b.y,dt);continue;}if(o.kind==='repairBridge'){b.hp=Math.min(b.max,b.hp+25*dt);e.action={kind:'repair',until:state.time+.4,duration:.4};if(b.hp===b.max)changedBridge(b,true);}else if(e.cool<=0&&(!e.deployReady||e.deployReady<=state.time)){b.hp=Math.max(0,b.hp-units.siege.damage*(e.deployed?1.35:1));e.cool=2.4;e.facing=Math.atan2(b.y-e.y,b.x-e.x);e.action={kind:'attack',until:state.time+.55,duration:.55};e.shot={rock:true,x:b.x,y:b.y,fromX:e.x,fromY:e.y,fromHeight:18,toHeight:0,left:.65,duration:.65};burst(b.x,b.y,'blast',e.owner,.65);if(!b.hp){changedBridge(b,false);finishTask(e);}}}
  }
- function personalityAI(schedule=false){for(let owner=0;owner<state.players.length;owner++){const p=state.players[owner];if(p.ai===false||owner===0&&p.ai!==true)continue;if(schedule&&p.personalityAt===p.nextAI)continue;p.personalityAt=p.nextAI;const base=state.entities.find(e=>e.owner===owner&&e.type==='base'&&e.hp>0),army=state.entities.filter(e=>e.owner===owner&&!e.building&&e.type!=='worker'&&!e.convoy&&e.hp>0);if(!base)continue;if(p.personality==='fortifier'){for(const e of army.filter(e=>!e.aiEngaged&&e.hp/e.max>.5).slice(0,5))if(!e.order||e.order.kind==='attackMove'&&Math.hypot(e.order.x-base.x,e.order.y-base.y)>650)queueTask(e,{kind:'attackMove',x:base.x+(e.id%3-1)*80,y:base.y+190});const worker=state.entities.find(e=>e.owner===owner&&e.type==='worker'&&!['build','repair'].includes(e.order?.kind));if(worker&&!state.entities.some(e=>e.owner===owner&&e.construction)&&state.entities.filter(e=>e.owner===owner&&e.type==='tower').length<3&&p.gold>500&&p.wood>350){const angle=(state.time%3)*2.1;build('tower',base.x+Math.cos(angle)*230,base.y+Math.sin(angle)*230,owner);}}
+ function personalityAI(schedule=false){for(let owner=0;owner<state.players.length;owner++){const p=state.players[owner];if(p.ai===false||owner===0&&p.ai!==true)continue;if(schedule&&p.personalityAt===p.nextAI)continue;p.personalityAt=p.nextAI;const base=state.entities.find(e=>e.owner===owner&&e.type==='base'&&e.hp>0),army=state.entities.filter(e=>e.owner===owner&&!e.building&&e.type!=='worker'&&!e.convoy&&e.hp>0);if(!base)continue;if(p.personality==='fortifier'&&!(['hard','extreme'].includes(p.difficulty||state.difficulty)&&p.attackWave?.phase==='advance')){for(const e of army.filter(e=>!e.aiEngaged&&e.hp/e.max>.5).slice(0,5))if(!e.order||e.order.kind==='attackMove'&&Math.hypot(e.order.x-base.x,e.order.y-base.y)>650)queueTask(e,{kind:'attackMove',x:base.x+(e.id%3-1)*80,y:base.y+190});const worker=state.entities.find(e=>e.owner===owner&&e.type==='worker'&&!['build','repair'].includes(e.order?.kind));if(worker&&!state.entities.some(e=>e.owner===owner&&e.construction)&&state.entities.filter(e=>e.owner===owner&&e.type==='tower').length<3&&p.gold>500&&p.wood>350){const angle=(state.time%3)*2.1;build('tower',base.x+Math.cos(angle)*230,base.y+Math.sin(angle)*230,owner);}}
  if(p.personality==='raider'){const scouts=army.filter(e=>['scout','ranged','air'].includes(e.type)&&!e.aiEngaged).slice(0,3),observed=state.entities.filter(e=>!sameTeam(e.owner,owner)&&e.hp>0&&state.entities.some(a=>a.owner===owner&&a.hp>0&&Math.hypot(a.x-e.x,a.y-e.y)<visionRadius(a))&&(e.type==='worker'||e.type==='depot'));for(const e of scouts){const target=observed.slice().sort((a,b)=>Math.hypot(e.x-a.x,e.y-a.y)-Math.hypot(e.x-b.x,e.y-b.y))[0];if(target)queueTask(e,{kind:'attack',target});}}
  }}
  const oldAI=ai;ai=function(schedule=false){oldAI(schedule);personalityAI(schedule);};
@@ -115,7 +115,7 @@
   if(e.type==='rootColossus'&&e.order?.kind==='attack'&&isFlying(e.order.target))return true;
   if(e.type==='rootColossus'&&!(e.stunUntil>state.time)&&!e.manualPassive&&!['stop','move'].includes(e.order?.kind)){
    const target=e.order?.kind==='attack'?e.order.target:nearbyEnemies(e,e.rooted?190:250).find(t=>!isFlying(t));
-   if(target?.hp>0&&!isFlying(target)&&!target.hiddenInMine&&Math.hypot(e.x-target.x,e.y-target.y)<=units[e.type].range+target.size){
+   if(target?.hp>0&&!isFlying(target)&&!target.hiddenInMine&&globalThis.KawNature?.canTarget(e,target)!==false&&Math.hypot(e.x-target.x,e.y-target.y)<=units[e.type].range+target.size){
     if(e.cool<=0){state.rootBursts??=[];const duration=Math.max(.35,Math.min(.9,Math.hypot(e.x-target.x,e.y-target.y)/300));state.rootBursts.push({owner:e.owner,sourceId:e.id,targetId:target.id,fromX:e.x,fromY:e.y,x:target.x,y:target.y,at:state.time,impactAt:state.time+duration,damage:36*(e.rooted?1.2:1)*battleAuraMultiplier(e)*(1+bannerAura(e,'bannerDamage')),snare:e.rooted?2:1});if(state.rootBursts.length>64)state.rootBursts.shift();e.cool=1.6;e.facing=Math.atan2(target.y-e.y,target.x-e.x);e.action={kind:'attack',duration:.6,until:state.time+.6};}return true;
    }if(e.rooted)return true;
   }return oldSupport(e,dt);
@@ -144,4 +144,62 @@
   for(const r of state.rootBursts||[])if(visible(r.x,r.y)||visible(r.fromX,r.fromY)){const progress=Math.min(1,(state.time-r.at)/(r.impactAt-r.at));c.strokeStyle='#705232';c.lineWidth=4;c.beginPath();c.moveTo(r.fromX,r.fromY);for(let i=1;i<=12*progress;i++){const t=i/12;c.lineTo(r.fromX+(r.x-r.fromX)*t+Math.sin(i*2.1)*4,r.fromY+(r.y-r.fromY)*t-terrainHeight(r.fromX+(r.x-r.fromX)*t,r.fromY+(r.y-r.fromY)*t));}c.stroke();if(progress>=1){const h=30*Math.sin(Math.min(1,(state.time-r.impactAt)/.65)*Math.PI);for(let i=-2;i<=2;i++){c.beginPath();c.moveTo(r.x+i*7-4,r.y);c.lineTo(r.x+i*7,r.y-h);c.lineTo(r.x+i*7+4,r.y);c.fillStyle='#7c6438';c.fill();}}}
   c.restore();};
  globalThis.KawSpecialists={roster,tick:tickSpecialists};
+})();
+
+/* Verdant renewal, visibility counters and deliberate ground bombardment. */
+(() => {
+ defaultKeys['research:skitterSmoke']='U';names.covenant.hero2='Tideborn Elemental';delete names.covenant.hero3;
+ const options=troopOptions;troopOptions=function(building,race){return options(building,race).filter(t=>race!=='covenant'||t!=='hero3');};
+ const art=unitAppearance;unitAppearance=function(type,race,owner=0){if(race==='covenant'){if(type==='hero2')return 'specialist-waterElemental';if(type==='melee')return 'specialist-ancientTreant';if(type==='sniper')return 'specialist-fireHydra';}return art(type,race,owner);};
+ function isWater(e){return e.type==='hero2'&&state.players[e.owner].faction==='covenant';}
+ const name=heroAbilityName,description=heroAbilityDescription,aura=heroAuraText;
+ heroAbilityName=e=>isWater(e)?'Tidal Wave':name(e);
+ heroAbilityDescription=e=>isWater(e)?'Forward wave: heals allies 70, damages enemies 90 · 360 reach · 150 width · 24s cooldown':description(e);
+ heroAuraText=e=>isWater(e)?'Restorative mist: friendly troops within 190 recover 1 health/s.':aura(e);
+ const heroPower=heroAbility;heroAbility=function(e,aiControlled=false){if(!isWater(e))return heroPower(e,aiControlled);if(paused||state.count>0||state.ended||e.hp<=0||e.owner!==0&&!aiControlled||e.abilityReady>state.time)return false;state.tidalWaves??=[];state.tidalWaves.push({owner:e.owner,sourceId:e.id,x:e.x,y:e.y,angle:e.facing||0,at:state.time,duration:1.4,hitIds:[]});if(state.tidalWaves.length>24)state.tidalWaves.shift();e.abilityReady=state.time+24;e.action={kind:'attack',duration:.8,until:state.time+.8};return true;};
+ const definition=abilityDefinition;abilityDefinition=function(e){const race=state.players[e.owner].faction;if(e.type==='medic')return {name:'Dawn of Light',description:'Dispel smoke, stealth and sight-reducing effects within 180 · allies gain clear sight for 6s · 25s cooldown',cooldown:25};if(e.type==='siege'&&race==='horde')return {name:'Bombard',description:'Choose ground to shell every 2.4s · hits all units and buildings within 70, including concealed targets · Stop cancels',cooldown:0,targeted:true};if(e.type==='air3'&&race==='covenant'&&state.players[e.owner].skitterSmoke)return {name:'Smoke Shroud',description:'Hide friendly units from ranged targeting within 130 for 6s · 24s cooldown · Dawn of Light dispels',cooldown:24};return definition(e);};
+ function canTarget(attacker,target){if(target.building)return true;if(sameTeam(attacker.owner,target.owner)||target.revealedUntil>state.time||attacker.clearSightUntil>state.time)return true;const range=attacker.type==='base'&&attacker.level>=3?300:units[attacker.type]?.range??buildings[attacker.type]?.range??0;if(range<100)return true;if(target.stealthUntil>state.time||target.invisibleUntil>state.time)return false;return !(state.smoke||[]).some(s=>s.shroud&&s.expires>state.time&&sameTeam(s.owner,target.owner)&&Math.hypot(s.x-target.x,s.y-target.y)<=s.radius);}
+ const power=unitAbility;unitAbility=function(e,aiControlled=false,mode){const race=state.players[e.owner].faction;if(e.type!=='medic'&&!(e.type==='siege'&&race==='horde')&&!(e.type==='air3'&&race==='covenant'&&state.players[e.owner].skitterSmoke))return power(e,aiControlled,mode);
+  if(paused||state.count>0||state.ended||e.hp<=0||e.owner!==0&&!aiControlled||e.unitAbilityReady>state.time)return false;
+  if(e.type==='siege'){
+   if(aiControlled&&!mode){const foe=nearbyEnemies(e,400)[0];if(foe)mode={x:foe.x,y:foe.y};}
+   if(!mode||!Number.isFinite(mode.x)||!Number.isFinite(mode.y)||mode.x<10||mode.y<10||mode.x>SIZE-10||mode.y>SIZE-10||!canSee(e.owner,mode.x,mode.y))return false;
+   queueTask(e,{kind:'bombardGround',x:mode.x,y:mode.y});return true;
+  }
+  if(mode!==undefined)return false;
+  if(e.type==='medic'){
+   state.smoke=(state.smoke||[]).filter(s=>Math.hypot(s.x-e.x,s.y-e.y)>180+s.radius);
+   for(const t of state.entities)if(t.hp>0&&Math.hypot(t.x-e.x,t.y-e.y)<=180){t.stealthUntil=t.invisibleUntil=t.blindUntil=t.rangeReducedUntil=0;t.revealedUntil=state.time+6;if(sameTeam(t.owner,e.owner))t.clearSightUntil=state.time+6;}
+   burst(e.x,e.y,'magic',e.owner,.3);
+  }else{state.smoke??=[];state.smoke.push({x:e.x,y:e.y,owner:e.owner,radius:130,expires:state.time+6,shroud:true});burst(e.x,e.y,'smoke',e.owner,.5);}
+  e.unitAbilityReady=state.time+abilityDefinition(e).cooldown;e.action={kind:'attack',duration:.7,until:state.time+.7};return true;
+ };
+ const issue=issueCommand;issueCommand=function(p,append=false,allowMove=true){if(commandMode!=='bombardGround')return issue(p,append,allowMove);if(!state||paused||state.count>0||state.ended)return;for(const e of selected.filter(e=>e.owner===0&&e.type==='siege'&&state.players[e.owner].faction==='horde'))unitAbility(e,false,{x:p.x,y:p.y});commandMode=null;orderMarker={...p,left:1};updateUI();};
+ const support=supportTick;supportTick=function(e,dt){
+  if(e.type==='melee'&&state.players[e.owner].faction==='covenant'&&(e.action?.kind==='attack'||e.order?.kind==='attack'||nearbyEnemies(e,80).length))e.combatGlowUntil=state.time+1;
+  const o=e.order;if(o?.kind==='bombardGround'){
+   if(e.stunUntil>state.time)return true;const distance=Math.hypot(o.x-e.x,o.y-e.y);
+   if(distance>units.siege.range){const d=distance||1,point=openMovePoint(e,{x:o.x+(e.x-o.x)/d*(units.siege.range-25),y:o.y+(e.y-o.y)/d*(units.siege.range-25)});move(e,point.x,point.y,dt);return true;}
+   if(e.cool<=0){state.groundBombards??=[];state.groundBombards.push({owner:e.owner,x:o.x,y:o.y,fromX:e.x,fromY:e.y,at:state.time+.65,damage:units.siege.damage*(1+(state.players[e.owner].artillery||0)*.2)});if(state.groundBombards.length>48)state.groundBombards.shift();e.facing=Math.atan2(o.y-e.y,o.x-e.x);e.cool=2.4;e.action={kind:'attack',duration:.55,until:state.time+.55};e.shot={rock:true,x:o.x,y:o.y,fromX:e.x,fromY:e.y,fromHeight:18,toHeight:terrainHeight(o.x,o.y),left:.65,duration:.65};}return true;
+  }
+  return support(e,dt);
+ };
+ function update(dt){
+  for(const p of state.players)if(p.faction==='covenant'&&!p.verdantRenewal){p.verdantRenewal=true;if(p.heroChoice==='hero3')p.heroChoice='hero2';for(const e of state.entities.filter(e=>e.owner===state.players.indexOf(p))){if(e.type==='hero3')e.type='hero2';for(const q of e.queue||[])if(q.type==='hero3')q.type='hero2';}}
+  state.tidalWaves??=[];
+  for(const w of state.tidalWaves){const age=state.time-w.at,front=Math.min(360,Math.max(0,age/w.duration*360)),previous=Math.max(0,front-dt/w.duration*360-25),dx=Math.cos(w.angle),dy=Math.sin(w.angle);
+   for(const t of state.entities){if(t.hp<=0||t.building||t.hiddenInMine||w.hitIds.includes(t.id))continue;const x=t.x-w.x,y=t.y-w.y,along=x*dx+y*dy,across=Math.abs(-x*dy+y*dx);if(along<previous||along>front+25||across>75+t.size)continue;w.hitIds.push(t.id);if(sameTeam(t.owner,w.owner)){t.hp=Math.min(t.max,t.hp+70);burst(t.x,t.y,'magic',w.owner,.2);}else{dealAbilityDamage({owner:w.owner},t,90);t.lastDamageType='hero2';} }
+  }
+  state.tidalWaves=state.tidalWaves.filter(w=>state.time-w.at<w.duration+.3);
+  state.groundBombards??=[];for(const shell of state.groundBombards)if(shell.at<=state.time){for(const t of state.entities)if(t.hp>0&&Math.hypot(t.x-shell.x,t.y-shell.y)<=70+t.size){const friendly=sameTeam(t.owner,shell.owner);t.lastDamageOwner=friendly?null:shell.owner;t.lastDamageType='siege';t.hp-=shell.damage*armorMultiplier(t)*shieldMultiplier(t)*(t.building?1.4:1);recordArtilleryDeath(t,shell.fromX,shell.fromY);}burst(shell.x,shell.y,'rock',shell.owner);burst(shell.x,shell.y,'dust',shell.owner);}
+  state.groundBombards=state.groundBombards.filter(s=>s.at>state.time);
+ }
+ const tick=KawWarfront.tick;KawWarfront.tick=function(dt){tick(dt);update(dt);};
+ const aiBase=ai;ai=function(schedule=false){aiBase(schedule);for(let owner=0;owner<state.players.length;owner++){const p=state.players[owner];if(!p.ai||!['hard','extreme'].includes(p.difficulty||state.difficulty)||(p.assaultAt||0)>state.time)continue;const own=state.entities.filter(e=>e.owner===owner&&e.hp>0),base=own.find(e=>e.type==='base');if(!base)continue;const fighters=own.filter(e=>!e.building&&!e.convoy&&e.type!=='worker'&&units[e.type]?.damage>0&&e.hp/e.max>.45&&!e.aiEngaged);if(fighters.length<6||state.time<40)continue;const threat=state.entities.some(e=>!sameTeam(e.owner,owner)&&e.hp>0&&!e.building&&units[e.type]?.damage>0&&Math.hypot(e.x-base.x,e.y-base.y)<450&&canSee(owner,e.x,e.y));if(threat)continue;
+   const known=(p.intel||[]).filter(e=>e.hp>0&&e.building),spots=state.spawns.filter(([x,y])=>Math.hypot(x-base.x,y-base.y)>600);p.assaultIndex??=0;const target=known.sort((a,b)=>Math.hypot(a.x-base.x,a.y-base.y)-Math.hypot(b.x-base.x,b.y-base.y))[0]||(()=>{const spot=spots[p.assaultIndex++%Math.max(1,spots.length)];return spot?{x:spot[0],y:spot[1]}:{x:SIZE/2,y:SIZE/2};})();
+   p.assaultAt=state.time+45;p.attackWave={phase:'advance',at:state.time,targetId:target.id};const slots=formationSlots(fighters,target,'line');for(const e of fighters)queueTask(e,{kind:'attackMove',...slots.get(e.id)});
+  }};
+ const draw=KawWarfront.draw;KawWarfront.draw=function(c){draw(c);if(window.KawBattlefield?.active)return;for(const w of state.tidalWaves||[]){const t=Math.min(1,(state.time-w.at)/w.duration),front=t*360;c.save();c.translate(w.x+Math.cos(w.angle)*front,w.y+Math.sin(w.angle)*front);c.rotate(w.angle);c.fillStyle='#47bad6aa';c.strokeStyle='#d6f9ff';c.lineWidth=3;c.beginPath();c.ellipse(0,-8,22,75,0,0,Math.PI*2);c.fill();c.stroke();c.restore();}};
+ function visibleEntity(owner,e){if(sameTeam(owner,e.owner)||e.building||e.revealedUntil>state.time)return true;const concealed=e.stealthUntil>state.time||e.invisibleUntil>state.time||(state.smoke||[]).some(s=>s.shroud&&s.expires>state.time&&sameTeam(s.owner,e.owner)&&Math.hypot(e.x-s.x,e.y-s.y)<=s.radius);if(!concealed)return true;return state.entities.some(a=>sameTeam(a.owner,owner)&&a.hp>0&&!a.hiddenInMine&&Math.hypot(a.x-e.x,a.y-e.y)<=visionRadius(a)&&canTarget(a,e));}
+ globalThis.KawNature={canTarget,visibleEntity,update};
 })();

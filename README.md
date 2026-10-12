@@ -32,7 +32,7 @@ Standard Bearers are 50% larger visually. Dawnward phoenixes become glowing ashe
 - Infantry Lodge: durable melee, balanced ranged, and fragile high-damage ranged infantry.
 - Siege Works: slow artillery with splash damage.
 - Sky Roost: fast flying units.
-- Hero Sanctum: choose one of three faction heroes for the entire match. Dawnward Sun Marshal grants 30% damage reduction within 190 units. Dominion Stormcaller grants 30% attack damage within 190 units.
+- Hero Sanctum: choose one hero for the entire match. Dawnward and Dominion have three choices; Verdant has Granite Guardian and Tideborn Elemental. Dawnward Sun Marshal grants 30% damage reduction within 190 units. Dominion Stormcaller grants 30% attack damage within 190 units.
 - Harvest Guild: separate lumber and gold gathering upgrades, each with three levels.
 - Infantry Armory: separate melee, ranged, and marksman/shadow-hunter training, with three ranks each.
 - Artillery Foundry: three artillery damage upgrades.
@@ -216,7 +216,7 @@ Collectors now approach trees precisely enough to reach chopping range at normal
 
 Lumber gathering is twice as fast (1.5 per second), with 25 lumber carried per delivery. Gold loads are reduced to 15, taking six seconds at the base mining rate. The Harvest Guild now researches lumber harvesting and gold mining separately, with independent three-level upgrades.
 
-Each faction chooses one of its three heroes for the entire match: Dawnward's Sun Marshal (Paladin), Frontier Wizard and Frontier Ranger; The Dominion's Stormcaller (Berserker), Frontier Witch and Dragon Sovereign. Their selection panels describe nearby troop auras and unique active powers. Hero talent trees and Sanctum mastery were removed in the 20261008-orders-and-strategy update; innate auras and abilities remain. Stormcaller emits small lightning sparks. Dominion infantry can research Fire Spears, applying damage over time with Troll Spearthrower attacks.
+Dawnward and Dominion each choose one of three heroes for the entire match: Dawnward's Sun Marshal (Paladin), Frontier Wizard and Frontier Ranger; The Dominion's Stormcaller (Berserker), Frontier Witch and Dragon Sovereign. Their selection panels describe nearby troop auras and unique active powers. Hero talent trees and Sanctum mastery were removed in the 20261008-orders-and-strategy update; innate auras and abilities remain. Stormcaller emits small lightning sparks. Dominion infantry can research Fire Spears, applying damage over time with Troll Spearthrower attacks.
 
 Winding rivers divide each battlefield. Ground troops cross at wooden bridges; flying units cross freely. Riverbanks, contrasting grass, stones and flowers add terrain detail. Roof shingles cover both complete slopes, and Dominion horns use smaller curved shapes with visible mounting collars.
 
@@ -360,7 +360,12 @@ Scouts have 420 vision; **Survey** temporarily expands it to 650 for six seconds
 
 Traps slow enemies by 60% for four seconds, deal 15 damage, expire after 90s, and are limited to six per player. Engineer barricades block ground movement, last 45s, and are limited to six. Both structures can be attacked and destroyed; workers cannot construct them through their normal menu. **Burrow Ambush** digs a Burrowbreaker in for 2.5s, then erupts for 60 damage to nearby ground enemies. A replacement move or Stop cancels a charge or burrow; Shift keeps the current order and queues movement.
 
-Covenant heroes keep the one-hero-per-match rule: Carapace Captain provides a 15% protection aura and temporary guard; Smoke Alchemist provides 1 health/s recovery and a smoke cloud; Trail Matriarch provides a 10% movement aura and a temporary speed surge. Hero talents remain removed. AI recruits its own faction's specialists, uses abilities, escorts support units, and scouts instead of sending fragile scouts into direct fights.
+Verdant heroes keep the one-hero-per-match rule with two choices: Granite Guardian and Tideborn Elemental. Smoke Alchemist and Trail Matriarch are removed from production; saved Matriarch choices migrate to the water hero. Tidal Wave travels 360 units forward through a 150-wide corridor, healing allies by 70 and dealing 90 damage to enemies once per wave, with a 24-second cooldown. Tideborn's restorative mist heals nearby allies at 1 health/s.
+
+Research Sky Skitterer Smoke Shroud at the Wing Pavilion (Stronghold 3) to unlock a 6-second, 130-radius concealment cloud, with a 24-second cooldown. Ranged units cannot acquire concealed targets; nearby melee observers can reveal them to the player, and revealed targets remain available to melee attackers. Dawnward medics use Dawn of Light to dispel nearby smoke and stealth and grant allies clear sight for 6 seconds (25-second cooldown). Dominion Rock Hewers can choose Bombard, then select visible ground to shell repeatedly every 2.4 seconds. Blasts affect all units and buildings within 70, including concealed targets and allies; Stop or a new Move order cancels continued bombardment. Projectiles already launched still land.
+
+Ancient Treants and Root Colossi have pointed, veined forest leaves with reflective sheen and wind motion. Treant eyes and facial glow turn red while fighting. Root Down switches the Colossus into a rooted trunk-and-leg form while its arms and head continue fighting. Bloom Weavers have pink blossoms and thorned vines. Fire Hydras have glossy scale textures, hooked fangs, sharper spines and articulated serpentine tails. Hard and Extreme AI launch infantry assaults without waiting for siege or aircraft, scout possible enemy starts, and avoid recalling an advancing wave merely because of a defensive personality.
+
 
 The server health endpoint advertises the three factions and unit abilities. An older server is rejected with a deployment message rather than silently ignoring the new commands. On Render, **Manual Deploy → Deploy latest commit** updates the online server if automatic deployment is disabled.
 

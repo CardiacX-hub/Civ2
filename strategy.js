@@ -85,7 +85,7 @@
     const p=state.players[owner];if(state.time<(p.coordinationAt||0))return;p.coordinationAt=state.time+6;
     if(observed.some(t=>!t.building&&units[t.type]?.damage>0&&Math.hypot(t.x-base.x,t.y-base.y)<500)){p.attackWave=null;return;}
     const troops=own.filter(e=>!e.building&&!e.convoy&&e.type!=='worker'&&!['scout','medic','engineer'].includes(e.type)&&!isBannerBearer(e)&&!e.aiEngaged&&!(e.raidUntil>state.time)&&e.hp/e.max>.6&&units[e.type]?.damage>0);
-    if(troops.length<8||!troops.some(e=>e.type==='siege'||isFlying(e)))return;
+    const aggressive=['hard','extreme'].includes(p.difficulty||state.difficulty);if(troops.length<(aggressive?6:8)||!aggressive&&!troops.some(e=>e.type==='siege'||isFlying(e)))return;
     const leader=troops.find(e=>['melee','devoured','cavalier','beetle','bogbreaker'].includes(e.type))||troops[0];
     const target=seen.filter(e=>e.building).sort((a,b)=>Math.hypot(a.x-leader.x,a.y-leader.y)-Math.hypot(b.x-leader.x,b.y-leader.y))[0];if(!target)return;
     const center={x:troops.reduce((n,e)=>n+e.x,0)/troops.length,y:troops.reduce((n,e)=>n+e.y,0)/troops.length};

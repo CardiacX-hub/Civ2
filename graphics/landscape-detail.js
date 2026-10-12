@@ -45,8 +45,8 @@ export function cliffFace(points,x0,z0,x1,z1,h0,h1,center){
 }
 
 /** Shared breeze clock drives grass and tree crowns without moving their roots. */
-export function prepareWindTree(model,time,height){
- model.traverse(mesh=>{if(!mesh.isMesh)return;
+export function prepareWindTree(model,time,height,leavesOnly=false){
+ model.traverse(mesh=>{if(!mesh.isMesh||leavesOnly&&mesh.material.name!=='living-leaf')return;
   const array=Array.isArray(mesh.material),materials=array?mesh.material:[mesh.material];
   mesh.material=materials.map(source=>{const material=source.clone(),prepare=source.onBeforeCompile,key=source.customProgramCacheKey;
    material.onBeforeCompile=shader=>prepare.call(material,shader);material.customProgramCacheKey=()=>key.call(source);
