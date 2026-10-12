@@ -80,7 +80,7 @@ function present(c){lastContext=c;const animationTime=c.state.time+(c.state.netw
  // Light pool reuses a fixed number of unshadowed emitters; no per-shot allocations.
  const fires=c.state.entities.filter(e=>(e.breath||e.shot?.fire&&e.shot.left>0||e.burn&&!e.burn.poison||e.type==='air2'&&c.state.players[e.owner].faction==='human')&&c.visible(e.x,e.y)&&c.inViewport(e.x,e.y));lights.forEach((light,i)=>{if(!light)return;const e=fires[i];if(e){const shot=e.breath||(e.shot?.left>0?e.shot:null)||e,t=e.breath?.5:shot===e?0:1-shot.left/shot.duration;light.color.set(e.breath?.blue?0x69baff:0xffae45);light.position.set((e.x+(shot.x-e.x)*t)*SCALE,(c.renderAltitude(e)+20)*SCALE,(e.y+(shot.y-e.y)*t)*SCALE);}else light.position.set(9999,9999,9999);});
  // Startup may use Classic once; later streaming must never switch the whole frame.
- if(waiting&&!presented){liveCanvas.style.display='none';window.KawVisual?.suspend(false);return false;}waterTime.value=window.KawHUD?.settings.reduced?0:animationTime;liveCanvas.style.display='block';specialistEffects.update(c);unitBatches.update(objects.values());pipeline.render(waterTime.value);presented=true;window.KawVisual?.suspend(true);return true;
+ if(waiting&&!presented){liveCanvas.style.display='none';window.KawVisual?.suspend(false);return false;}waterTime.value=window.KawHUD?.settings.reduced?0:animationTime;liveCanvas.style.display='block';specialistEffects.update(c,objects);unitBatches.update(objects.values());pipeline.render(waterTime.value);presented=true;window.KawVisual?.suspend(true);return true;
  }catch(error){fallback(error);return false;}
 }
 liveCanvas.addEventListener('webglcontextlost',event=>{event.preventDefault();fallback(new Error('WebGL context lost'));});
