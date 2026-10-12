@@ -32,8 +32,27 @@ export function createSpecialistModel(type){
   for(const x of [-4,4])for(const z of [-8,7]){const l=group('horseLeg'+x+z,horse,x,-3,z);rod(l,silver,[0,0,0],[0,-8,0],1.4);box(l,silver,0,-8,0,3,3,4);}rod(horse,dark,[0,0,-11],[0,-4,-19],1);
   const h=humanoid();h.body.position.y=24;h.legs.forEach((l,i)=>{l.position.set(i?6:-6,19,0);l.rotation.z=i?-.35:.35;});box(h.body,blue,0,3,5,7,10,1);box(h.head,dark,0,0,4,6,.7,.3);spike(h.head,blue,0,8,0,1.5,7);rod(h.arms[1],gold,[2,-12,3],[2,22,8],.6);spike(h.arms[1],silver,2,24,8,1.7,6);
  }else if(type==='chainbreaker'){
-  const h=humanoid(false,true);h.body.scale.set(1.2,1.1,1.2);box(h.body,red,0,-2,4,11,8,1);for(const side of [-1,1])for(let i=0;i<3;i++)spike(h.arms[side===1?1:0],iron,side*2,2+i,0,.7,4,0,side*.5);
-  for(let i=0;i<10;i++){const ring=mesh(h.arms[1],new T.TorusGeometry(1,.3,5,8),iron,2+Math.sin(i*.4),-11-i*.9,3);ring.rotation.x=i%2*Math.PI/2;}rod(h.arms[1],iron,[2,-19,3],[5,-24,3],1);spike(h.arms[1],silver,6,-22,3,1.4,6,0,.7);box(h.head,iron,0,4,0,7,2,7);
+  const h=humanoid(false,true);h.body.scale.set(1.4,1.12,1.25);h.body.rotation.x=.12;h.arms[0].rotation.z=-.95;h.arms[1].rotation.z=.65;
+  const blood=mat(0x6b1e19),leather=mat(0x49372b,'bark'),scar=mat(0x574b35,'skin');
+  // Broad scarred torso, torn crimson cloth, riveted shoulders and bone trophies.
+  for(const side of [-1,1]){sphere(h.body,skin,side*3,6,3,3.5,1.1,.8,.6);sphere(h.body,skin,side*2,1,4,2.2,1,.8,.4);box(h.arms[side===1?1:0],iron,0,1,0,7,3,8);for(let i=0;i<4;i++){spike(h.arms[side===1?1:0],bone,side*(i%2?3:0),3, -3+i*2, .75,5+i%2*2,0,side*.3);sphere(h.arms[side===1?1:0],silver,side*3,1,-3+i*2,.45);}}
+  for(let i=0;i<5;i++){const panel=box(h.body,i%2?leather:red,-5+i*2.5,-4,4,2,8+i%3,1);panel.rotation.z=(i-2)*.08;}
+  rod(h.body,leather,[-5,10,5],[4,-1,5],.65);rod(h.body,iron,[-5,-1,5],[5,-1,5],.8);
+  for(const x of [-4,0,4]){sphere(h.body,bone,x,-1,6,1.2,.85,1.1,.6);for(const side of [-1,1])sphere(h.body,dark,x+side*.4,-.8,6.7,.28);box(h.body,bone,x,-2.2,6.3,.8,.8,.4);}
+  // A scowling muzzle, large tusks, topknot and face paint preserve the reference silhouette.
+  sphere(h.head,skin,0,-2,3,2.8,1.2,.7,.6);box(h.head,dark,0,-2.8,4.2,4,1.1,.4);for(const side of [-1,1]){spike(h.head,bone,side*2,-1.5,4.3,.7,4);rod(h.head,scar,[side*.9,2,3.7],[side*3,1.5,3.4],.45);}sphere(h.head,dark,0,5,-1,2.5,1,.6,1);rod(h.head,dark,[0,5,-1],[0,9,-3],1.1);sphere(h.head,dark,0,10,-4,2,.7,1.4,.7);rod(h.head,blood,[0,4,4],[.5,-.4,4.4],.4);
+  for(let i=0;i<6;i++)rod(h.body,i%2?scar:blood,[-4+i*1.4,8,4.5],[-3.5+i*1.4,5,4.9],.16);
+  // Alternating oval links are wrapped around both forearms and suspend serrated hooks.
+  for(const [side,arm]of [[-1,h.arms[0]],[1,h.arms[1]]]){
+   for(let i=0;i<9;i++){const angle=i*Math.PI*2/9,link=mesh(arm,new T.TorusGeometry(1,.32,6,12),iron,side*2+Math.cos(angle)*2.5,-9+Math.sin(angle)*2,3);link.scale.y=1.4;link.rotation.y=i%2*Math.PI/2;}
+   for(let i=0;i<13;i++){const link=mesh(arm,new T.TorusGeometry(1,.35,6,12),iron,side*(2+Math.sin(i*.18)*3),-12-i*.65,3+Math.sin(i*.3)*1.3);link.scale.y=1.4;link.rotation.y=i%2*Math.PI/2;}
+   const hook=new T.Shape();hook.moveTo(-2,4);hook.bezierCurveTo(8,4,9,-5,1,-10);hook.bezierCurveTo(4,-5,3,-2,-1,-2);hook.lineTo(-2,4);
+   const blade=mesh(arm,new T.ExtrudeGeometry(hook,{depth:1,bevelEnabled:true,bevelSize:.35,bevelThickness:.3,bevelSegments:2,steps:1,curveSegments:10}),silver,side*5,-21,3);blade.scale.x=side;
+   for(let i=0;i<4;i++)spike(arm,silver,side*(4+i*1.1),-19-i*1.6,3.5,.6,2.5,0,side*-.9);
+   rod(arm,blood,[side*5,-21,4.2],[side*7,-25,4.2],.22);
+  }
+  for(const leg of h.legs){box(leg,iron,0,-3,2,5,6,2);for(const side of [-1,1])spike(leg,bone,side*2,-2,2,.5,3,0,side*.7);}
+  root.userData.chainbreakerDetail={interlockingLinks:44,hookBlades:2,spikedArmor:true};
  }else if(type==='ashShaman'){
   const h=humanoid(false,true);mesh(h.body,new T.ConeGeometry(7,15,10),red,0,-1,0);h.body.rotation.x=.12;for(const side of [-1,1]){rod(h.head,bone,[side*2,3,0],[side*6,10,-1],1);spike(h.head,bone,side*7,11,0,.8,5,0,side*-.6);}rod(h.arms[1],bark,[2,-19,3],[2,10,3],.9);sphere(h.arms[1],glow,2,12,3,2);for(let i=0;i<5;i++)sphere(h.body,bone,-4+i*2,9,5,.9);box(h.body,dark,0,5,5,5,9,1);
  }else if(type==='rootColossus'){
@@ -47,7 +66,7 @@ export function createSpecialistModel(type){
  }
  root.updateMatrixWorld(true);
  // Merge static parts under each nearest animation joint; share material and geometry across units.
- for(const parent of [root,...joints]){const batches=new Map();for(const child of [...parent.children])if(child.isMesh){const g=child.geometry.clone();g.applyMatrix4(child.matrix);if(!g.index)g.setIndex(Array.from({length:g.attributes.position.count},(_,i)=>i));const key=child.material.uuid;if(!batches.has(key))batches.set(key,{material:child.material,geometries:[]});batches.get(key).geometries.push(g);parent.remove(child);child.geometry.dispose();}for(const b of batches.values()){const merged=mergeGeometries(b.geometries,false);if(merged)parent.add(new T.Mesh(merged,b.material));b.geometries.forEach(g=>g.dispose());}}
+ for(const parent of [root,...joints]){const batches=new Map();for(const child of [...parent.children])if(child.isMesh){const g=child.geometry.clone();g.applyMatrix4(child.matrix);if(!g.index)g.setIndex(Array.from({length:g.attributes.position.count},(_,i)=>i));let material=child.material,key=material.uuid;if(type==='chainbreaker'){const colors=[];for(let i=0;i<g.attributes.position.count;i++)colors.push(material.color.r,material.color.g,material.color.b);g.setAttribute('color',new T.Float32BufferAttribute(colors,3));key=[material.map?.uuid,Math.round(material.metalness*2),material.roughness,material.emissive.getHex()].join(':');material=material.clone();material.color.set(0xffffff);material.vertexColors=true;material.metalness=Math.round(material.metalness*2)/2;}if(!batches.has(key))batches.set(key,{material,geometries:[]});batches.get(key).geometries.push(g);parent.remove(child);child.geometry.dispose();}for(const b of batches.values()){const merged=mergeGeometries(b.geometries,false);if(merged)parent.add(new T.Mesh(merged,b.material));b.geometries.forEach(g=>g.dispose());}}
  const animations=[];
  for(const phase of ['idle','walk','attack']){const duration=phase==='idle'?2.5:phase==='walk'?.65:.6,tracks=[];for(const joint of joints){const times=[],values=[],base=joint.quaternion.clone();for(let i=0;i<=16;i++){const t=i/16,w=Math.sin(t*Math.PI*2),arm=joint.name.startsWith('arm'),leg=joint.name.includes('Leg')||joint.name.startsWith('leg');let angle=phase==='idle'?(joint.name==='torso'?w*.015:0):phase==='walk'?(arm||leg?w*.4*(joint.name.endsWith('L')||joint.name.includes('-4')?1:-1):joint.name==='torso'?w*.025:0):arm?Math.sin(t*Math.PI)*-.9:joint.name==='torso'?Math.sin(t*Math.PI)*.12:0;const q=base.clone().multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),angle));times.push(t*duration);values.push(...q.toArray());}if(values.some((v,i)=>Math.abs(v-values[i%4])>.00001))tracks.push(new T.QuaternionKeyframeTrack(joint.name+'.quaternion',times,values));}if(tracks.length)animations.push(new T.AnimationClip(phase,duration,tracks));}
  root.userData.factionSpecialist=type;return {scene:root,animations};
