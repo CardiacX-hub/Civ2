@@ -24,12 +24,12 @@ export function polishModel(entry,e,c,time){
  if(e.type==='siege'&&race==='horde'){
   if(!entry.polish){entry.polish=new THREE.Group();entry.root.add(entry.polish);const wood=new THREE.MeshStandardMaterial({map:woodGrain(),bumpMap:woodGrain(),bumpScale:.035,roughness:.83});
    entry.model.traverse(m=>{if(!m.isMesh)return;const list=Array.isArray(m.material)?m.material:[m.material];m.material=list.map(mat=>{if(!mat.color||mat.metalness>.4)return mat;const color=mat.color;if(color.r>color.b*1.3&&color.g>color.b*1.1){const copy=mat.clone();copy.map=copy.bumpMap=woodGrain();copy.bumpScale=.025;entry.polishMaterials??=[];entry.polishMaterials.push(copy);return copy;}return mat;});if(!Array.isArray(list)||m.material.length===1)m.material=m.material[0];});
-   const arm=new THREE.Group();arm.position.set(0,1.25,0);const beam=new THREE.Mesh(new THREE.BoxGeometry(.18,.18,2.6),wood);beam.position.z=1;arm.add(beam);const cup=new THREE.Mesh(new THREE.SphereGeometry(.35,12,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x4c3020,roughness:.95,side:THREE.DoubleSide}));cup.rotation.x=Math.PI;cup.position.set(0,.1,2.2);arm.add(cup);entry.polish.add(arm);entry.slingArm=arm;
-   const stone=new THREE.Mesh(new THREE.IcosahedronGeometry(.26,1),new THREE.MeshStandardMaterial({color:0x8e918a,roughness:.95}));stone.position.set(0,.18,2.2);arm.add(stone);entry.loadedRock=stone;}
+   const arm=new THREE.Group();arm.position.set(0,1.25,0);const beam=new THREE.Mesh(new THREE.BoxGeometry(.24,.24,3.8),wood);beam.position.z=1.4;arm.add(beam);const cup=new THREE.Mesh(new THREE.SphereGeometry(.35,12,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x4c3020,roughness:.95,side:THREE.DoubleSide}));cup.rotation.x=Math.PI;cup.position.set(0,.1,3.2);arm.add(cup);entry.polish.add(arm);entry.slingArm=arm;
+   const stone=new THREE.Mesh(new THREE.IcosahedronGeometry(.48,1),new THREE.MeshStandardMaterial({color:0x8e918a,roughness:.95}));stone.position.set(0,.18,3.2);arm.add(stone);entry.loadedRock=stone;}
   const progress=e.action?.kind==='attack'?Math.max(0,Math.min(1,1-(e.action.until-time)/e.action.duration)):0;
   // Wind up, snap forward at release, then recover. The simulation owns the projectile.
-  entry.slingArm.rotation.x=progress<.25?-.45-progress*1.8:progress<.55?-.9+(progress-.25)/.3*2:1.1-(progress-.55)/.45*1.55;
-  entry.loadedRock.visible=progress<.5;
+  entry.slingArm.rotation.x=progress<.15?-.45-progress*3:progress<.3?-.9+(progress-.15)/.15*2:1.1-(progress-.3)/.7*1.55;
+  entry.loadedRock.visible=progress<.15;
  }
 }
 export function disposePolish(entry){if(entry.polish){entry.polish.traverse(m=>{m.geometry?.dispose();if(m.material)for(const mat of(Array.isArray(m.material)?m.material:[m.material]))mat.dispose();});entry.polish.removeFromParent();entry.polish=null;}entry.polishMaterials?.forEach(m=>m.dispose());entry.polishMaterials=null;}

@@ -203,3 +203,14 @@
  function visibleEntity(owner,e){if(sameTeam(owner,e.owner)||e.building||e.revealedUntil>state.time)return true;const concealed=e.stealthUntil>state.time||e.invisibleUntil>state.time||(state.smoke||[]).some(s=>s.shroud&&s.expires>state.time&&sameTeam(s.owner,e.owner)&&Math.hypot(e.x-s.x,e.y-s.y)<=s.radius);if(!concealed)return true;return state.entities.some(a=>sameTeam(a.owner,owner)&&a.hp>0&&!a.hiddenInMine&&Math.hypot(a.x-e.x,a.y-e.y)<=visionRadius(a)&&canTarget(a,e));}
  globalThis.KawNature={canTarget,visibleEntity,update};
 })();
+
+// These specialists are now full heroes, sharing the permanent match hero choice.
+(() => {
+ const name=heroAbilityName,desc=heroAbilityDescription,aura=heroAuraText,power=heroAbility;
+ const tick=KawWarfront.tick;KawWarfront.tick=function(dt){for(const e of state.entities)if(['bloomWeaver','ashShaman'].includes(e.type)&&e.xp===undefined){restoreHeroProgress(e);state.players[e.owner].heroChoice??=e.type;}return tick(dt);};
+ const promoted=e=>['bloomWeaver','ashShaman'].includes(e.type);
+ heroAbilityName=e=>promoted(e)?abilityDefinition(e).name:name(e);
+ heroAbilityDescription=e=>promoted(e)?abilityDefinition(e).description:desc(e);
+ heroAuraText=e=>e.type==='bloomWeaver'?'Bloom Weaver hero · Healing blooms restore nearby allies; poison pods defend an area. One chosen hero per match.':e.type==='ashShaman'?'Ash Shaman hero · Ash Veil shields allies from ranged attacks; Blood Pact boosts nearby allied damage. One chosen hero per match.':aura(e);
+ heroAbility=(e,ai=false)=>promoted(e)?unitAbility(e,ai):power(e,ai);
+})();
