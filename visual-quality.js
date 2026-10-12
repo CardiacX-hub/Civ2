@@ -47,32 +47,41 @@ window.KawFog=(()=>{
  for(let i=0;i<65;i++){const x=random()*256,y=random()*256,r=20+random()*48;
   for(const ox of [-256,0,256])for(const oy of [-256,0,256]){const g=paint.createRadialGradient(x+ox,y+oy,0,x+ox,y+oy,r);g.addColorStop(0,'rgba(166,188,189,.14)');g.addColorStop(1,'rgba(166,188,189,0)');paint.fillStyle=g;paint.fillRect(x+ox-r,y+oy-r,r*2,r*2);}}
  const layer=document.createElement('canvas'),mask=document.createElement('canvas');
- let lastMask='',previousVisible=null,previousSeen=null;
- function draw(ctx,state,cam,viewport,cell,n){
-  // Half-resolution clouds bound fill cost on phones; masks are redrawn only when
-  // visibility or the viewport changes. Clouds animate without per-cell gradients.
-  const w=Math.ceil(viewport.width/2),h=Math.ceil(viewport.height/2);
-  if(layer.width!==w||layer.height!==h){layer.width=w;layer.height=h;lastMask='';}
-  const left=Math.max(0,Math.floor(cam.x/cell)),top=Math.max(0,Math.floor(cam.y/cell)),right=Math.min(n,Math.ceil((cam.x+viewport.width)/cell)),bottom=Math.min(n,Math.ceil((cam.y+viewport.height)/cell));
-  const key=String(n);let dirty=key!==lastMask||previousVisible?.length!==state.visible.length;
-  if(!dirty)for(let y=0;y<n&&!dirty;y++)for(let x=0;x<n;x++){const i=y*n+x;if(previousVisible[i]!==state.visible[i]||previousSeen[i]!==state.seen[i]){dirty=true;break;}}
-  const m=mask.getContext('2d');if(dirty){
-   // Distance to hidden regions feathers INTO visible terrain. Hidden cells retain
-   // their exact opacity, so smoothing cannot reveal undiscovered enemies/terrain.
-   const detail=4,side=n*detail,total=side*side,feather=detail*.95;
-   mask.width=mask.height=side;const distance=new Float32Array(total),density=new Uint8Array(total);
-   for(let y=0;y<side;y++)for(let x=0;x<side;x++){const i=y*side+x,c=Math.floor(y/detail)*n+Math.floor(x/detail);distance[i]=state.visible[c]?9999:0;density[i]=state.visible[c]?0:state.seen[c]?186:255;}
-   const diagonal=Math.SQRT2;
-   const relax=(i,j,cost)=>{const d=distance[j]+cost;if(d<distance[i]){distance[i]=d;density[i]=density[j];}};
-   for(let y=0;y<side;y++)for(let x=0;x<side;x++){const i=y*side+x;if(x)relax(i,i-1,1);if(y){relax(i,i-side,1);if(x)relax(i,i-side-1,diagonal);if(x+1<side)relax(i,i-side+1,diagonal);}}
-   for(let y=side-1;y>=0;y--)for(let x=side-1;x>=0;x--){const i=y*side+x;if(x+1<side)relax(i,i+1,1);if(y+1<side){relax(i,i+side,1);if(x)relax(i,i+side-1,diagonal);if(x+1<side)relax(i,i+side+1,diagonal);}}
-   const pixels=m.createImageData(side,side);for(let y=0;y<side;y++)for(let x=0;x<side;x++){const i=y*side+x,cellIndex=Math.floor(y/detail)*n+Math.floor(x/detail),t=Math.min(1,Math.max(0,(distance[i]-1.5)/feather));pixels.data[i*4+3]=state.visible[cellIndex]?Math.round(density[i]*(1-t*t*(3-2*t))):state.seen[cellIndex]?186:255;}
-   m.putImageData(pixels,0,0);previousVisible=new Uint8Array(state.visible);previousSeen=new Uint8Array(state.seen);lastMask=key;
+ let previousVisible=null,previousSeen=null,pixels=null,dirtyFlags=null,lastUpdated=0,maskMs=0;
+ function updateMask(state,n){const began=performance.now();
+  const detail=4,side=n*detail,feather=detail*.95,initial=previousVisible?.length!==n*n||mask.width!==side;
+  if(initial){mask.width=mask.height=side;pixels=mask.getContext('2d').createImageData(side,side);previousVisible=new Uint8Array(n*n);previousSeen=new Uint8Array(n*n);dirtyFlags=new Uint8Array(n*n);}
+  const dirty=[];dirtyFlags.fill(0);
+  if(initial){
+   // Initialize solid/clear interiors with a linear write; only visible boundary
+   // cells need feather-distance calculations, including on the first frame.
+   previousVisible.set(state.visible);previousSeen.set(state.seen);
+   for(let cy=0;cy<n;cy++)for(let cx=0;cx<n;cx++){const i=cy*n+cx,alpha=state.visible[i]?0:state.seen[i]?186:255;for(let y=cy*detail;y<(cy+1)*detail;y++)for(let x=cx*detail;x<(cx+1)*detail;x++)pixels.data[(y*side+x)*4+3]=alpha;
+    if(state.visible[i]){let boundary=false;for(let y=Math.max(0,cy-2);y<=Math.min(n-1,cy+2)&&!boundary;y++)for(let x=Math.max(0,cx-2);x<=Math.min(n-1,cx+2);x++)if(!state.visible[y*n+x]){boundary=true;break;}if(boundary)dirty.push(i);}
+   }
+  }else for(let i=0;i<n*n;i++){if(previousVisible[i]===state.visible[i]&&previousSeen[i]===state.seen[i])continue;previousVisible[i]=state.visible[i];previousSeen[i]=state.seen[i];const x=i%n,y=Math.floor(i/n);for(let cy=Math.max(0,y-2);cy<=Math.min(n-1,y+2);cy++)for(let cx=Math.max(0,x-2);cx<=Math.min(n-1,x+2);cx++){const j=cy*n+cx;if(!dirtyFlags[j]){dirtyFlags[j]=1;dirty.push(j);}}}
+  lastUpdated=initial?n*n:dirty.length;if(!initial&&!dirty.length){maskMs=performance.now()-began;return;}
+  let minX=initial?0:side,minY=initial?0:side,maxX=initial?side:0,maxY=initial?side:0;
+  for(const i of dirty){const cx=i%n,cy=Math.floor(i/n),ox=cx*detail,oy=cy*detail;minX=Math.min(minX,ox);minY=Math.min(minY,oy);maxX=Math.max(maxX,ox+detail);maxY=Math.max(maxY,oy+detail);
+   const hidden=[];if(state.visible[i])for(let y=Math.max(0,cy-2);y<=Math.min(n-1,cy+2);y++)for(let x=Math.max(0,cx-2);x<=Math.min(n-1,cx+2);x++)if(!state.visible[y*n+x])hidden.push({x:x*detail,y:y*detail,alpha:state.seen[y*n+x]?186:255});
+   for(let y=oy;y<oy+detail;y++)for(let x=ox;x<ox+detail;x++){let alpha=state.visible[i]?0:state.seen[i]?186:255;
+    if(state.visible[i]&&hidden.length){let distance=9999,density=0;for(const h of hidden){const dx=Math.max(h.x-x,0,x-(h.x+detail-1)),dy=Math.max(h.y-y,0,y-(h.y+detail-1));
+      // Octile distance matches the original eight-neighbor chamfer metric.
+      const d=Math.max(dx,dy)+(Math.SQRT2-1)*Math.min(dx,dy);if(d<distance-1e-6){distance=d;density=h.alpha;}else if(Math.abs(d-distance)<1e-6)density=Math.max(density,h.alpha);
+     }const t=Math.min(1,Math.max(0,(distance-1.5)/feather));alpha=Math.round(density*(1-t*t*(3-2*t)));
+    }pixels.data[(y*side+x)*4+3]=alpha;
+   }
   }
+  mask.getContext('2d').putImageData(pixels,0,0,minX,minY,maxX-minX,maxY-minY);maskMs=performance.now()-began;
+ }
+ function draw(ctx,state,cam,viewport,cell,n){
+  const w=Math.ceil(viewport.width/2),h=Math.ceil(viewport.height/2);
+  if(layer.width!==w||layer.height!==h){layer.width=w;layer.height=h;}
+  updateMask(state,n);
   const g=layer.getContext('2d');g.globalCompositeOperation='source-over';g.fillStyle='#26383e';g.fillRect(0,0,w,h);
   const t=performance.now()/1000;for(let pass=0;pass<2;pass++){const size=pass?320:220,dx=((cam.x/2-t*(pass?2:4))%size+size)%size,dy=((cam.y/2+t*(pass?1:2))%size+size)%size;g.globalAlpha=pass?.7:1;for(let y=-size;y<h+size;y+=size)for(let x=-size;x<w+size;x+=size)g.drawImage(tile,x-dx,y-dy,size,size);}
   g.globalAlpha=1;g.globalCompositeOperation='destination-in';g.imageSmoothingEnabled=true;g.drawImage(mask,cam.x/cell*4,cam.y/cell*4,viewport.width/cell*4,viewport.height/cell*4,0,0,w,h);g.imageSmoothingEnabled=true;g.globalCompositeOperation='source-over';
   ctx.save();ctx.translate(cam.x,cam.y);ctx.drawImage(layer,0,0,viewport.width,viewport.height);ctx.restore();
  }
- return {draw};
+ return {draw,updateMask,get stats(){return {updatedCells:lastUpdated,totalCells:previousVisible?.length||0,maskMs};}};
 })();

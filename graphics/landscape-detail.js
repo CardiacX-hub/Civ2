@@ -34,7 +34,7 @@ export function addWindGrass(pipeline,c,time){
  }
  // Two uneven grass/reed lines follow each actual bank, leaving bridge approaches open.
  for(const river of c.state.rivers||[])for(let z=river.points[0].y;z<=river.points.at(-1).y;z+=7){if(river.bridges.some(y=>Math.abs(y-z)<65))continue;for(const side of [-1,1])for(let k=0;k<3;k++){const x=c.riverCenter(river,z)+side*(river.width/2+5+k*6);add(x,z+Math.sin(z+k)*3,Math.floor(z)+k,true);}}
- for(const {matrices,tints} of chunks.values()){const mesh=pipeline.addInstances(geometry,material,matrices);tints.forEach((color,i)=>mesh.setColorAt(i,color));mesh.instanceColor.needsUpdate=true;mesh.castShadow=false;mesh.userData.noShadow=true;mesh.userData.kawGrass=true;}
+ pipeline.grassChunks=[];for(const [key,{matrices,tints}] of chunks){const mesh=pipeline.addInstances(geometry,material,matrices);tints.forEach((color,i)=>mesh.setColorAt(i,color));mesh.instanceColor.needsUpdate=true;mesh.castShadow=false;mesh.userData.noShadow=true;mesh.userData.kawGrass=true;const [cx,cy]=key.split(':').map(Number),span=c.SIZE/8;mesh.userData.grassBounds={x0:cx*span,x1:(cx+1)*span,y0:cy*span,y1:(cy+1)*span};pipeline.grassChunks.push(mesh);}
  attachDeformation(material,{key:'rooted-leaf-grass-v4',uniforms:{grassTime:time},declarations:'uniform float grassTime;',code:'vec3 grassAnchor=instanceMatrix[3].xyz;float bend=position.y*position.y;transformed.x+=bend*(sin(grassTime*1.8+grassAnchor.x*.29+grassAnchor.z*.21)*.34+sin(grassTime*.73+grassAnchor.z*.12)*.16);transformed.z+=bend*cos(grassTime*1.2+grassAnchor.x*.18)*.18;'});
 }
 /** Subdivided sloping cliff faces with uneven ledges; tops stay aligned to the playable plateau. */
