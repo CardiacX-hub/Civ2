@@ -14,3 +14,18 @@ test('smoke research completes at the Sky Roost and cannot be bought by another 
 test('Hard AI sends infantry attack waves toward unexplored enemy starts without waiting for siege',()=>{const {engine,s,add}=fixture('human'),p=s.players[1],base=s.entities.find(e=>e.owner===1);p.ai=true;p.difficulty='hard';p.personality='fortifier';p.gold=p.wood=0;p.nextAI=0;base.x=500;base.y=500;s.time=100;s.ai=0;s.spawns=[[1100,900],[500,500]];const soldiers=Array.from({length:8},(_,i)=>{const e=add(i<4?'melee':'ranged',1,500+i*15,660);e.order=null;e.manualPassive=false;return e;});engine.step(.05);assert.equal(p.attackWave.phase,'advance');assert(soldiers.filter(e=>e.order?.kind==='attackMove').length>=6);for(let i=0;i<25;i++)engine.step(.05);assert(soldiers.filter(e=>e.order?.kind==='attackMove'&&e.order.x>900).length>=6,'fortifier must not recall the assault');});
 
 test('guest Tidal Wave retains ownership and heals the guest army rather than the host',()=>{const {engine,s,add}=fixture('human');s.players[1].faction='covenant';const hero=add('hero2',1,700,700),ally=add('melee',1,800,700),foe=add('ranged',0,900,700);hero.facing=0;ally.hp=200;assert.equal(engine.apply(1,{kind:'ability',id:hero.id}),null);assert.equal(s.tidalWaves[0].owner,1);assert.equal(engine.snapshot(1).tidalWaves[0].owner,0);assert.equal(s.tidalWaves[0].owner,1);for(let i=0;i<35;i++)engine.step(.05);assert(ally.hp>=270);assert.equal(foe.hp,910);});
+
+test('Hard attacks with four fighters and keeps advancing when distant reinforcements arrive',()=>{
+ const {engine,s,add}=fixture('human'),p=s.players[1],base=s.entities.find(e=>e.owner===1);
+ p.ai=true;p.difficulty='hard';p.gold=p.wood=0;p.nextAI=0;base.x=500;base.y=500;s.time=25;s.ai=0;
+ const enemy=s.entities.find(e=>e.owner===0);enemy.x=2000;enemy.y=1600;
+ p.scouted={[enemy.id]:{id:enemy.id,type:'base',building:true,x:enemy.x,y:enemy.y,at:s.time}};
+ const wave=Array.from({length:4},(_,i)=>{const e=add('melee',1,950+i*30,1000);e.order=null;e.manualPassive=false;return e;});
+ engine.step(.05);assert.equal(p.attackWave.phase,'advance');assert(wave.every(e=>e.order?.kind==='attackMove'));
+ const orders=wave.map(e=>e.order);
+ for(const e of wave){e.x=1600;e.y=1300;}
+ for(let i=0;i<6;i++){const e=add('melee',1,500+i*30,550);e.order=null;e.manualPassive=false;}
+ s.time+=3.2;s.ai=0;p.nextAI=0;engine.step(.05);
+ assert.equal(p.attackWave.phase,'advance','reinforcements do not trigger a retreat to regroup');
+ assert(wave.every((e,i)=>e.order===orders[i]),'active wave keeps its route and formation');
+});
