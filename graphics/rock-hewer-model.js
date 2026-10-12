@@ -23,7 +23,7 @@ export function createRockHewerModel(){
  for(let i=0;i<9;i++)box(root,wood,-10+i*2.5,7,0,2.3,2,31);
  for(const side of [-1,1]){rod(root,wood,[side*9,6,-16],[side*9,6,17],2.4);box(root,wood,side*6,20,0,3.3,27,3.8);rod(root,wood,[side*6,7,-13],[side*6,29,0],1.65);rod(root,wood,[side*6,7,13],[side*6,29,0],1.65);
   for(const y of [8,18,30]){box(root,iron,side*6,y,0,4.1,2.2,4.4);for(const z of [-2.3,2.3]){ball(root,iron,side*6,y,z,.45);spike(root,side*6,y+1.8,z,.65,2.2);}}
-  for(const z of [-11,11]){rod(root,iron,[-14,6,z],[14,6,z],.8);const wheel=joint('hewerWheel'+side+':'+z,root,side*13,6,z),disk=mesh(wheel,new T.CylinderGeometry(6,6,2,24),wood);disk.rotation.z=Math.PI/2;
+  for(const z of [-11,11]){rod(root,iron,[-14,6,z],[14,6,z],.8);const wheel=joint('hewerWheel'+(side<0?'L':'R')+(z<0?'Back':'Front'),root,side*13,6,z),disk=mesh(wheel,new T.CylinderGeometry(6,6,2,24),wood);disk.rotation.z=Math.PI/2;
    const rim=mesh(wheel,new T.TorusGeometry(5.7,.65,6,32),iron);rim.rotation.y=Math.PI/2;
    for(let j=0;j<12;j++){const a=j*Math.PI/6;rod(wheel,iron,[side*1.2,0,0],[side*1.2,Math.cos(a)*5.4,Math.sin(a)*5.4],.26);ball(wheel,iron,side*1.3,Math.cos(a)*5.4,Math.sin(a)*5.4,.35);if(j%2===0){const n=spike(wheel,side*1.3,Math.cos(a)*6.8,Math.sin(a)*6.8,.7,2.5);n.rotation.x=a;}}
    const hub=mesh(wheel,new T.ConeGeometry(1.8,3.5,8),iron,side*2,0,0);hub.rotation.z=-side*Math.PI/2;
