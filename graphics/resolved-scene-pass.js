@@ -5,9 +5,9 @@ import * as T from 'three';
 import {Pass,FullScreenQuad} from 'three/addons/postprocessing/Pass.js';
 import {CopyShader} from 'three/addons/shaders/CopyShader.js';
 export class ResolvedScenePass extends Pass{
- constructor(scene,camera,samples){
+ constructor(scene,camera,samples,hdr={type:T.HalfFloatType}){
   super();this.scene=scene;this.camera=camera;this.needsSwap=false;
-  this.target=new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,depthBuffer:true});this.target.samples=samples;
+  this.target=new T.WebGLRenderTarget(1,1,{...hdr,depthBuffer:true});this.target.samples=samples;
   this.uniforms=T.UniformsUtils.clone(CopyShader.uniforms);this.uniforms.tDiffuse.value=this.target.texture;
   this.material=new T.ShaderMaterial({uniforms:this.uniforms,vertexShader:CopyShader.vertexShader,fragmentShader:CopyShader.fragmentShader,depthTest:false,depthWrite:false,toneMapped:false});this.quad=new FullScreenQuad(this.material);
  }
