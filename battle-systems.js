@@ -30,13 +30,13 @@
   if(e.stance==='defensive'){e.stanceAnchor??={x:e.x,y:e.y};if(!e.order&&Math.hypot(e.x-e.stanceAnchor.x,e.y-e.stanceAnchor.y)>180){originalQueue(e,{kind:'move',...e.stanceAnchor});return null;}const target=acquire(e,Math.min(range??Infinity,(units[e.type]?.range||0)+80));return target&&Math.hypot(target.x-e.stanceAnchor.x,target.y-e.stanceAnchor.y)<=180+(target.size||0)?target:null;}
   return acquire(e,e.stance==='aggressive'&&range===null?visionRadius(e):range);
  };
- const oldTick=tick;tick=function(dt){return profiler.measure('simulation',()=>{before();oldTick(dt);after();});};
- const oldAI=ai;ai=function(...a){return profiler.measure('ai',()=>oldAI(...a));};
- const oldRoute=wallRoute;wallRoute=function(...a){return profiler.measure('pathfinding',()=>oldRoute(...a));};
- const oldMove=move;move=function(...a){return profiler.measure('movement',()=>oldMove(...a));};
+ const oldTick=tick;tick=function(dt){if(!profiler.enabled){before();oldTick(dt);after();return;}return profiler.measure('simulation',()=>{before();oldTick(dt);after();});};
+ const oldAI=ai;ai=function(schedule=false){if(!profiler.enabled)return oldAI(schedule);return profiler.measure('ai',()=>oldAI(schedule));};
+ const oldRoute=wallRoute;wallRoute=function(e,x,y){if(!profiler.enabled)return oldRoute(e,x,y);return profiler.measure('pathfinding',()=>oldRoute(e,x,y));};
+ const oldMove=move;move=function(e,x,y,dt,arrival){if(!profiler.enabled)return oldMove(e,x,y,dt,arrival);return profiler.measure('movement',()=>oldMove(e,x,y,dt,arrival));};
  const oldSpeed=effectiveSpeed;effectiveSpeed=function(e){const f=state.players[e.owner].faction;return oldSpeed(e)*(f==='human'&&['melee','cavalier','shieldwarden'].includes(e.type)?.94:f==='horde'&&['melee','devoured','bogbreaker'].includes(e.type)?1.08:1);};
  const oldArmor=armorMultiplier;armorMultiplier=function(e){const f=state.players[e.owner].faction;return Math.max(.3,Math.min(1,oldArmor(e)+(f==='human'&&['melee','cavalier','shieldwarden'].includes(e.type)?-.04:f==='horde'&&['melee','devoured','bogbreaker'].includes(e.type)?.04:0)));};
  const oldDamage=KawTactics.damage;KawTactics.damage=function(e,t){return oldDamage(e,t)*(state.players[t.owner].faction==='covenant'&&t.rootward&&['siege','bastion'].includes(e.type)?1.12:1);};
- const clearOld=clearWallLine;clearWallLine=function(...a){return profiler.measure('collision',()=>clearOld(...a));};const trafficOld=trafficNeighbors;trafficNeighbors=function(...a){return profiler.measure('traffic',()=>trafficOld(...a));};const sepOld=separateUnits;separateUnits=function(...a){return profiler.measure('separation',()=>sepOld(...a));};const effOld=effectiveSpeed;effectiveSpeed=function(...a){return profiler.measure('speed',()=>effOld(...a));};
+ const clearOld=clearWallLine;clearWallLine=function(e,x,y,obstacles){if(!profiler.enabled)return clearOld(e,x,y,obstacles);return profiler.measure('collision',()=>clearOld(e,x,y,obstacles));};const trafficOld=trafficNeighbors;trafficNeighbors=function(e,radius){if(!profiler.enabled)return trafficOld(e,radius);return profiler.measure('traffic',()=>trafficOld(e,radius));};const sepOld=separateUnits;separateUnits=function(){if(!profiler.enabled)return sepOld();return profiler.measure('separation',()=>sepOld());};const effOld=effectiveSpeed;effectiveSpeed=function(e){if(!profiler.enabled)return effOld(e);return profiler.measure('speed',()=>effOld(e));};
  globalThis.KawBattle={command,profiles,profiler,before,after};
 })();
