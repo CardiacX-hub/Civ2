@@ -20,7 +20,9 @@ export function createUnitBatches(scene){
    }
    for(const [key,batch]of batches){const count=batch.sources.length;if(!count){if(performance.now()-batch.used>45000){batch.mesh.removeFromParent();batch.mesh.dispose();batches.delete(key);}continue;}batch.used=performance.now();
     if(count>batch.mesh.instanceMatrix.count){const old=batch.mesh,mesh=new THREE.InstancedMesh(old.geometry,old.material,2**Math.ceil(Math.log2(count)));mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.castShadow=old.castShadow;mesh.receiveShadow=old.receiveShadow;mesh.frustumCulled=false;old.removeFromParent();old.dispose();scene.add(mesh);batch.mesh=mesh;}
-    batch.mesh.count=count;batch.mesh.visible=true;batch.sources.forEach((source,i)=>batch.mesh.setMatrixAt(i,source.matrixWorld));batch.mesh.instanceMatrix.needsUpdate=true;
+    batch.mesh.count=count;batch.mesh.visible=true;// Keep a CPU precision copy: comparing doubles avoids Float32 rounding noise.
+    // Changed matrices use native typed-array copies instead of 16 scalar writes.
+    const data=batch.mesh.instanceMatrix.array;let changed=false;if(!batch.previous||batch.previous.length!==data.length){batch.previous=new Float64Array(data.length);batch.previous.fill(NaN);}for(let i=0;i<count;i++){const values=batch.sources[i].matrixWorld.elements,offset=i*16;for(let j=0;j<16;j++)if(batch.previous[offset+j]!==values[j]){data.set(values,offset);batch.previous.set(values,offset);changed=true;break;}}if(changed)batch.mesh.instanceMatrix.needsUpdate=true;
    }
   },
   get stats(){return {batches:[...batches.values()].filter(b=>b.mesh.visible).length,instances:submitted};},
