@@ -13,6 +13,7 @@
  const saves=make('fieldset',null,$('keySettings'));make('legend','Saves & replays',saves);
  button('Save game',saves,()=>save('manual'));
  button('Save replay',saves,()=>saveReplay());
+ const diagnostics=make('fieldset',null,$('keySettings'));make('legend','Diagnostics',diagnostics);button('Download error report',diagnostics,()=>{let report;try{report=localStorage.getItem('kaw-last-crash');}catch{}if(!report){toast('No game error has been recorded on this device.');return;}const url=URL.createObjectURL(new Blob([report],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='kingdoms-error-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
  const groupBar=make('section',null,document.querySelector('#game'));groupBar.id='armyGroups';document.querySelector('#game footer').before(groupBar);groupBar.setAttribute('aria-label','Army control groups');let storing=false;const storeButton=button('Store group',groupBar,()=>{storing=!storing;storeButton.setAttribute('aria-pressed',storing);refreshGroups();});
  function group(n,append=false){if(storing){groups[n]=selected.filter(e=>e.owner===0).map(e=>e.id);storing=false;storeButton.setAttribute('aria-pressed','false');toast('Group '+n+' stored');refreshGroups();}else if(groups[n]){const members=state.entities.filter(e=>groups[n].includes(e.id)&&e.hp>0&&e.owner===0);selected=append?[...new Set([...selected,...members])]:members;updateUI();}}
  const groupButtons=[];
