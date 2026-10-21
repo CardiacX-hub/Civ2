@@ -637,3 +637,30 @@ Run `npm test`, `npm run build:graphics`, `CHECK_URL=http://localhost:3084 node 
 Choose **Campaign · 10 levels** from the main menu. Your selected faction and banner color carry into each mission. Defeat all enemy Strongholds to unlock the next level. Enemy rosters grow from infantry to siege, flyers, heroes and specialists, ending with three allied AI opponents.
 
 Each mission awards one star for victory, one for its displayed time goal, and one for staying within its loss limit without losing buildings. Best stars and unlocks are saved on this browser. Results offer Retry, Next level and Level selection. Campaign battle saves use the existing single-player save system.
+
+### The Astral Remnant
+
+Choose the fourth faction card to play the original alien faction in skirmishes,
+Campaign, or online lobbies (the multiplayer server must also have this update).
+The Remnant Ark begins as a tilted, damaged spacecraft. Level 2 repairs its hull
+and landing supports; level 3 adds weapon pods and a command module; level 4 adds
+outer hull sections and reactor spires. Each tier retains the original hull and
+uses the level-one rendering scale so upgrades never shrink the stronghold.
+
+Clone Foundries train Riftblades, Pulse Troopers, Prism Stalkers, Phase Binders and
+noncombat Survey Skiffs. Graviton Works produce Grav Mortars at Stronghold level 2.
+Flight Nexuses require level 3 and train Shard Interceptors (spacecraft) and
+Voidwing Leviathans (living winged aliens). All use the existing gold/lumber,
+supply, armor, research, AI, fog and saved-game rules. The three hero choices are
+Star Warden, Rift Seer and Void Sovereign. The models, portraits and faction names
+are original; no external game's assets are included.
+
+Alien visuals are defined in `graphics/alien-models.js`, generated once per
+model type and shared between instances. Wings, tails and limbs animate through
+cached pivots rather than regenerating geometry. Existing factions' graphics
+assets are unchanged. PNG previews also cover the lightweight fallback renderer.
+
+Regenerate the alien menu/fallback/portrait PNGs after editing the models with
+`node tools/export-alien-previews.cjs` (Chromium and Playwright required), then run
+`npm run build:graphics`. Check the four live tiers with
+`CHECK_URL=http://localhost:3085 node tools/check-alien-faction.cjs`.
