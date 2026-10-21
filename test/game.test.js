@@ -241,3 +241,5 @@ test('scouts train at tier one and cannot fight; melee cannot hit flyers, ranged
 test('tier three flying troops and dragon heroes receive 100 extra health but scouts do not',()=>{
  for(const race of ['human','horde','covenant']){const r=openBattle(race);assert.ok(r(`(()=>{for(const type of ['air','air2','air3','hero3','scout']){if(!unitBelongs(type,'${race}'))continue;const e=entity(type,0,800,800),bonus=unitStrongholdRequirement(type)===3&&isFlying(e)?100:0;if(e.max!==units[type].hp+bonus)return false;}return true;})()`));}
 });
+
+test('cached open-cell collision checks respect neighboring obstacles, large units and new snapshots',()=>{const r=game();assert.ok(r(`(()=>{const small={x:130,y:130,size:8},large={x:130,y:130,size:80},empty=[],near=[{x:205,y:145,half:12}];for(let i=0;i<20;i++)if(!clearWallLine(small,150,145,empty))return false;if(!clearWallLine(small,150,145,near)||clearWallLine(large,150,145,near))return false;const blocking=[{x:155,y:145,half:12}];return !clearWallLine(small,150,145,blocking)&&clearWallLine(small,150,145,empty);})()`));});
