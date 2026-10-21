@@ -630,3 +630,10 @@ The browser report includes frame percentiles, simulation time versus wall time,
 - Settings expose texture filtering, shadows, wind grass, and ambient occlusion/bloom independently of the existing quality preset. These budgets preserve authored unit geometry at every zoom level. Water uses flowing ripple normals, low-roughness PBR environment reflections, clearcoat shine, and animated foam without another scene capture pass. Dawnward artillery impacts show bounded radial fire/smoke plumes with sparks at projectile contact. Water reflections use the lighting environment; they do not mirror every moving unit or nearby building.
 
 Run `npm test`, `npm run build:graphics`, `CHECK_URL=http://localhost:3084 node tools/check-commander-tools.cjs`, and `CHECK_URL=http://localhost:3084 node tools/check-water-explosions.cjs` against the development server. The latter validates the live water shader and saves `/tmp/r6-water-explosions.png`.
+
+
+### Crownfall campaign levels
+
+Choose **Campaign · 10 levels** from the main menu. Your selected faction and banner color carry into each mission. Defeat all enemy Strongholds to unlock the next level. Enemy rosters grow from infantry to siege, flyers, heroes and specialists, ending with three allied AI opponents.
+
+Each mission awards one star for victory, one for its displayed time goal, and one for staying within its loss limit without losing buildings. Best stars and unlocks are saved on this browser. Results offer Retry, Next level and Level selection. Campaign battle saves use the existing single-player save system.
