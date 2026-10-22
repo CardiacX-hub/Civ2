@@ -664,3 +664,13 @@ Regenerate the alien menu/fallback/portrait PNGs after editing the models with
 `node tools/export-alien-previews.cjs` (Chromium and Playwright required), then run
 `npm run build:graphics`. Check the four live tiers with
 `CHECK_URL=http://localhost:3085 node tools/check-alien-faction.cjs`.
+
+Astral unit silhouettes identify their jobs: quadruped cargo drones carry a
+salvage tool, Riftblades wear broad armor with twin blades, Pulse Troopers carry
+compact coil rifles, and hooded Prism Stalkers carry longer scoped rifles.
+Phase Binders have containment canisters and focus rings. The Star Warden uses
+a shield and blade, the Rift Seer has a psionic halo, and the Void Sovereign uses
+a crown and command staff. Signal Bearers carry a banner without a rifle.
+Survey Skiffs use a rotating sensor dish, Shard Interceptors have swept wings,
+and Grav Mortars walk on six legs with recoiling artillery cradles. These visual
+changes retain existing combat statistics and use cached animation pivots.
