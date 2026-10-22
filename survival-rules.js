@@ -16,7 +16,7 @@
   for(const p of state.players){p.ai=false;p.initialAI=false;p.team=0;}
   state.players[0].gold=state.players[0].wood=600;
   for(const type of ['melee','melee','ranged','ranged']){const i=state.entities.length;entity(type,0,center-90+(i%4)*42,center+150);}
-  state.survival={version:1,wave:0,cleared:0,nextAt:60,phase:'prepare',spawned:0,failedSpawns:0,direction:0,scanAt:0,events:[]};
+  state.survival={version:1,baseId:base.id,wave:0,cleared:0,nextAt:60,phase:'prepare',spawned:0,failedSpawns:0,direction:0,scanAt:0,events:[]};
   state.rules={...state.rules,victory:'strongholds',speed:1};state.networkMatch=false;state.ai=1e9;
   cam.x=center-viewport.width/2;cam.y=center-viewport.height/2;clampCam();clearTerrainCache();fog();updateUI();
  }
@@ -51,7 +51,7 @@
   KawSurvival.pending=false;const race=options?.players?.[0]?.faction||faction,color=options?.players?.[0]?.color||$('color').value,roster=[race,...Object.keys(factions).filter(f=>f!==race)].map((f,i)=>({name:i?'Wave host '+i:'You',faction:f,color:i?colors.filter(c=>c!==color)[i-1]:color,ai:false}));
   const result=previousStart({...options,players:roster,rules:{resources:600,speed:1,supply:200,victory:'strongholds'}});if(state)configure();return result;
  };
- const previousOutcome=KawRules.outcome;KawRules.outcome=function(){if(state.survival)return state.entities.some(e=>e.owner===0&&e.type==='base'&&e.hp>0)?null:{winners:[],reason:'centerhold'};return previousOutcome();};
+ const previousOutcome=KawRules.outcome;KawRules.outcome=function(){if(state.survival)return state.entities.some(e=>e.owner===0&&e.type==='base'&&e.hp>0&&(state.survival.baseId?e.id===state.survival.baseId:Math.hypot(e.x-SIZE/2,e.y-SIZE/2)<10))?null:{winners:[],reason:'centerhold'};return previousOutcome();};
  const previousTick=tick;tick=function(dt){if(state?.survival)advance();return previousTick(dt);};
  globalThis.KawSurvival={pending:false,plan,configure,launch,advance,limit:LIMIT};
 })();
