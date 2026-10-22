@@ -32,7 +32,7 @@
   const spacing=Math.max(28,e.size+leader.size+12),needed=rank*spacing,trail=leader.breadcrumbs||[];let length=0,goal=trail.at(-1);
   for(let i=1;i<trail.length;i++){const a=trail[i-1],b=trail[i],d=Math.hypot(a.x-b.x,a.y-b.y);if(length+d>=needed){const t=(needed-length)/(d||1);goal={x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};length=needed;break;}length+=d;}
   // Let the front leave the bottleneck before feeding the next troop into it.
-  if(goal&&length>=needed-2){o.x=goal.x;o.y=goal.y;}else{o.x=e.x;o.y=e.y;}
+  if(goal&&length>=needed-2){const side=rank%2?1:-1,offset=e.size+5,split={x:goal.x-Math.sin(heading)*offset*side,y:goal.y+Math.cos(heading)*offset*side};const room=!blockedGroundPoint(split.x,split.y,e.size)&&clearWallLine(e,split.x,split.y);o.x=room?split.x:goal.x;o.y=room?split.y:goal.y;f.split=room;}else{o.x=e.x;o.y=e.y;}
   f.column=true;
  }
  const formationSpeed=effectiveSpeed;effectiveSpeed=function(e){const f=e.order?.formation,base=formationSpeed(e);return f&&!isFlying(e)&&f.groupSpeed&&['move','attackMove'].includes(e.order.kind)?Math.min(base,f.groupSpeed)*(f.leaderId===e.id?f.pace||1:1):base;};

@@ -741,3 +741,32 @@ use a windup/strike/recovery timing curve. Static route caches now survive mobil
 unit production and losses; workers stage outside full mines to clear entrances.
 These changes improve the existing models; final realism remains limited by their
 underlying geometry and textures.
+
+Tactical feedback & thrusters (r39): moving Astral spacecraft have rear-facing
+blue plasma exhaust; it shuts off when movement stops. Astral armor cladding is
+raised geometry with chamfers, seams and fasteners. Combat adds directional hit
+reactions, flight banking, insect leg tucking, damaged building tint and torn
+standards. Hover unit powers for descriptions/range previews; Bombard shows its
+70-unit impact area, visible targets and friendly-fire warning.
+
+Collector mine clicks now take priority over overlapping units/building artwork,
+including touch; a closer Stronghold/drop-off remains accessible for deliveries.
+Hidden miners cannot enter a box selection. Cached projected pick bounds avoid
+repeated rig traversal on mouse movement. Loaded collectors have collision
+priority, and formations can use two files through passages before reforming.
+AI siege/support escorts react to observed threats and injured specialists retreat.
+Astral combat units recharge a 20-point phase capacitor at 3/s within 180 of a
+completed Stronghold, House or Depot after 3 seconds without damage. Full charge
+reduces incoming damage by 15%; taking damage drains charge. Other faction
+formation, momentum and terrain-control passives remain active.
+
+The repeatable benchmark uses seed 20261022, fixed armies/orders and camera paths.
+Default mode measures simulation CPU time. Set `BENCH_RENDER=1` to include real
+frame-rate/frame-time measurements; `BENCH_QUALITY=low|balanced|high` selects the
+render preset, and `SCENARIO_STEPS` limits duration (default 300 rendered frames or
+6,000 simulation ticks). Example: `CHECK_URL=http://localhost:3092 BENCH_RENDER=1
+SCENARIO='crowded fight' SCENARIO_STEPS=120 node tools/profile-battle-scenarios.cjs`.
+Compare on the same device: software WebGL in a cloud container is not a gaming
+GPU benchmark. Grass keeps its full density and detail, using smaller static
+chunks to cull more invisible vertices. Pathfinding/AI spatial lookups and pick
+caches reduce overhead; extreme congestion may still produce occasional spikes.

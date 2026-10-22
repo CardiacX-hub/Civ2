@@ -1,12 +1,18 @@
-function fl(s){let e=s.name||"";return s.userData?.previewFloor||s.emissive&&s.emissive.r+s.emissive.g+s.emissive.b>.2||s.transparent&&s.opacity<.9||/leaf|water|cascade|flame|glow|roof/i.test(e)?0:/bark|wood|timber/i.test(e)?2:/stone|masonry|rock/i.test(e)?3:(s.metalness||0)>.4?1:s.userData?.structure?3:4}function _h(s,e){if(!e)return;s.vertexShader=`varying vec3 detailPosition;
+function fl(s){let e=s.name||"";return s.userData?.previewFloor||s.emissive&&s.emissive.r+s.emissive.g+s.emissive.b>.2||s.transparent&&s.opacity<.9||/leaf|water|cascade|flame|glow|roof/i.test(e)?0:/bark|wood|timber/i.test(e)?2:/stone|masonry|rock/i.test(e)?3:(s.metalness||0)>.4?1:s.userData?.structure?3:4}function _h(s,e){if(!e)return;s.vertexShader=`varying vec3 detailPosition; varying float detailDamage;
 `+s.vertexShader,s.vertexShader=s.vertexShader.replace("#include <begin_vertex>",`#include <begin_vertex>
-detailPosition=position;`),s.fragmentShader=`varying vec3 detailPosition;
+detailPosition=position;
+#ifdef USE_INSTANCING_COLOR
+detailDamage=clamp((1.0-instanceColor.r)/.45,0.0,1.0);
+#else
+detailDamage=0.0;
+#endif`),s.fragmentShader=`varying vec3 detailPosition; varying float detailDamage;
 `+s.fragmentShader;let t=e===2?"detailPosition.x*.9+sin(detailPosition.y*.13+detailPosition.z*.4)*.7":e===1?"detailPosition.y*5.0+sin(detailPosition.x*.7)*.15":e===3?"detailPosition.x*1.8+detailPosition.z*1.3+sin(detailPosition.y*2.4)*.6":"dot(detailPosition,vec3(2.1,3.7,1.6))";s.fragmentShader=s.fragmentShader.replace("#include <roughnessmap_fragment>",`#include <roughnessmap_fragment>
  float detailCoord=${t};
  float detailAA=1.0-smoothstep(.35,1.5,fwidth(detailCoord));
  float detailGroove=pow(.5+.5*sin(detailCoord*6.2831853),${e===2?"8.0":"4.0"})*detailAA;
  roughnessFactor=clamp(roughnessFactor+(detailGroove-.3)*${e===1?".1":".06"},.12,1.0);
- diffuseColor.rgb*=1.0-detailGroove*${e===2?".13":e===3?".085":".04"};`),s.fragmentShader=s.fragmentShader.replace("#include <normal_fragment_maps>",`#include <normal_fragment_maps>
+ diffuseColor.rgb*=1.0-detailGroove*${e===2?".13":e===3?".085":".04"};
+ if(detailDamage>.25){float fissure=1.0-smoothstep(.012,.04,abs(sin(detailPosition.y*.7+sin(detailPosition.x*.9+detailPosition.z*.45)*2.4)));float fissureMask=step(.62,fract(floor(detailPosition.x*.5)*.23+floor(detailPosition.y*.5)*.71));diffuseColor.rgb*=1.0-fissure*fissureMask*detailDamage*.7;}`),s.fragmentShader=s.fragmentShader.replace("#include <normal_fragment_maps>",`#include <normal_fragment_maps>
  vec3 detailDx=dFdx(-vViewPosition),detailDy=dFdy(-vViewPosition);
  vec3 detailR1=cross(detailDy,normal),detailR2=cross(normal,detailDx);
  float detailDet=dot(detailDx,detailR1);

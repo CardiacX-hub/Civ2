@@ -223,3 +223,5 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 #performanceMonitor{position:absolute;top:8px;right:8px;z-index:5;background:#101c22df;color:#c7f3df;padding:5px 8px;font:11px monospace;pointer-events:none}#selectionStats b{overflow-wrap:anywhere}
 
 #modelGallery{width:min(1000px,95vw);max-height:95dvh;overflow:auto}#modelGallery canvas{display:block;width:100%;height:min(52vh,500px);min-height:250px;touch-action:none;background:#202a31}#modelGallery .gallery-controls{display:flex;gap:10px;flex-wrap:wrap}#modelGallery label{font-size:12px}#galleryStatus{display:block;padding:8px;font:12px monospace}#galleryDone{display:block;margin-top:8px}
+
+#abilityReadout{display:block;font-size:11px;line-height:1.5;color:#b8e8ef;padding:6px;border-left:2px solid #63bdd4}#abilityReadout[hidden]{display:none}

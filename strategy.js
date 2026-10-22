@@ -108,13 +108,24 @@
     }
     // Evaluate nearby opponents only. Do not redirect an army away from base defense.
     const threats=observed.filter(e=>!e.building && units[e.type]?.damage>0);
+    const buckets=list=>{const m=new Map();for(const u of list){const k=Math.floor(u.x/256)+':'+Math.floor(u.y/256);if(!m.has(k))m.set(k,[]);m.get(k).push(u);}return m;},friendsIndex=buckets(army),foesIndex=buckets(threats);
+    const local=(index,e,r)=>{const out=[];for(let y=Math.floor((e.y-r)/256);y<=Math.floor((e.y+r)/256);y++)for(let x=Math.floor((e.x-r)/256);x<=Math.floor((e.x+r)/256);x++)for(const u of index.get(x+':'+y)||[])if((u.x-e.x)**2+(u.y-e.y)**2<r*r)out.push(u);return out;};
     const retreatRatio=(p.difficulty||state.difficulty)==='easy'?.45:['hard','extreme'].includes(p.difficulty||state.difficulty)?.6:.8;
     for(const e of army) {
-      if(e===scout || !threats.some(t=>Math.hypot(t.x-e.x,t.y-e.y)<330)) continue;
+      if(e===scout)continue;const nearbyFoes=local(foesIndex,e,330);if(!nearbyFoes.length)continue;
       const power=group=>group.reduce((sum,u)=>sum+(units[u.type]?.damage||0)*Math.sqrt(Math.max(0,u.hp/u.max)),0);
-      const nearbyFriends=army.filter(t=>Math.hypot(t.x-e.x,t.y-e.y)<300), nearbyFoes=threats.filter(t=>Math.hypot(t.x-e.x,t.y-e.y)<300);
+      const nearbyFriends=local(friendsIndex,e,300);
       if(Math.hypot(e.x-base.x,e.y-base.y)>350 && power(nearbyFriends)<power(nearbyFoes)*retreatRatio) {
         KawBattle.command(e,'retreat');e.aiEngaged=true;e.fallbackUntil=state.time+4;
+      }
+    }
+    // Protect siege and injured specialists using observed threats only.
+    if(state.time>=(p.coverAt||0)){p.coverAt=state.time+1.5;
+      for(const support of own.filter(e=>['siege','medic','engineer','naniteTender','nullDisruptor'].includes(e.type)&&!e.building&&e.hp>0)){
+        const danger=local(foesIndex,support,180).filter(t=>!isFlying(t)&&units[t.type]?.range<100).sort((a,b)=>(a.x-support.x)**2+(a.y-support.y)**2-((b.x-support.x)**2+(b.y-support.y)**2))[0];
+        if(!danger)continue;const defenders=army.filter(e=>e!==support&&['melee','devoured','cavalier','beetle','bogbreaker','phaseSentinel'].includes(e.type)&&e.hp/e.max>.4).sort((a,b)=>(a.x-support.x)**2+(a.y-support.y)**2-((b.x-support.x)**2+(b.y-support.y)**2));
+        for(const escort of defenders.slice(0,2)){if(canAttackTarget(escort,danger)){queueTask(escort,{kind:'attack',target:danger});escort.aiEngaged=true;}}
+        if(support.hp/support.max<.4){KawBattle.command(support,'retreat');support.fallbackUntil=state.time+4;}else if(Math.hypot(danger.x-support.x,danger.y-support.y)<110){const a=Math.atan2(support.y-danger.y,support.x-danger.x);queueTask(support,{kind:'move',x:support.x+Math.cos(a)*110,y:support.y+Math.sin(a)*110});support.kiteUntil=state.time+1.5;}
       }
     }
     coordinateArmy(owner,own,observed,seen,base);

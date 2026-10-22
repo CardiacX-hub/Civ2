@@ -21,10 +21,12 @@ export function createAlienModel(name){
  // Reuse matching beveled parts inside each template: readable plate edges
  // without a new mesh topology or geometry allocation during animation.
  const plates=new Map();
+ const thruster=(x,y,z,size=1)=>{const jet=new T.Group();jet.name='alienThruster';jet.position.set(x,y,z);jet.userData.size=size;jet.visible=false;for(const [r,h,color,opacity]of [[.9,5.4,0x165cff,.32],[.55,4,0x40bbff,.7],[.25,2.5,0xd2f7ff,.9]]){const flame=mesh(new T.ConeGeometry(r*size,h*size,12,1,true),new T.MeshBasicMaterial({color,transparent:true,opacity,depthWrite:false,side:T.DoubleSide,blending:T.AdditiveBlending}),0,0,h*size*.5,jet);flame.rotation.x=Math.PI/2;flame.userData.noShadow=true;flame.castShadow=flame.receiveShadow=false;}root.add(jet);return jet;};
  const box=(x,y,z,w,h,d,m=steel,p=root)=>{const key=w+':'+h+':'+d;let g=plates.get(key);if(!g){{const b=Math.min(w,h,d)*.12,shape=new T.Shape(),a=w/2-b,c=h/2-b;shape.moveTo(-a,-c);shape.lineTo(a,-c);shape.lineTo(a,c);shape.lineTo(-a,c);shape.closePath();g=new T.ExtrudeGeometry(shape,{depth:d-2*b,bevelEnabled:true,bevelThickness:b,bevelSize:b,bevelSegments:1,steps:1});g.translate(0,0,-d/2+b);}plates.set(key,g);}return mesh(g,m,x,y,z,p);};
- const orb=(x,y,z,a,b,c,m=steel,p=root)=>{const o=mesh(new T.SphereGeometry(1,16,10),m,x,y,z,p);o.scale.set(a,b,c);return o;};
- const cone=(x,y,z,r,h,m=edge,p=root)=>mesh(new T.ConeGeometry(r,h,8),m,x,y,z,p);
- function ring(x,y,z,r,m=edge,p=root){const o=mesh(new T.TorusGeometry(r,.12,6,24),m,x,y,z,p);o.rotation.x=Math.PI/2;return o;}
+ const sphereGeometry=new T.SphereGeometry(1,16,10),coneGeometry=new T.ConeGeometry(1,1,8),ringGeometries=new Map();
+ const orb=(x,y,z,a,b,c,m=steel,p=root)=>{const o=mesh(sphereGeometry,m,x,y,z,p);o.scale.set(a,b,c);return o;};
+ const cone=(x,y,z,r,h,m=edge,p=root)=>{const o=mesh(coneGeometry,m,x,y,z,p);o.scale.set(r,h,r);return o;};
+ function ring(x,y,z,r,m=edge,p=root){let geometry=ringGeometries.get(r);if(!geometry){geometry=new T.TorusGeometry(r,.12,6,24);ringGeometries.set(r,geometry);}const o=mesh(geometry,m,x,y,z,p);o.rotation.x=Math.PI/2;return o;}
  function panel(x,y,z,w,h,d,p=root){const result=box(x,y,z,w,h,d,steel,p);box(x,y+h*.51,z,w*.9,.09,d*.9,edge,p);for(let i=0;i<3;i++)box(x-w*.32+i*w*.32,y+h*.56,z,.06,.04,d*.78,dark,p);return result;}
  if(!unit){
   if(type.startsWith('base')){
@@ -123,16 +125,24 @@ export function createAlienModel(name){
   }else if(banner){box(0,1,-.5,.3,13,.3,edge,right);box(2,5,-.5,4,5,.15,team,right);orb(0,8,-.5,.6,.6,.6,glow,right);panel(0,6,1.5,3,3,1);}
 
  }
+ if(unit&&['air','air2','scout'].includes(type)){if(type==='scout')thruster(0,3,3, .55);else for(const side of [-1,1])thruster(side*(type==='air'?3:5),type==='air'?3:3.2,type==='air'?6.0:6.3,type==='air'?1:1.35);}
+ // Raised armor plates are geometry: gaps, chamfers and fasteners cast shadows.
+ if(!unit&&!['wall','gate','gate-open','trap','barricade'].includes(type)){
+  const primary=root.getObjectByName('astralPrimaryHull');if(primary)for(let row=0;row<2;row++)for(let i=0;i<12;i++){const a=i*Math.PI/6,radius=10-(row-.5)*2.1*.4+.22,plate=box(Math.cos(a)*radius,(row-.5)*2.1,Math.sin(a)*radius,4.5,1.8,.35,steel,primary);plate.rotation.y=Math.PI/2-a;}
+  const surfaces=[];root.traverse(o=>{if(o.isMesh&&o!==primary&&o.material===steel){if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();const b=o.geometry.boundingBox,v=b.getSize(new T.Vector3());if(v.x>=5&&v.y>=3&&v.z>=4)surfaces.push({o,b,v});}});
+  for(const {o,b,v}of surfaces.sort((a,b)=>b.v.x*b.v.y-a.v.x*a.v.y).slice(0,3)){const columns=Math.min(5,Math.floor(v.x/2)),rows=Math.min(3,Math.floor(v.y/1.5)),w=v.x/columns,h=v.y/rows;for(let row=0;row<rows;row++)for(let col=0;col<columns;col++){const x=b.min.x+w*(col+.5),y=b.min.y+h*(row+.5),plate=box(x,y,b.min.z-.16,w*.88,h*.82,.28,team,o);for(const side of [-1,1])orb(x+side*w*.32,y+h*.25,b.min.z-.33,.065,.065,.04,edge,o);}}
+ }
  if(!unit){for(const [mat,label]of [[steel,'astral-hull-alloy'],[edge,'astral-edge-alloy'],[dark,'astral-recess-alloy'],[team,'astral-painted-alloy']]){mat.name=label;mat.userData.structure=true;}if(!['wall','gate','gate-open','trap','barricade'].includes(type)){const bounds=new T.Box3().setFromObject(root),w=bounds.max.x-bounds.min.x,d=bounds.max.z-bounds.min.z;for(const side of [-1,1]){const x=side*w*.32;panel(x,.45,d*.26,Math.max(1,w*.2),.5,Math.max(1,d*.2));for(let i=0;i<5;i++)box(x-.6+i*.3,.8,d*.26,.12,.12,Math.max(1,d*.16),dark);for(const z of [-d*.2,d*.2]){orb(x,1,z,.16,.16,.16,edge);box(x,1.6,z,.12,.8,.12,glow);}}}}
  if(type.startsWith('base')&&level>=2){const expansion=new T.Group();expansion.add(...root.children.slice());expansion.scale.set(1.08,1,1.08);root.add(expansion);}root.name=name;root.userData.alien=true;return root;
 }
 /** Animation touches only authored pivots; no geometry regeneration per frame. */
 export function animateAlien(entry,e,time){
  if(!entry.name.startsWith('alien-')||e.building)return;
- if(!entry.alienPivots){entry.alienPivots=[];entry.model.traverse(o=>{if(/^alien(Wing|Tail|Leg|Arm|Tool|Sensor|Mortar|Halo|Rifle|Torso)/.test(o.name))entry.alienPivots.push(o);});}
+ if(!entry.alienPivots){entry.alienPivots=[];entry.model.traverse(o=>{if(/^alien(Wing|Tail|Leg|Arm|Tool|Sensor|Mortar|Halo|Rifle|Torso|Thruster)/.test(o.name))entry.alienPivots.push(o);});}
  const walk=e.walkUntil>time,attack=e.action?.until>time,progress=attack?Math.max(0,Math.min(1,1-(e.action.until-time)/e.action.duration)):0,strike=progress<.22?-progress/.22*.3:progress<.4?-.3+(progress-.22)/.18*1.3:1-(progress-.4)/.6;
  for(const o of entry.alienPivots){const side=o.name.includes('-1')?-1:1;
-  if(o.name.startsWith('alienWing'))o.rotation.z=side*Math.sin(time*4)*.28;
+  if(o.name==='alienThruster'){o.visible=walk;const pulse=.9+Math.sin(time*27+(e.id||0))*.08+Math.sin(time*43)*.04;o.scale.set(1,1,walk?pulse:0);}
+  else if(o.name.startsWith('alienWing'))o.rotation.z=side*Math.sin(time*4)*.28;
   else if(o.name==='alienTail')o.rotation.y=Math.sin(time*2)*.25;
   else if(o.name==='alienSensor')o.rotation.y=time*.8;
   else if(o.name==='alienHalo')o.rotation.y=time*.3;

@@ -10,9 +10,9 @@ export function surfaceKind(material){
 }
 export function injectSurfaceDetail(shader,kind){
  if(!kind)return;
- shader.vertexShader='varying vec3 detailPosition;\n'+shader.vertexShader;
- shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\ndetailPosition=position;');
- shader.fragmentShader='varying vec3 detailPosition;\n'+shader.fragmentShader;
+ shader.vertexShader='varying vec3 detailPosition; varying float detailDamage;\n'+shader.vertexShader;
+ shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\ndetailPosition=position;\n#ifdef USE_INSTANCING_COLOR\ndetailDamage=clamp((1.0-instanceColor.r)/.45,0.0,1.0);\n#else\ndetailDamage=0.0;\n#endif');
+ shader.fragmentShader='varying vec3 detailPosition; varying float detailDamage;\n'+shader.fragmentShader;
  // Object-space coordinates keep scratches attached to moving units. fwidth
  // integrates away subpixel grooves, avoiding extra texture reads and allocations.
  const sample=kind===2?'detailPosition.x*.9+sin(detailPosition.y*.13+detailPosition.z*.4)*.7':kind===1?'detailPosition.y*5.0+sin(detailPosition.x*.7)*.15':kind===3?'detailPosition.x*1.8+detailPosition.z*1.3+sin(detailPosition.y*2.4)*.6':'dot(detailPosition,vec3(2.1,3.7,1.6))';
@@ -21,7 +21,8 @@ export function injectSurfaceDetail(shader,kind){
  float detailAA=1.0-smoothstep(.35,1.5,fwidth(detailCoord));
  float detailGroove=pow(.5+.5*sin(detailCoord*6.2831853),${kind===2?'8.0':'4.0'})*detailAA;
  roughnessFactor=clamp(roughnessFactor+(detailGroove-.3)*${kind===1?'.1':'.06'},.12,1.0);
- diffuseColor.rgb*=1.0-detailGroove*${kind===2?'.13':kind===3?'.085':'.04'};`);
+ diffuseColor.rgb*=1.0-detailGroove*${kind===2?'.13':kind===3?'.085':'.04'};
+ if(detailDamage>.25){float fissure=1.0-smoothstep(.012,.04,abs(sin(detailPosition.y*.7+sin(detailPosition.x*.9+detailPosition.z*.45)*2.4)));float fissureMask=step(.62,fract(floor(detailPosition.x*.5)*.23+floor(detailPosition.y*.5)*.71));diffuseColor.rgb*=1.0-fissure*fissureMask*detailDamage*.7;}`);
  // Perturb the already mapped normal through screen-space surface derivatives.
  // It is bounded and vanishes below a pixel; no displacement cracks or geometry.
  shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
