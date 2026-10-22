@@ -709,3 +709,19 @@ repeated per-part UUID keys; dirty GPU updates upload the changed matrix span.
 Static landscape matrices update only when transforms change, including falling
 trees and shrink animation. `node tools/profile-render-work.cjs` compares this
 CPU workload with `ae12e61`; it does not measure end-to-end GPU frame rate.
+
+Battle polish (r35): Settings → Battle performance enables an optional FPS monitor
+and downloads a bounded JSON report (3,600 recent frame timings, 120 lag spikes).
+Reports include simulation, AI, route search, Canvas and presentation CPU timings;
+they are diagnostics, not GPU frame-time measurements. Background/paused intervals
+are excluded. Run `CHECK_URL=http://localhost:3090 node tools/profile-battle-scenarios.cjs`
+against a local server for five simulated minutes each of crowded combat, mine
+traffic and AI routing. Set SCENARIO_STEPS for shorter checks.
+
+Original campaign now also offers Last Departure (evacuate five of six marked
+collectors to the eastern beacon), Hold the Gate (four-minute fortress defense),
+Lost Patrol (rescue and escort two survivors), and The Last Reserves (destroy the
+enemy base with finite starting resources and exhausted deposits). Campaign talents
+apply here, while online battles remain isolated. Selected-unit stats explain
+active protection, slows, burning/poison, healing, standards and weapon research.
+Combat sounds are synthesized locally; no downloaded recordings are used.

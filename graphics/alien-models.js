@@ -93,7 +93,9 @@ export function createAlienModel(name){
    if(melee&&side===1){const blade=mesh(new T.ConeGeometry(.55,5,4),glow,0,-3,-2.7,arm);blade.rotation.x=-Math.PI/2;box(0,-3,-.8,1.2,.8,1,edge,arm);}
   }
   const right=arms[1],left=arms[0];
-  if(melee){const plate=mesh(new T.CylinderGeometry(type==='phaseSentinel'?2.8:2.1,type==='phaseSentinel'?2.8:2.1,.45,6),team,0,-2,-1,left);plate.rotation.x=Math.PI/2;plate.name='alienShield';ring(0,-2,-1.3,type==='phaseSentinel'?2:1.3,glow,left).rotation.x=0;for(const side of [-1,1]){const crest=cone(side*.6,12.2,.1,.35,2.6,edge);crest.rotation.z=side*.2;box(side*2.3,8.6,0,2,.35,2,edge);}const cloak=mesh(new T.ConeGeometry(2.5,6,6,1,true),dark,0,5,1.4);cloak.scale.z=.45;}
+  // Shared blue energy material and layered fittings retain GPU instancing.
+  if(melee){const blue=new T.MeshStandardMaterial({color:0x286eff,emissive:0x145aff,emissiveIntensity:1.7,metalness:.5,roughness:.22});right.traverse(o=>{if(o.isMesh&&o.geometry.type==='ConeGeometry')o.material=blue;});for(const side of [-1,1])for(let i=0;i<3;i++){box(side*2.4,8.3-i*.32,-.1,1.8,.16,1.8,edge);orb(side*1.5,6.9-i*.55,-1.42,.09,.09,.06,edge);}box(0,4.3,-1.1,2.4,.65,.25,dark);for(const side of [-1,1])box(side*1.15,2.5,-.6,.85,.7,.3,team);}
+  if(melee){const plate=mesh(new T.CylinderGeometry(type==='phaseSentinel'?3.3:3.0,type==='phaseSentinel'?3.3:3.0,.45,6),team,0,-2,-1,left);plate.rotation.x=Math.PI/2;plate.name='alienShield';ring(0,-2,-1.3,type==='phaseSentinel'?2.5:2.2,glow,left).rotation.x=0;for(const side of [-1,1]){const crest=cone(side*.6,12.2,.1,.35,2.6,edge);crest.rotation.z=side*.2;box(side*2.3,8.6,0,2,.35,2,edge);}const cloak=mesh(new T.ConeGeometry(2.5,6,6,1,true),dark,0,5,1.4);cloak.scale.z=.45;}
   if(type==='nullDisruptor'){const antenna=box(0,12,1,.2,4,.2,edge);orb(0,14.1,1,.5,.5,.5,glow);}
 
   if(type==='ranged'||sniper){
