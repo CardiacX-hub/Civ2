@@ -127,12 +127,12 @@
  const acquire=nearestCombatTarget;nearestCombatTarget=function(e,range=null){if(e.type!=='rootColossus')return acquire(e,range);return nearbyEnemies(e,range??250).filter(t=>!isFlying(t)).sort((a,b)=>Math.hypot(a.x-e.x,a.y-e.y)-Math.hypot(b.x-e.x,b.y-e.y))[0]||null;};
  const deaths=resolveCombatDeaths;resolveCombatDeaths=function(){
   state.phoenixAshes??=[];
-  for(const e of state.entities)if(e.hp<=0&&!e.deathResolved&&e.type==='air2'&&state.players[e.owner].faction==='human'){burst(e.x,e.y,'smoke',e.owner);state.phoenixAshes.push({id:e.id,owner:e.owner,x:e.x,y:e.y,at:state.time,reviveAt:state.time+2,facing:e.facing});}
+  for(const e of state.entities)if(e.hp<=0&&!e.deathResolved&&e.type==='air2'&&state.players[e.owner].faction==='human'){burst(e.x,e.y,'smoke',e.owner);state.phoenixAshes.push({id:e.id,owner:e.owner,x:e.x,y:e.y,at:state.time,reviveAt:state.time+2,facing:e.facing,...(e.waveEnemy?{waveEnemy:true,wave:e.wave,waveMax:e.max}:{})});}
   deaths();state.ruins=(state.ruins||[]).filter(r=>!(r.type==='air2'&&state.players[r.owner].faction==='human'));
  };
  function tickSpecialists(dt){
   state.phoenixAshes??=[];state.rootBursts??=[];
-  for(const ash of state.phoenixAshes){if(state.entities.some(t=>t.hp>0&&!t.building&&!isFlying(t)&&!t.hiddenInMine&&!sameTeam(t.owner,ash.owner)&&Math.hypot(t.x-ash.x,t.y-ash.y)<=22+t.size)){ash.trampled=true;burst(ash.x,ash.y,'dust',ash.owner,.4);}else if(state.time>=ash.reviveAt){const phoenix=spawnEffectUnit('air2',ash.owner,ash.x,ash.y);phoenix.hp=phoenix.max*.5;phoenix.facing=ash.facing;phoenix.order={kind:'hold'};phoenix.rebornAt=state.time;ash.trampled=true;burst(ash.x,ash.y,'blast',ash.owner,.7);}}
+  for(const ash of state.phoenixAshes){if(state.entities.some(t=>t.hp>0&&!t.building&&!isFlying(t)&&!t.hiddenInMine&&!sameTeam(t.owner,ash.owner)&&Math.hypot(t.x-ash.x,t.y-ash.y)<=22+t.size)){ash.trampled=true;burst(ash.x,ash.y,'dust',ash.owner,.4);}else if(state.time>=ash.reviveAt){const phoenix=spawnEffectUnit('air2',ash.owner,ash.x,ash.y);if(ash.waveEnemy){phoenix.waveEnemy=true;phoenix.wave=ash.wave;phoenix.max=ash.waveMax;}phoenix.hp=phoenix.max*.5;phoenix.facing=ash.facing;phoenix.order={kind:'hold'};phoenix.rebornAt=state.time;ash.trampled=true;burst(ash.x,ash.y,'blast',ash.owner,.7);}}
   state.phoenixAshes=state.phoenixAshes.filter(a=>!a.trampled);
   for(const root of state.rootBursts){if(!root.hit&&state.time>=root.impactAt){root.hit=true;const target=state.entities.find(t=>t.id===root.targetId&&t.hp>0&&!isFlying(t)&&!t.hiddenInMine&&Math.hypot(t.x-root.x,t.y-root.y)<targetRadius(t));if(target){dealAbilityDamage({owner:root.owner},target,root.damage);target.lastDamageType='rootColossus';if(!target.building)target.webSlowUntil=state.time+root.snare;}burst(root.x,root.y,'wood',root.owner,.4);}}
   state.rootBursts=state.rootBursts.filter(r=>state.time-r.impactAt<.65);

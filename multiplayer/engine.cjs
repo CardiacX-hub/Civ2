@@ -1,11 +1,13 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm');
-const source=['game.js','navigation.js','tactics.js','warfront.js','battle-systems.js','war-council.js','strategy.js','astral-rules.js','campaign-codec.js'].map(f=>fs.readFileSync(require.resolve('../'+f),'utf8')).join('\n');
+const source=['game.js','navigation.js','tactics.js','warfront.js','battle-systems.js','war-council.js','strategy.js','astral-rules.js','survival-rules.js','campaign-codec.js'].map(f=>fs.readFileSync(require.resolve('../'+f),'utf8')).join('\n');
 const bridge=`
 globalThis.matchEngine={
  get state(){return state;},
  ping(slot,kind,x,y){return KawStrategy.ping(slot,kind,x,y);},
  get profiler(){return KawBattle.profiler;},
+ initSurvival(){KawSurvival.configure();},
+ survivalPlan(wave,race){return KawSurvival.plan(wave,race);},
  init(members,map,rules){mapChoice=map;start({players:members,rules});state.players.forEach((p,i)=>{p.name=members[i].name;});state.resources.forEach((r,i)=>r.resourceId=i);state.adminResources=false;this.visions=members.map(()=>({seen:new Uint8Array(N*N),visible:new Uint8Array(N*N),enemyBuildings:{}}));},
  perspective(slot,fn){const oldPlayers=state.players,oldSpawns=state.spawns,oldSight=state.networkSight,oldVision={seen:state.seen,visible:state.visible,enemyBuildings:state.enemyBuildings};const swap=n=>n===0?slot:n===slot?0:n;
  if(slot){state.players=oldPlayers.slice();[state.players[0],state.players[slot]]=[state.players[slot],state.players[0]];if(oldSight){state.networkSight=oldSight.slice();[state.networkSight[0],state.networkSight[slot]]=[state.networkSight[slot],state.networkSight[0]];}state.spawns=oldSpawns.slice();[state.spawns[0],state.spawns[slot]]=[state.spawns[slot],state.spawns[0]];for(const e of state.entities){e.owner=swap(e.owner);if(Number.isInteger(e.lastDamageOwner))e.lastDamageOwner=swap(e.lastDamageOwner);if(Number.isInteger(e.burn?.owner))e.burn.owner=swap(e.burn.owner);}for(const w of state.tidalWaves||[])w.owner=swap(w.owner);for(const a of state.phoenixAshes||[])a.owner=swap(a.owner);for(const e of state.effects)e.owner=swap(e.owner);for(const cloud of state.smoke||[])cloud.owner=swap(cloud.owner);for(const p of state.posts||[]){p.owner=swap(p.owner);p.claimant=swap(p.claimant);}}
@@ -47,9 +49,9 @@ globalThis.matchEngine={
 // All simulation globals and exports are lexical to that closure. Client commands
 // remain validated data; no client-supplied code is compiled or evaluated.
 let lexicalSource=source;
-for(const name of ['KawTactics','KawWarfront','KawBattle','KawRules','KawStrategy'])lexicalSource=lexicalSource.replace('globalThis.'+name+'=','globalThis.'+name+'='+name+'=');
+for(const name of ['KawTactics','KawWarfront','KawBattle','KawRules','KawStrategy','KawSurvival'])lexicalSource=lexicalSource.replace('globalThis.'+name+'=','globalThis.'+name+'='+name+'=');
 lexicalSource=lexicalSource.replace('root.KawCampaign=api','root.KawCampaign=KawCampaign=api');
-const factory=vm.compileFunction("'use strict';const globalThis={performance,KawMapsValidator},module=undefined;let KawTactics,KawWarfront,KawBattle,KawRules,KawStrategy,KawCampaign;\n"+lexicalSource+'\nupdateUI=()=>{};toast=message=>{globalThis.lastMatchMessage=message;};resize=()=>{};\n'+bridge+'\nreturn globalThis.matchEngine;',['document','window','requestAnimationFrame','alert','console','Math','performance','KawMapsValidator']);
+const factory=vm.compileFunction("'use strict';const globalThis={performance,KawMapsValidator},module=undefined;let KawTactics,KawWarfront,KawBattle,KawRules,KawStrategy,KawCampaign,KawSurvival;\n"+lexicalSource+'\nupdateUI=()=>{};toast=message=>{globalThis.lastMatchMessage=message;};resize=()=>{};\n'+bridge+'\nreturn globalThis.matchEngine;',['document','window','requestAnimationFrame','alert','console','Math','performance','KawMapsValidator']);
 function createEngine(members,map='highlands',rules){
  const elements={},element=id=>elements[id]??={value:({color:'#53c9eb',c1:'#ef685a',c2:'#b88af0',ai1:'horde',ai2:'off'})[id],style:{},dataset:{},classList:{toggle(){}},clientWidth:1200,clientHeight:650,getContext(){return{};},appendChild(){},getBoundingClientRect(){return{left:0,top:0,width:210,height:150};}};
  const engine=factory({getElementById:element,querySelectorAll(){return[];},createElement(){return element(Math.random());}},{addEventListener(){}},()=>{},()=>{},console,Math,require('node:perf_hooks').performance,require('../world-editor.js'));

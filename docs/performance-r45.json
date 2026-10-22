@@ -1,0 +1,25 @@
+{
+  "scope": "Same saved six-player 1200-unit checkpoint. Server CPU only. Routes have a real-time planning budget, so unit paths can differ as execution speed changes. Shared-machine timings are not desktop GPU frame rates.",
+  "initialUnits": 1200,
+  "baseline": {
+    "ticks": 300,
+    "simulatedSeconds": 15,
+    "meanMs": 29.410633083333323,
+    "p95Ms": 45.47693199999958,
+    "worstMs": 177.39000800000008,
+    "remainingUnits": 1180
+  },
+  "current": {
+    "ticks": 300,
+    "simulatedSeconds": 15,
+    "meanMs": 28.27078161333327,
+    "p95Ms": 40.824570000000676,
+    "worstMs": 164.92535199999838,
+    "remainingUnits": 1180
+  },
+  "changes": [
+    "Spatial index for artillery splash",
+    "Primary hero sources cached per tick"
+  ],
+  "graphicsDetailReduced": false
+}

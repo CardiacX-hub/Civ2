@@ -821,3 +821,25 @@ CHECK_URL=http://localhost:3000 node tools/check-stronghold-machinery.cjs
 ```
 
 Validation: 424 automated tests, desktop/phone menu navigation and launch checks, live WebGL machinery/muzzle checks without browser errors, and 36 side-swapped combat arenas. Identical armies still mutually defeat each other in all 24 controls; all six cross-faction pairings retain the same winner after a side swap.
+
+### Centerhold survival and battle polish (r45)
+
+Choose **Single player → Centerhold · Endless waves → your faction → battlefield**. Your Stronghold starts at the map center with four collectors, four fighters, 600 gold and 600 lumber. The chosen biome becomes an arena with an open center and clear approaches; rivers are removed so they cannot cut off waves or resource deliveries. Prepare for 60 seconds. Enemy factions rotate, attacks arrive from successive compass directions, siege appears from wave 5 and flyers from wave 7. Enemy health rises each wave; research ranks rise to 3. Clear a wave for 90 + 20 × wave gold and lumber and 35 seconds to rebuild. There is no time-limit victory: defend your central Stronghold until it falls.
+
+Waves have at most 72 enemies and cannot overlap: new waves wait for every enemy and pending phoenix revival to finish. Spawn sites are checked against obstacles and units; a fully blocked entrance retries rather than placing enemies inside terrain or awarding a free clear. Later waves keep escalating health after the army-size cap. Wave progress, bonuses, spawn timers and the last 96 events survive the existing save/checkpoint format. Campaign talents do not apply.
+
+**Single player → Faction field drill** teaches scouting and the chosen faction's signature hero power in two playable objectives, with faction strengths and counterplay explained. The full guided tutorial includes these objectives after its existing lessons. No faction balance multipliers are changed by these presentation improvements.
+
+Phones gain a compact **Commands** menu for Move, Attack-move, Attack, Gather, Stop and Hold. Settings offers Standard/Large/Extra-large touch buttons, optional larger health bars, heavy-attack direction cues and incoming boulder warnings. Existing exact research comparisons, visible research fittings, status descriptions, reduced-effects options and faction mechanics remain in place. Selected-unit stats now lead with their battlefield role. Group orders receive a concise acknowledgment, a destination ring and a blocked-route warning when necessary. These overlays do not reveal fogged enemies.
+
+Post-battle results now include a chronological timeline of Stronghold and research upgrades, army milestones, major losses, economy snapshots and survival waves. Histories remain bounded. HTTP diagnostics add the last 360 round-trip/body-download-and-decode samples and known wire-byte counts to the downloadable performance report, separate from CPU timings. Reports contain no request URLs, credentials or game payloads. Network round trips include server work; these measurements are not pure network latency.
+
+Further CPU improvements replace artillery's full-army splash scan with the shared spatial index and reuse the primary-hero list per simulation tick. No mesh, texture or shadow detail is removed. [Recorded comparison](docs/performance-r45.json) on the same 1,200-unit checkpoint: mean tick 29.41 → 28.27 ms, p95 45.48 → 40.82 ms; worst current tick 164.93 ms. This modest shared-cloud improvement does not eliminate spikes or establish target-device FPS.
+
+Validation commands:
+
+    npm test
+    CHECK_URL=http://localhost:3000 node tools/check-menu-flow.cjs
+    CHECK_URL=http://localhost:3000 node tools/check-centerhold.cjs
+
+The survival regressions cover all three arena biomes, central spawn/resource safety, escalation, research limits, clearing/rewards, blocked entrances, endless defeat rules, save restoration, phoenix membership/health after revival and bounded history across 110 waves.
