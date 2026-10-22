@@ -1,0 +1,1455 @@
+{
+  "method": "2000 gold+lumber budget, unspent remainder reported; mixed mirrored spawns, no terrain/research/heroes/economy; deterministic arena outcomes, not player win rates",
+  "results": [
+    {
+      "a": "human",
+      "b": "horde",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 11.7,
+      "hp": [
+        589.97,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "human",
+      "b": "horde",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 11.7,
+      "hp": [
+        589.97,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "human",
+      "b": "covenant",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 11.5,
+      "hp": [
+        507,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "human",
+      "b": "covenant",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 11.5,
+      "hp": [
+        507,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "human",
+      "b": "alien",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 11.5,
+      "hp": [
+        703.1,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "human",
+      "b": "alien",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 11.5,
+      "hp": [
+        703.1,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "horde",
+      "b": "covenant",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 14.1,
+      "hp": [
+        0,
+        111.39999999999998
+      ],
+      "winnerSlot": 1,
+      "winner": "covenant"
+    },
+    {
+      "a": "horde",
+      "b": "covenant",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 14.1,
+      "hp": [
+        0,
+        111.39999999999998
+      ],
+      "winnerSlot": 1,
+      "winner": "covenant"
+    },
+    {
+      "a": "horde",
+      "b": "alien",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 13.5,
+      "hp": [
+        157,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "horde"
+    },
+    {
+      "a": "horde",
+      "b": "alien",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 13.5,
+      "hp": [
+        157,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "horde"
+    },
+    {
+      "a": "covenant",
+      "b": "alien",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 14.5,
+      "hp": [
+        222,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "covenant"
+    },
+    {
+      "a": "covenant",
+      "b": "alien",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 14.5,
+      "hp": [
+        222,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "covenant"
+    }
+  ],
+  "mirroredControls": [
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 22.6,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 22.6,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 45.5,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 45.5,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 16.2,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 16.2,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 21.4,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 21.4,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 38.2,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 38.2,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 15.8,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 15.8,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 17.6,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 17.6,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 41.7,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 41.7,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 15.8,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 15.8,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 21.4,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 21.4,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 41.7,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 41.7,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 14.3,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "rosterB": [
+        "melee",
+        "ranged",
+        "sniper"
+      ],
+      "swap": true,
+      "budgets": [
+        {
+          "spent": 1925,
+          "count": 14
+        },
+        {
+          "spent": 1925,
+          "count": 14
+        }
+      ],
+      "seconds": 14.3,
+      "hp": [
+        0,
+        0
+      ],
+      "winnerSlot": null,
+      "winner": "timeout"
+    }
+  ],
+  "counters": [
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 13.9,
+      "hp": [
+        2440.1700000000005,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "air"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1890,
+          "count": 7
+        }
+      ],
+      "seconds": 11,
+      "hp": [
+        905.0999999999999,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "human",
+      "b": "human",
+      "rosterA": [
+        "siege"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1740,
+          "count": 6
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 12.5,
+      "hp": [
+        394.79999999999984,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "human"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 12.2,
+      "hp": [
+        2306.5199999999995,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "horde"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "air"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1890,
+          "count": 7
+        }
+      ],
+      "seconds": 8.3,
+      "hp": [
+        976.4,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "horde"
+    },
+    {
+      "a": "horde",
+      "b": "horde",
+      "rosterA": [
+        "siege"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1740,
+          "count": 6
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 8.4,
+      "hp": [
+        730.8,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "horde"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 13.8,
+      "hp": [
+        1953.5,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "covenant"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "air"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1890,
+          "count": 7
+        }
+      ],
+      "seconds": 5.3,
+      "hp": [
+        1575,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "covenant"
+    },
+    {
+      "a": "covenant",
+      "b": "covenant",
+      "rosterA": [
+        "siege"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1740,
+          "count": 6
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 7.7,
+      "hp": [
+        774,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "covenant"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "melee"
+      ],
+      "rosterB": [
+        "ranged"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1995,
+          "count": 21
+        },
+        {
+          "spent": 1950,
+          "count": 15
+        }
+      ],
+      "seconds": 13.9,
+      "hp": [
+        2268,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "alien"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "ranged"
+      ],
+      "rosterB": [
+        "air"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1950,
+          "count": 15
+        },
+        {
+          "spent": 1890,
+          "count": 7
+        }
+      ],
+      "seconds": 12.9,
+      "hp": [
+        574,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "alien"
+    },
+    {
+      "a": "alien",
+      "b": "alien",
+      "rosterA": [
+        "siege"
+      ],
+      "rosterB": [
+        "melee"
+      ],
+      "swap": false,
+      "budgets": [
+        {
+          "spent": 1740,
+          "count": 6
+        },
+        {
+          "spent": 1995,
+          "count": 21
+        }
+      ],
+      "seconds": 7.7,
+      "hp": [
+        774,
+        0
+      ],
+      "winnerSlot": 0,
+      "winner": "alien"
+    }
+  ],
+  "siege": [
+    {
+      "race": "human",
+      "threeSiegeVsStrongholdSeconds": 19.3,
+      "remainingHP": -237
+    },
+    {
+      "race": "horde",
+      "threeSiegeVsStrongholdSeconds": 17.6,
+      "remainingHP": -73.50000000000028
+    },
+    {
+      "race": "covenant",
+      "threeSiegeVsStrongholdSeconds": 19.3,
+      "remainingHP": -237
+    },
+    {
+      "race": "alien",
+      "threeSiegeVsStrongholdSeconds": 19.3,
+      "remainingHP": -237
+    }
+  ]
+}

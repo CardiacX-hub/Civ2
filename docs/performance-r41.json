@@ -1,0 +1,190 @@
+{
+  "method": "Seed 41041. Six hard AI slots at 200/200 supply, real highlands resources/traffic. Scripted reinforcements restore near-cap armies every five seconds unless STRESS_REINFORCE=0; live samples reported. HTTP phase freezes the final state and polls all six perspectives at loopback. Graphics uses the original full-supply scene and normal camera culling. Timings are this machine only.",
+  "initialSupply": [
+    {
+      "used": 200,
+      "cap": 200
+    },
+    {
+      "used": 200,
+      "cap": 200
+    },
+    {
+      "used": 200,
+      "cap": 200
+    },
+    {
+      "used": 200,
+      "cap": 200
+    },
+    {
+      "used": 200,
+      "cap": 200
+    },
+    {
+      "used": 200,
+      "cap": 200
+    }
+  ],
+  "simulation": {
+    "simulatedSeconds": 60,
+    "scriptedReinforcements": 622,
+    "samples": 1200,
+    "meanMs": 80.5038158149999,
+    "p95Ms": 172.3765240000066,
+    "worstMs": 460.88391600000614,
+    "activeUnitSamples": [
+      1200,
+      1200,
+      1200,
+      1200,
+      1200,
+      1200,
+      1200,
+      1200,
+      1200,
+      1200,
+      1200,
+      1199,
+      1197,
+      1192,
+      1188,
+      1196,
+      1189,
+      1182,
+      1171,
+      1158,
+      1195,
+      1184,
+      1173,
+      1156,
+      1149,
+      1193,
+      1171,
+      1166,
+      1154,
+      1148,
+      1193,
+      1183,
+      1171,
+      1153,
+      1144,
+      1195,
+      1176,
+      1152,
+      1135,
+      1120,
+      1197,
+      1175,
+      1155,
+      1125,
+      1110,
+      1200,
+      1182,
+      1163,
+      1139,
+      1130,
+      1190,
+      1177,
+      1161,
+      1149,
+      1133,
+      1200,
+      1183,
+      1167,
+      1157,
+      1149
+    ],
+    "profilerEnabled": false,
+    "profileTotalsMs": {}
+  },
+  "multiplayer": {
+    "clients": 6,
+    "pollsPerClient": 10,
+    "snapshotAndJSON": {
+      "samples": 60,
+      "meanMs": 8.395647883333488,
+      "p95Ms": 13.254568999996991,
+      "worstMs": 28.91896200001065
+    },
+    "gzipCPU": {
+      "samples": 60,
+      "meanMs": 5.46607373333342,
+      "p95Ms": 7.198143000001437,
+      "worstMs": 7.997650999997859
+    },
+    "uncompressedBytesPerClient": [
+      6540620,
+      5209480,
+      4653190,
+      4563720,
+      5325530,
+      4349320
+    ],
+    "sixClientRoundtrip": {
+      "samples": 10,
+      "meanMs": 114.49400550000283,
+      "p95Ms": 196.87721500000043,
+      "worstMs": 196.87721500000043
+    },
+    "bodyBytesPerClient": [
+      995680,
+      792760,
+      719600,
+      688640,
+      833080,
+      674050
+    ],
+    "estimatedBytesPerSecondAt150msPoll": [
+      663786.6666666667,
+      528506.6666666667,
+      479733.3333333334,
+      459093.3333333334,
+      555386.6666666667,
+      449366.6666666667
+    ],
+    "compression": "gzip, matching current JSON endpoint; content-length wire bodies, excludes HTTP/TLS headers",
+    "scope": "loopback; production network latency not measured"
+  },
+  "graphics": {
+    "skipped": false,
+    "quality": "balanced",
+    "frames": 8,
+    "renderCPU": {
+      "meanMs": 66.9125000005588,
+      "p95Ms": 93.70000000298023,
+      "worstMs": 93.70000000298023
+    },
+    "presented": {
+      "meanMs": 15599.385714285714,
+      "p95Ms": 23582.5,
+      "worstMs": 23582.5
+    },
+    "renderer": {
+      "generation": 1,
+      "drawCalls": 974,
+      "triangles": 2608286,
+      "models": 231,
+      "hiddenTemplatesInScene": 0,
+      "grassChunks": 256,
+      "visibleGrassChunks": 12,
+      "attachedModels": 231,
+      "unitBatches": {
+        "batches": 656,
+        "instances": 14936
+      },
+      "joinedWalls": 0,
+      "slings": 0,
+      "pending": 0,
+      "loaded": 14,
+      "quality": "balanced",
+      "ruins": 0
+    },
+    "sceneUnits": 1200,
+    "rendererActive": true,
+    "deviceNote": "Cloud Chromium SwiftShader software renderer; not a desktop GPU performance estimate. 1200 scene units, 231 visible models, normal camera culling.",
+    "simulationContext": "Measured in a separate phase from its server simulation. Other validation jobs shared the cloud CPU; these are diagnostic observations, not controlled hardware comparisons."
+  },
+  "browserErrors": [],
+  "measurementCaveat": "Shared cloud CPU and SwiftShader software GPU; timings include scheduling contention. Repeat on target hardware with other workloads closed."
+}

@@ -20,27 +20,29 @@
    if(state.time>=(lf.probeAt||0)){
     lf.probeAt=state.time+.35;const width=Math.min(180,Math.max(28,...members.filter(u=>!isFlying(u)).map(u=>Math.abs(-Math.sin(heading)*u.order.formation.dx+Math.cos(heading)*u.order.formation.dy)+u.size)));
     for(const side of [-1,1])if(!clearWallLine(leader,leader.x+Math.cos(heading)*70-Math.sin(heading)*width*side,leader.y+Math.sin(heading)*70+Math.cos(heading)*width*side)){lf.narrowUntil=state.time+1.4;break;}
-    lf.pace=members.some(u=>u!==leader&&Math.hypot(u.x-leader.x,u.y-leader.y)>260)?.8:1;
+    const lag=Math.max(0,...members.filter(u=>u!==leader&&!isFlying(u)).map(u=>Math.hypot(u.x-(leader.x+u.order.formation.dx),u.y-(leader.y+u.order.formation.dy))));lf.pace=lag>150?.65:lag>85?.85:1;
    }
    f.traveling=false;o.x=f.finalX;o.y=f.finalY;return;
   }
   const moving=['move','attackMove'].includes(leader.order.kind)&&Math.hypot(leader.x-lf.finalX,leader.y-lf.finalY)>40;
   f.traveling=moving;if(!moving){o.x=f.finalX;o.y=f.finalY;return;}
-  const desired={x:leader.x+f.dx,y:leader.y+f.dy};
+  if(f.column&&!(lf.narrowUntil>state.time))f.reformAt??=state.time;const blend=f.reformAt===undefined?1:Math.min(1,(state.time-f.reformAt)/1.4),desired={x:leader.x+f.dx*blend,y:leader.y+f.dy*blend};
   if(isFlying(e)||!(lf.narrowUntil>state.time)&&clearWallLine(e,desired.x,desired.y)){o.x=desired.x;o.y=desired.y;f.column=false;return;}
   const rank=members.rank.get(e.id)||1;
   const spacing=Math.max(28,e.size+leader.size+12),needed=rank*spacing,trail=leader.breadcrumbs||[];let length=0,goal=trail.at(-1);
   for(let i=1;i<trail.length;i++){const a=trail[i-1],b=trail[i],d=Math.hypot(a.x-b.x,a.y-b.y);if(length+d>=needed){const t=(needed-length)/(d||1);goal={x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};length=needed;break;}length+=d;}
   // Let the front leave the bottleneck before feeding the next troop into it.
   if(goal&&length>=needed-2){const side=rank%2?1:-1,offset=e.size+5,split={x:goal.x-Math.sin(heading)*offset*side,y:goal.y+Math.cos(heading)*offset*side};const room=!blockedGroundPoint(split.x,split.y,e.size)&&clearWallLine(e,split.x,split.y);o.x=room?split.x:goal.x;o.y=room?split.y:goal.y;f.split=room;}else{o.x=e.x;o.y=e.y;}
-  f.column=true;
+  f.column=true;f.reformAt=undefined;
  }
+ // Open a short-lived side lane without deleting the squad's destination.
+ function yieldRetreatLane(e,o,f){if(isFlying(e))return;const r=trafficNeighbors(e,90).find(u=>u.owner===e.owner&&u.retreatUntil>state.time&&u.order?.kind==='move');if(r){const d=Math.hypot(r.order.x-r.x,r.order.y-r.y)||1,dx=(r.order.x-r.x)/d,dy=(r.order.y-r.y)/d,lateral=(e.x-r.x)*-dy+(e.y-r.y)*dx,side=lateral<0?-1:1,width=e.size+r.size+20,shift=side*width-lateral,point={x:e.x-dy*shift,y:e.y+dx*shift};if(!blockedGroundPoint(point.x,point.y,e.size)&&clearWallLine(e,point.x,point.y)){f.yieldX=point.x;f.yieldY=point.y;f.yieldUntil=state.time+.45;}}if(f.yieldUntil>state.time){o.x=f.yieldX;o.y=f.yieldY;f.traveling=true;}}
  const formationSpeed=effectiveSpeed;effectiveSpeed=function(e){const f=e.order?.formation,base=formationSpeed(e);return f&&!isFlying(e)&&f.groupSpeed&&['move','attackMove'].includes(e.order.kind)?Math.min(base,f.groupSpeed)*(f.leaderId===e.id?f.pace||1:1):base;};
  function tick(dt){
   const living=new Map(state.entities.filter(e=>e.hp>0).map(e=>[e.id,e])),groups=new Map();
   for(const e of living.values()){const f=e.order?.formation;if(f){const key=e.owner+':'+f.leaderId+':'+f.key;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);}}
   for(const members of groups.values()){const ground=members.filter(e=>!isFlying(e)),speed=ground.length?Math.min(...ground.map(formationSpeed)):0;for(const e of members)e.order.formation.groupSpeed=speed;const leader=members[0]?.order?.formation?.leaderId;members.rank=new Map(members.filter(e=>e.id!==leader&&!isFlying(e)).sort((a,b)=>a.id-b.id).map((e,i)=>[e.id,i+1]));}
-  for(const e of state.entities){if(e.hp<=0||e.building)continue;const o=e.order,f=o?.formation;if(f) followFormation(e,o,f,living,groups);
+  for(const e of state.entities){if(e.hp<=0||e.building)continue;const o=e.order,f=o?.formation;if(f){followFormation(e,o,f,living,groups);yieldRetreatLane(e,o,f);}
    if(!o||!['repairBridge','bombardBridge'].includes(o.kind))continue;const b=state.siegeBridges?.find(b=>b.id===o.bridgeId);if(!b||o.kind==='bombardBridge'&&b.hp<=0||o.kind==='repairBridge'&&b.hp>=b.max){finishTask(e);continue;}const r=state.rivers[b.river],distance=Math.hypot(e.x-b.x,e.y-b.y),range=o.kind==='repairBridge'?r.width/2+45:units.siege.range*(e.deployed?1.25:1);if(distance>range){const sign=e.x<b.x?-1:1;move(e,b.x+sign*(r.width/2+35),b.y,dt);continue;}if(o.kind==='repairBridge'){b.hp=Math.min(b.max,b.hp+25*dt);e.action={kind:'repair',until:state.time+.4,duration:.4};if(b.hp===b.max)changedBridge(b,true);}else if(e.cool<=0&&(!e.deployReady||e.deployReady<=state.time)){b.hp=Math.max(0,b.hp-units.siege.damage*(e.deployed?1.35:1));e.cool=2.4;e.facing=Math.atan2(b.y-e.y,b.x-e.x);e.action={kind:'attack',until:state.time+.55,duration:.55};e.shot={rock:true,x:b.x,y:b.y,fromX:e.x,fromY:e.y,fromHeight:18,toHeight:0,left:.65,duration:.65};burst(b.x,b.y,'blast',e.owner,.65);if(!b.hp){changedBridge(b,false);finishTask(e);}}}
  }
  function personalityAI(schedule=false){for(let owner=0;owner<state.players.length;owner++){const p=state.players[owner];if(p.ai===false||owner===0&&p.ai!==true)continue;if(schedule&&p.personalityAt===p.nextAI)continue;p.personalityAt=p.nextAI;const base=state.entities.find(e=>e.owner===owner&&e.type==='base'&&e.hp>0),army=state.entities.filter(e=>e.owner===owner&&!e.building&&e.type!=='worker'&&!e.convoy&&e.hp>0);if(!base)continue;if(p.personality==='fortifier'&&!(['hard','extreme'].includes(p.difficulty||state.difficulty)&&p.attackWave?.phase==='advance')){for(const e of army.filter(e=>!e.aiEngaged&&e.hp/e.max>.5).slice(0,5))if(!e.order||e.order.kind==='attackMove'&&Math.hypot(e.order.x-base.x,e.order.y-base.y)>650)queueTask(e,{kind:'attackMove',x:base.x+(e.id%3-1)*80,y:base.y+190});const worker=state.entities.find(e=>e.owner===owner&&e.type==='worker'&&!['build','repair'].includes(e.order?.kind));if(worker&&!state.entities.some(e=>e.owner===owner&&e.construction)&&state.entities.filter(e=>e.owner===owner&&e.type==='tower').length<3&&p.gold>500&&p.wood>350){const angle=(state.time%3)*2.1;build('tower',base.x+Math.cos(angle)*230,base.y+Math.sin(angle)*230,owner);}}

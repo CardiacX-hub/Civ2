@@ -9,7 +9,9 @@
     "start": "node server.js",
     "test": "node --test",
     "build:graphics": "esbuild graphics/modern-renderer.js --bundle --format=esm --minify --outfile=graphics/modern-renderer.bundle.js && esbuild graphics/live-battlefield.js --bundle --format=esm --minify --outfile=graphics/live-battlefield.bundle.js",
-    "build:exporter": "esbuild tools/live-export-entry.js --bundle --format=iife --outfile=/tmp/kaw-exporter.js"
+    "build:exporter": "esbuild tools/live-export-entry.js --bundle --format=iife --outfile=/tmp/kaw-exporter.js",
+    "test:stress": "node tools/stress-six-player.cjs",
+    "test:balance": "node tools/balance-armies.cjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.10",
