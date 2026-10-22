@@ -28,6 +28,8 @@ export function createAlienModel(name){
  const cone=(x,y,z,r,h,m=edge,p=root)=>{const o=mesh(coneGeometry,m,x,y,z,p);o.scale.set(r,h,r);return o;};
  function ring(x,y,z,r,m=edge,p=root){let geometry=ringGeometries.get(r);if(!geometry){geometry=new T.TorusGeometry(r,.12,6,24);ringGeometries.set(r,geometry);}const o=mesh(geometry,m,x,y,z,p);o.rotation.x=Math.PI/2;return o;}
  function panel(x,y,z,w,h,d,p=root){const result=box(x,y,z,w,h,d,steel,p);box(x,y+h*.51,z,w*.9,.09,d*.9,edge,p);for(let i=0;i<3;i++)box(x-w*.32+i*w*.32,y+h*.56,z,.06,.04,d*.78,dark,p);return result;}
+ function solar(parent,x,y,z,side){const hinge=new T.Group();hinge.name='astralSolarHinge';hinge.position.set(x,y,z);hinge.userData.side=side;parent.add(hinge);box(side*2,0,0,4,.22,6,edge,hinge);for(let row=0;row<5;row++)for(let col=0;col<3;col++)box(side*(.35+col*1.1),.14,-2.35+row*1.15,1,.08,1.04,dark,hinge);box(0,-.6,0,.35,1.2,.35,steel,hinge);return hinge;}
+ function turret(parent,index,x,y,z){const yaw=new T.Group();yaw.name='astralDefenseYaw'+index;yaw.position.set(x,y,z);parent.add(yaw);const base=mesh(new T.CylinderGeometry(1.5,1.8,.8,12),steel,0,0,0,yaw);box(0,.7,0,2.5,1.1,2.4,team,yaw);const pitch=new T.Group();pitch.name='astralDefensePitch'+index;pitch.position.y=.8;yaw.add(pitch);for(const side of [-1,1]){box(side*.5,0,-2,.35,.35,3.8,edge,pitch);ring(side*.5,0,-3.9,.24,dark,pitch).rotation.x=0;}const muzzle=new T.Group();muzzle.name='defenseMuzzle'+index;muzzle.position.set(0,0,-4);pitch.add(muzzle);return yaw;}
  if(!unit){
   if(type.startsWith('base')){
    const hull=new T.Group();root.add(hull);hull.rotation.z=level===1?-.10:0;hull.position.y=level===1?1:2;
@@ -37,9 +39,9 @@ export function createAlienModel(name){
    for(let i=-4;i<=4;i++){panel(i*2.6,5.7+(level-1)*.6,1,2.45,.45,8,hull);for(const z of [-3,5])orb(i*2.6,6.05+(level-1)*.6,z,.12,.12,.12,edge,hull);}
    for(const side of [-1,1]){const wing=new T.Group();wing.position.set(side*10,2.5,1);wing.rotation.z=level===1?side*.23:0;hull.add(wing);panel(side*3,0,1,8,.8,8,wing);box(side*3,.55,1,5,.15,3,team,wing);const engine=mesh(new T.CylinderGeometry(2,2.4,7,16),dark,side*13,2.7,6,hull);engine.rotation.x=Math.PI/2;const nozzle=mesh(new T.CylinderGeometry(1.4,1.7,.4,16),glow,side*13,2.7,9.7,hull);nozzle.rotation.x=Math.PI/2;for(let i=0;i<5;i++)box(side*13,4.6,3+i,3,.1,.15,edge,hull);}
    if(level===1){for(let i=0;i<5;i++){const p=panel(-12+i*5,.25,11+i%2*2,3,.2,2);if(p)p.rotation.z=.2;}cone(9,6,4,1,4,dark);for(let i=0;i<5;i++){const crack=box(-6+i*2,6.05,2+(i%2),.18,.08,4,dark,hull);crack.rotation.y=.4+i*.2;}for(const x of [-10,-7,8]){const beam=box(x,3,9,.3,3,4,edge);beam.rotation.x=.45;beam.rotation.z=x*.035;}}
-   if(level>=2){for(const x of [-9,9]){box(x,1,0,1.3,2,1.3,dark);box(x,.3,0,4,.6,4,edge);}ring(0,7,0,4,glow);orb(0,7.6,0,2.7,1.7,2.7,team);for(const x of [-6,6])panel(x,6.6,2,3,1,5);}
-   if(level>=3){for(const x of [-15,15]){panel(x,3,-6,6,2,8);box(x,5,-6,4,2,4,team);ring(x,6.5,-6,1.5,glow);box(x,6,-10,.8,.8,6,edge);}box(0,8,5,5,4,4,dark);orb(0,10.5,5,3,.6,3,glow);}
-   if(level>=4){for(const x of [-20,20]){panel(x,3,2,6,2,9);box(x,7,2,2,7,2,edge);orb(x,11,2,2,1,2,glow);}ring(0,12,0,7,glow);cone(0,12.8,0,2,6,edge);}
+   if(level>=2){for(const side of [-1,1])solar(root,side*10,8,-2,side);const dish=new T.Group();dish.name='astralSatelliteDish';dish.position.set(0,10,1);root.add(dish);box(0,-1,0,.5,2,.5,edge,dish);const bowl=mesh(new T.SphereGeometry(1.8,12,6,0,Math.PI*2,0,Math.PI/2),edge,0,0,0,dish);bowl.rotation.x=-.6;box(0,1.1,-.6,.14,1.8,.14,glow,dish);for(const x of [-9,9]){box(x,1,0,1.3,2,1.3,dark);box(x,.3,0,4,.6,4,edge);}ring(0,7,0,4,glow);orb(0,7.6,0,2.7,1.7,2.7,team);for(const x of [-6,6])panel(x,6.6,2,3,1,5);}
+   if(level>=3){for(const x of [-15,15]){panel(x,3,-6,6,2,8);box(x,5,-6,4,2,4,team);ring(x,6.5,-6,1.5,glow);turret(root,x<0?0:1,x,7,-6);}box(0,8,5,5,4,4,dark);orb(0,10.5,5,3,.6,3,glow);}
+   if(level>=4){const orbit=new T.Group();orbit.name='astralSatelliteOrbit';orbit.position.y=16;root.add(orbit);box(9,0,0,1.8,1.2,1.5,steel,orbit);orb(9,.2,-.9,.3,.3,.3,glow,orbit);for(const side of [-1,1])solar(orbit,9+side,0,0,side).scale.setScalar(.35);for(const x of [-20,20]){panel(x,3,2,6,2,9);box(x,7,2,2,7,2,edge);orb(x,11,2,2,1,2,glow);}ring(0,12,0,7,glow);cone(0,12.8,0,2,6,edge);}
   }else if(['wall','gate','gate-open'].includes(type)){box(0,2,0,12,4,2,dark);box(0,4,0,12,.3,2,glow);for(const x of [-5,5])box(x,3,0,1.5,6,3,edge);if(type==='gate-open')root.scale.y=.25;}
   else{
    // Functional architecture: every facility has its own footprint and roofline.
@@ -54,7 +56,7 @@ export function createAlienModel(name){
    else if(type==='foundry'){panel(0,2,0,11,4,9);for(const x of [-3,3]){mesh(new T.CylinderGeometry(1.2,1.8,6,10),edge,x,6,1);ring(x,9,1,1.2,glow);for(let i=0;i<3;i++)box(x,7,1,2.6,.25,.25,dark).rotation.y=i*Math.PI/3;}box(0,3,-4.6,4,3,.3,glow);}
    else if(type==='depot'){const roof=mesh(new T.CylinderGeometry(4,4,10,8,1,false,0,Math.PI),team,0,3,0);roof.rotation.z=Math.PI/2;roof.rotation.y=Math.PI/2;panel(0,.5,0,10,1,8);for(const x of [-3,0,3])panel(x,1.8,-4,2,2,2);}
    else if(type==='goldmine'){mesh(new T.CylinderGeometry(5,6,2,10),dark,0,1,0);for(const x of [-3,3])box(x,4,0,1,6,2,team);box(0,7,0,8,1,3,edge);const drill=cone(0,3,0,1.6,5,edge);drill.rotation.z=Math.PI;ring(0,5,0,2,glow);for(const z of [-3,3])turbine(0,2,z,1.2);}
-   else if(type==='tower'||type==='bastion'){const heavy=type==='bastion';mesh(new T.CylinderGeometry(heavy?5:2.7,heavy?6:3.5,3,8),dark,0,1.5,0);mesh(new T.CylinderGeometry(heavy?3:1.5,heavy?4:2.5,heavy?6:10,6),steel,0,heavy?5:7,0);const h=heavy?9:13;orb(0,h,0,heavy?4:3,1.5,heavy?4:3,team);for(const x of heavy?[-2,2]:[-.8,.8]){box(x,h,-3,.5,.5,6,edge);orb(x,h,-6,.3,.3,.2,glow);}ring(0,h-1,0,heavy?3:2,glow);}
+   else if(type==='tower'||type==='bastion'){const heavy=type==='bastion';mesh(new T.CylinderGeometry(heavy?5:2.7,heavy?6:3.5,3,8),dark,0,1.5,0);mesh(new T.CylinderGeometry(heavy?3:1.5,heavy?4:2.5,heavy?6:10,6),steel,0,heavy?5:7,0);const h=heavy?9:13;turret(root,0,0,h,0).scale.setScalar(heavy?1.4:1);ring(0,h-1,0,heavy?3:2,glow);}
    else{panel(0,1,0,5,2,5);ring(0,2.2,0,2,glow);}
   }
  }else if(type==='scout'){
@@ -137,7 +139,7 @@ export function createAlienModel(name){
 }
 /** Animation touches only authored pivots; no geometry regeneration per frame. */
 export function animateAlien(entry,e,time){
- if(!entry.name.startsWith('alien-')||e.building)return;
+ if(!entry.name.startsWith('alien-'))return;if(e.building){if(!entry.astralMachines){entry.astralMachines=[];entry.model.traverse(o=>{if(/^astral(SolarHinge|SatelliteDish|SatelliteOrbit)$/.test(o.name))entry.astralMachines.push(o);});}for(const o of entry.astralMachines){if(o.name==='astralSolarHinge')o.rotation.z=(o.userData.side||1)*(.12+Math.sin(time*.28+(e.id||0))*.13);else if(o.name==='astralSatelliteDish')o.rotation.y=time*.22;else o.rotation.y=time*.35;}return;}
  if(!entry.alienPivots){entry.alienPivots=[];entry.model.traverse(o=>{if(/^alien(Wing|Tail|Leg|Arm|Tool|Sensor|Mortar|Halo|Rifle|Torso|Thruster)/.test(o.name))entry.alienPivots.push(o);});}
  const walk=e.walkUntil>time,attack=e.action?.until>time,progress=attack?Math.max(0,Math.min(1,1-(e.action.until-time)/e.action.duration)):0,strike=progress<.22?-progress/.22*.3:progress<.4?-.3+(progress-.22)/.18*1.3:1-(progress-.4)/.6;
  for(const o of entry.alienPivots){const side=o.name.includes('-1')?-1:1;

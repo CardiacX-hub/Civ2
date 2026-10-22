@@ -800,3 +800,24 @@ The stress report separates simulation ticks, snapshot/JSON generation, gzip CPU
 [Recorded six-player stress results](docs/performance-r41.json) keep CPU, compressed HTTP traffic and software WebGL measurements separate. This deliberately extreme 1,200-unit workload still exceeds the 50 ms simulation budget in this cloud environment; it is a diagnosed limit, not a claim of smooth maximum-army play. The normal camera rendered 231 models in a scene containing 1,200 units. GPU timings must be repeated on target PC hardware.
 
 Benchmark setup: run `npm start` in one terminal, then the benchmark command in another. Tools default to `http://localhost:3000`; set `CHECK_URL` for another local port. The optional WebGL checks need Chromium and Playwright; the cloud workspace paths are used by default.
+
+### Stronghold machinery, aiming defenses and clearer menus (r42)
+
+The Astral Remnant ark gains animated solar arrays and a tracking satellite dish at level 2, independently aiming twin machine-gun turrets at level 3, and an orbiting relay satellite at level 4. These are physical scene parts, not flat overlays. Level 3 turret damage and reload balance remain unchanged. Defensive buildings track targets while reloading; rooftop weapons turn independently of their foundations, and Dominion tower trolls turn toward their victims. Friendly allied bases are excluded from Stronghold targeting.
+
+The Home Screen now offers Single player, Multiplayer, Library & creative tools, and Settings. Single-player setup proceeds through game mode, faction, opponents and battlefield. Back preserves your choices. Existing campaigns, tutorials, saves, banners and tools remain available on their respective pages.
+
+Performance work removes repeated full-army visibility scans in AI raids, shares spatial queries with defenses and area effects, caches formation membership/ranks, skips retreat-lane searches when nobody is retreating, and freezes local transforms only on rigid mesh fittings. Building damage hooks and water texture references are cached once. Mesh detail, texture resolution, shadow quality and effects budgets are preserved.
+
+[Recorded CPU comparison](docs/performance-r42.json) restores the same six-player, 1,200-unit checkpoint into the previous and current engines for 300 ticks each: mean tick time improved from 43.74 to 29.18 ms; p95 improved from 86.29 to 40.66 ms. The worst current tick still took 158 ms. These shared-cloud CPU measurements demonstrate a reduction in simulation cost, not a guarantee of desktop FPS or the elimination of all spikes. Time-budgeted route planning can produce slightly different paths between runs.
+
+To reproduce with trusted local engines and a generated checkpoint:
+
+```sh
+CHECK_URL=http://localhost:3000 STRESS_CHECKPOINT=/tmp/cap-state.json npm run test:stress
+BASELINE_ENGINE=/path/to/previous/multiplayer/engine.cjs node tools/compare-stress-cpu.cjs /tmp/cap-state.json
+CHECK_URL=http://localhost:3000 node tools/check-menu-flow.cjs
+CHECK_URL=http://localhost:3000 node tools/check-stronghold-machinery.cjs
+```
+
+Validation: 424 automated tests, desktop/phone menu navigation and launch checks, live WebGL machinery/muzzle checks without browser errors, and 36 side-swapped combat arenas. Identical armies still mutually defeat each other in all 24 controls; all six cross-faction pairings retain the same winner after a side swap.

@@ -10,3 +10,11 @@ export function updateStaticTransforms(entries){
   const model=entry.model;if(model&&(old[9]!==model.scale.x||old[10]!==model.scale.y||old[11]!==model.scale.z)){old[9]=model.scale.x;old[10]=model.scale.y;old[11]=model.scale.z;model.updateMatrix();root.matrixWorldNeedsUpdate=true;}
  }
 }
+
+/** Rigid fittings inherit bone motion but their own local transforms never
+ * change. Avoid composing thousands of identical local matrices every frame.
+ * Clip targets and procedural pivots remain live. */
+export function freezeRigidMeshLocals(model,clips=[]){
+ const animated=new Set(clips.flatMap(clip=>clip.tracks.map(track=>track.name.split('.')[0])));
+ model.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh||o.userData.convoyWheel||animated.has(o.name)||/^alien(Torso|Wing|Tail|Sensor|Mortar|Halo|Rifle)/.test(o.name))return;o.updateMatrix();o.matrixAutoUpdate=false;});
+}

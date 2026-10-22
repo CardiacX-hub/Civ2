@@ -1,0 +1,26 @@
+{
+  "scope": "Same saved six-player 1200-unit checkpoint. Server CPU only. Routes have a real-time planning budget, so unit paths can differ as execution speed changes. Shared-machine timings are not desktop GPU frame rates.",
+  "initialUnits": 1200,
+  "baseline": {
+    "ticks": 300,
+    "simulatedSeconds": 15,
+    "meanMs": 43.73790481000004,
+    "p95Ms": 86.29443100000026,
+    "worstMs": 178.63508400000006,
+    "remainingUnits": 1183
+  },
+  "current": {
+    "ticks": 300,
+    "simulatedSeconds": 15,
+    "meanMs": 29.18383390000003,
+    "p95Ms": 40.660907000001316,
+    "worstMs": 158.00138300000071,
+    "remainingUnits": 1182
+  },
+  "validation": {
+    "testsPassed": 424,
+    "desktopAndPhoneMenu": true,
+    "sideSwapArenas": 36,
+    "renderQualityReduced": false
+  }
+}
