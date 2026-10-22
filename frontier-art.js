@@ -9,7 +9,7 @@ for(const name of ['gold','tree','pine','mountain','construction1','construction
 function frontierAppearance(type,race,owner){return unitAppearance(type,race,owner);}
 // Cached original alien renders provide a consistent lightweight fallback.
 const alienPreviews={};
-function drawAlienPreview(name,width,height=width){let img=alienPreviews[name];if(!img){img=new Image();img.src='assets/'+name+'.png?v=astral-expansion-r33';alienPreviews[name]=img;}if(!img.complete||!img.naturalWidth)return true;ctx.drawImage(img,-width/2,-height+15,width,height);return true;}
+function drawAlienPreview(name,width,height=width){let img=alienPreviews[name];if(!img){img=new Image();img.src='assets/'+name+'.png?v=visual-polish-r38';alienPreviews[name]=img;}if(!img.complete||!img.naturalWidth)return true;ctx.drawImage(img,-width/2,-height+15,width,height);return true;}
 function drawFrontierUnit(e,p,horde){
  if(p.faction==='alien'&&e.type!=='pig'){const width=(isFlying(e)?90:70)*unitVisualScale(e);ctx.save();if(e.walkUntil>state.time)ctx.translate(0,Math.sin(state.time*9)*1.2);drawAlienPreview('alien-'+(e.type.startsWith('banner')?'bannerDamage':e.type),width);ctx.restore();return true;}
  if(e.burrowUntil>state.time){ctx.fillStyle='#806842';ctx.beginPath();ctx.ellipse(0,0,28,14,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#bca77a';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,21,9,0,0,Math.PI*2);ctx.stroke();return true;}

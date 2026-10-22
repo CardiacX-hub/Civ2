@@ -725,3 +725,19 @@ enemy base with finite starting resources and exhausted deposits). Campaign tale
 apply here, while online battles remain isolated. Selected-unit stats explain
 active protection, slows, burning/poison, healing, standards and weapon research.
 Combat sounds are synthesized locally; no downloaded recordings are used.
+
+Visual inspection and material polish (r38): the main menu's **Inspect units &
+buildings** opens the live 3D models with faction, asset, animation, zoom and
+quality controls. Preview quality is independent of battle preferences; closing
+stops its animation and releases its renderer resources. Astral Strongholds grow
+their primary hull and command prow across all four tiers. Riftblades carry a
+longer blue emissive blade with a restrained additive halo. Building panels have
+beveled edges, recessed fittings, normal relief and roughness variation.
+
+`graphics/surface-detail.js` adds derivative-filtered metal, bark and masonry
+microdetail while retaining existing textures. Detail fades below pixel size to
+avoid distant shimmer. Ground troops follow gentle ramp slopes and melee clips
+use a windup/strike/recovery timing curve. Static route caches now survive mobile
+unit production and losses; workers stage outside full mines to clear entrances.
+These changes improve the existing models; final realism remains limited by their
+underlying geometry and textures.

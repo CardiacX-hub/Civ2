@@ -9,7 +9,9 @@ function hullSurface(){
  for(let i=0;i<1800;i++){seed=(seed*1664525+1013904223)>>>0;const x=seed%512,y=(seed>>>9)%512,w=4+(seed>>>18)%45;a.fillStyle=i%2?'#ffffff14':'#30405216';a.fillRect(x,y,w,1);}
  for(const y of [8,252,504]){a.fillStyle='#263442';a.fillRect(0,y,512,2);a.fillStyle='#ffffff80';a.fillRect(0,y+2,512,1);n.fillStyle='#8097ed';n.fillRect(0,y,512,2);n.fillStyle='#8069ed';n.fillRect(0,y+2,512,2);}
  for(const x of [12,500])for(const y of [20,240,264,488]){a.fillStyle='#485866';a.beginPath();a.arc(x,y,2,0,Math.PI*2);a.fill();}
- const map=new T.CanvasTexture(color),normalMap=new T.CanvasTexture(normal);map.colorSpace=T.SRGBColorSpace;for(const texture of [map,normalMap])texture.wrapS=texture.wrapT=T.RepeatWrapping;return sharedHullSurface={map,normalMap};
+ const rough=document.createElement('canvas');rough.width=rough.height=512;const q=rough.getContext('2d');q.fillStyle='#a8a8a8';q.fillRect(0,0,512,512);
+ for(let row=0;row<4;row++)for(let col=0;col<4;col++){const x=col*128+4,y=row*128+4;a.strokeStyle='#25343d';a.lineWidth=3;a.strokeRect(x,y,120,120);a.strokeStyle='#edf8ff70';a.lineWidth=1;a.strokeRect(x+2,y+2,116,116);n.strokeStyle='#6898ed';n.lineWidth=2;n.strokeRect(x,y,120,120);q.fillStyle=(row+col)%2?'#999999':'#b6b6b6';q.fillRect(x+3,y+3,114,114);for(const dx of [8,112])for(const dy of [8,112]){a.fillStyle='#29343a';a.fillRect(x+dx-2,y+dy-2,4,4);a.fillStyle='#c9d5dc';a.fillRect(x+dx-1,y+dy-1,2,2);}for(let i=0;i<5;i++){a.fillStyle='#1f2e38aa';a.fillRect(x+30,y+85+i*4,55,2);n.fillStyle='#708ff0';n.fillRect(x+30,y+85+i*4,55,1);}}
+ const map=new T.CanvasTexture(color),normalMap=new T.CanvasTexture(normal),roughnessMap=new T.CanvasTexture(rough);map.colorSpace=T.SRGBColorSpace;for(const texture of [map,normalMap,roughnessMap]){texture.wrapS=texture.wrapT=T.RepeatWrapping;texture.userData.sharedLifetime=true;}return sharedHullSurface={map,normalMap,roughnessMap};
 }
 export function createAlienModel(name){
  const root=new T.Group(),unit=!name.startsWith('alien-world-'),type=name.replace(/^alien-(world-)?/,'').replace(/-(carry|logs|hammer|pick)$/,''),level=Number(type.match(/level(\d)/)?.[1]||1);
@@ -19,7 +21,7 @@ export function createAlienModel(name){
  // Reuse matching beveled parts inside each template: readable plate edges
  // without a new mesh topology or geometry allocation during animation.
  const plates=new Map();
- const box=(x,y,z,w,h,d,m=steel,p=root)=>{const key=w+':'+h+':'+d;let g=plates.get(key);if(!g){if(unit){const b=Math.min(w,h,d)*.12,shape=new T.Shape(),a=w/2-b,c=h/2-b;shape.moveTo(-a,-c);shape.lineTo(a,-c);shape.lineTo(a,c);shape.lineTo(-a,c);shape.closePath();g=new T.ExtrudeGeometry(shape,{depth:d-2*b,bevelEnabled:true,bevelThickness:b,bevelSize:b,bevelSegments:1,steps:1});g.translate(0,0,-d/2+b);}else g=new T.BoxGeometry(w,h,d);plates.set(key,g);}return mesh(g,m,x,y,z,p);};
+ const box=(x,y,z,w,h,d,m=steel,p=root)=>{const key=w+':'+h+':'+d;let g=plates.get(key);if(!g){{const b=Math.min(w,h,d)*.12,shape=new T.Shape(),a=w/2-b,c=h/2-b;shape.moveTo(-a,-c);shape.lineTo(a,-c);shape.lineTo(a,c);shape.lineTo(-a,c);shape.closePath();g=new T.ExtrudeGeometry(shape,{depth:d-2*b,bevelEnabled:true,bevelThickness:b,bevelSize:b,bevelSegments:1,steps:1});g.translate(0,0,-d/2+b);}plates.set(key,g);}return mesh(g,m,x,y,z,p);};
  const orb=(x,y,z,a,b,c,m=steel,p=root)=>{const o=mesh(new T.SphereGeometry(1,16,10),m,x,y,z,p);o.scale.set(a,b,c);return o;};
  const cone=(x,y,z,r,h,m=edge,p=root)=>mesh(new T.ConeGeometry(r,h,8),m,x,y,z,p);
  function ring(x,y,z,r,m=edge,p=root){const o=mesh(new T.TorusGeometry(r,.12,6,24),m,x,y,z,p);o.rotation.x=Math.PI/2;return o;}
@@ -27,9 +29,10 @@ export function createAlienModel(name){
  if(!unit){
   if(type.startsWith('base')){
    const hull=new T.Group();root.add(hull);hull.rotation.z=level===1?-.10:0;hull.position.y=level===1?1:2;
-   const body=mesh(new T.CylinderGeometry(9,11,5,10),steel,0,3,0,hull);body.scale.set(1.25,1,.8);orb(0,6,-5,4,1.5,2.5,dark,hull);orb(0,6.3,-5.5,3.4,1,2,glow,hull);for(const side of [-1,1])for(let i=0;i<6;i++){box(side*(9-i*.35),3,-4+i*1.6,.3,2.5,.7,dark,hull);orb(side*(9.3-i*.35),4,-4+i*1.6,.17,.17,.17,edge,hull);}
+   hull.name='astralShipHull';const body=mesh(new T.CylinderGeometry(9,11,5,12),steel,0,3,0,hull);body.name='astralPrimaryHull';body.scale.set(1.25+(level-1)*.16,1+(level-1)*.16,.8+(level-1)*.4);
+   if(level>=2){const prow=new T.Shape();prow.moveTo(-7,6);prow.lineTo(-8,-8-(level-2)*2);prow.lineTo(0,-20-(level-2)*5);prow.lineTo(8,-8-(level-2)*2);prow.lineTo(7,6);prow.closePath();const g=new T.ExtrudeGeometry(prow,{depth:2.6+(level-2)*.3,bevelEnabled:true,bevelThickness:.35,bevelSize:.4,bevelSegments:1});g.rotateX(Math.PI/2);g.translate(0,2.6+(level-2)*.3,0);const nose=mesh(g,steel,0,3,0,hull);nose.name='astralCommandProw';for(const side of [-1,1]){for(let i=0;i<4+level;i++)box(side*(3+i*.4),6.1,-9-i*1.6,.18,.12,1.1,edge,hull);box(side*2.2,5.7,-14-(level-2)*3,1,.2,5,team,hull);}box(0,6.3,-9,2,.3,8,glow,hull);}orb(0,6,-5,4,1.5,2.5,dark,hull);orb(0,6.3,-5.5,3.4,1,2,glow,hull);for(const side of [-1,1])for(let i=0;i<6;i++){box(side*(9-i*.35),3,-4+i*1.6,.3,2.5,.7,dark,hull);orb(side*(9.3-i*.35),4,-4+i*1.6,.17,.17,.17,edge,hull);}
    // Overlapping hull plates, seams, rivets and conduits survive all upgrades.
-   for(let i=-4;i<=4;i++){panel(i*2.6,5.7,1,2.45,.45,8,hull);for(const z of [-3,5])orb(i*2.6,6.05,z,.12,.12,.12,edge,hull);}
+   for(let i=-4;i<=4;i++){panel(i*2.6,5.7+(level-1)*.6,1,2.45,.45,8,hull);for(const z of [-3,5])orb(i*2.6,6.05+(level-1)*.6,z,.12,.12,.12,edge,hull);}
    for(const side of [-1,1]){const wing=new T.Group();wing.position.set(side*10,2.5,1);wing.rotation.z=level===1?side*.23:0;hull.add(wing);panel(side*3,0,1,8,.8,8,wing);box(side*3,.55,1,5,.15,3,team,wing);const engine=mesh(new T.CylinderGeometry(2,2.4,7,16),dark,side*13,2.7,6,hull);engine.rotation.x=Math.PI/2;const nozzle=mesh(new T.CylinderGeometry(1.4,1.7,.4,16),glow,side*13,2.7,9.7,hull);nozzle.rotation.x=Math.PI/2;for(let i=0;i<5;i++)box(side*13,4.6,3+i,3,.1,.15,edge,hull);}
    if(level===1){for(let i=0;i<5;i++){const p=panel(-12+i*5,.25,11+i%2*2,3,.2,2);if(p)p.rotation.z=.2;}cone(9,6,4,1,4,dark);for(let i=0;i<5;i++){const crack=box(-6+i*2,6.05,2+(i%2),.18,.08,4,dark,hull);crack.rotation.y=.4+i*.2;}for(const x of [-10,-7,8]){const beam=box(x,3,9,.3,3,4,edge);beam.rotation.x=.45;beam.rotation.z=x*.035;}}
    if(level>=2){for(const x of [-9,9]){box(x,1,0,1.3,2,1.3,dark);box(x,.3,0,4,.6,4,edge);}ring(0,7,0,4,glow);orb(0,7.6,0,2.7,1.7,2.7,team);for(const x of [-6,6])panel(x,6.6,2,3,1,5);}
@@ -85,16 +88,17 @@ export function createAlienModel(name){
  }else{
   const melee=type==='melee'||type==='phaseSentinel',sniper=type==='sniper',seer=type==='hero2',warden=type==='hero',sovereign=type==='hero3',binder=type==='trapper'||type==='nullDisruptor',banner=type.startsWith('banner'),broad=melee||warden;
   // Role proportions are authored here, not merely recolors of a shared soldier.
-  const torso=mesh(new T.CylinderGeometry(broad?2.1:1.3,broad?1.6:1,4.2,6),steel,0,6,0);torso.scale.z=.7;
+  const torso=mesh(new T.CylinderGeometry(broad?2.1:1.3,broad?1.6:1,4.2,6),steel,0,6,0);torso.scale.z=.7;torso.name='alienTorso';
   box(0,6.6,-1.15,broad?3.4:1.8,2,.4,team);for(let i=0;i<3;i++)box(0,5.4+i*.65,-1.4,broad?2.5:1.5,.12,.15,edge);
   orb(0,10,0,sniper?1.05:1.3,sniper?1.45:1.8,1.1,melee?edge:skin);orb(0,10.3,-1, sniper?.8:1,.28,.25,glow);for(const side of [-1,1]){orb(side*.75,10.6,-.85,.2,.22,.22,glow);const jaw=cone(side*.65,9,-.7,.22,1.4,edge);jaw.rotation.z=side*.3;}const crest=mesh(new T.CylinderGeometry(.45,.7,2.2,5),dark,0,11.5,.25);crest.rotation.x=-.3;
+  if(melee||warden){for(const side of [-1,1]){const brow=box(side*.57,10.7,-1.05,.95,.22,.35,edge);brow.rotation.z=side*.16;box(side*.82,9.3,-.85,.32,1.0,.35,dark);for(let i=0;i<3;i++)box(side*.4,9.2+i*.22,-1.12,.22,.08,.1,steel);}box(0,9,-1.05,.7,.3,.3,edge);}
   const arms=[];for(const side of [-1,1]){const leg=new T.Group();leg.position.set(side*(broad?1.2:.8),4,0);leg.name='alienLeg'+side;root.add(leg);box(0,-1,0,broad?1.1:.65,3,1,steel,leg);box(0,-3,1,.65,2,.8,edge,leg);box(0,-4,0,1,.5,2,dark,leg);
    const arm=new T.Group();arm.position.set(side*(broad?2.4:1.7),8,0);arm.name='alienArm'+side;root.add(arm);arms.push(arm);const shoulder=mesh(new T.CylinderGeometry(broad?1.35:.7,broad?1:.6,1.2,6),broad?team:edge,0,0,0,arm);shoulder.rotation.z=side*.3;box(0,-1.5,0,.65,3,.8,steel,arm);orb(0,-3,-.3,.55,.6,.55,skin,arm);
-   if(melee&&side===1){const blade=mesh(new T.ConeGeometry(.55,5,4),glow,0,-3,-2.7,arm);blade.rotation.x=-Math.PI/2;box(0,-3,-.8,1.2,.8,1,edge,arm);}
+   if(melee&&side===1){const blade=mesh(new T.ConeGeometry(.75,9.5,4),glow,0,-3,-5.2,arm);blade.rotation.x=-Math.PI/2;for(const [radius,opacity]of [[.9,.12],[1.1,.055]]){const halo=mesh(new T.ConeGeometry(radius,9.8,4),new T.MeshBasicMaterial({color:0x246dff,transparent:true,opacity,depthWrite:false,blending:T.AdditiveBlending}),0,-3,-5.2,arm);halo.rotation.x=-Math.PI/2;halo.name='riftBladeHalo';halo.userData.noShadow=true;halo.castShadow=halo.receiveShadow=false;}box(0,-3,-.8,1.2,.8,1,edge,arm);}
   }
   const right=arms[1],left=arms[0];
   // Shared blue energy material and layered fittings retain GPU instancing.
-  if(melee){const blue=new T.MeshStandardMaterial({color:0x286eff,emissive:0x145aff,emissiveIntensity:1.7,metalness:.5,roughness:.22});right.traverse(o=>{if(o.isMesh&&o.geometry.type==='ConeGeometry')o.material=blue;});for(const side of [-1,1])for(let i=0;i<3;i++){box(side*2.4,8.3-i*.32,-.1,1.8,.16,1.8,edge);orb(side*1.5,6.9-i*.55,-1.42,.09,.09,.06,edge);}box(0,4.3,-1.1,2.4,.65,.25,dark);for(const side of [-1,1])box(side*1.15,2.5,-.6,.85,.7,.3,team);}
+  if(melee){const blue=new T.MeshStandardMaterial({color:0x286eff,emissive:0x145aff,emissiveIntensity:1.7,metalness:.5,roughness:.22});right.traverse(o=>{if(o.isMesh&&o.geometry.type==='ConeGeometry'&&o.name!=='riftBladeHalo'){o.material=blue;o.name='riftEnergyBlade';}});for(const side of [-1,1])for(let i=0;i<3;i++){box(side*2.4,8.3-i*.32,-.1,1.8,.16,1.8,edge);orb(side*1.5,6.9-i*.55,-1.42,.09,.09,.06,edge);}box(0,4.3,-1.1,2.4,.65,.25,dark);for(const side of [-1,1])box(side*1.15,2.5,-.6,.85,.7,.3,team);}
   if(melee){const plate=mesh(new T.CylinderGeometry(type==='phaseSentinel'?3.3:3.0,type==='phaseSentinel'?3.3:3.0,.45,6),team,0,-2,-1,left);plate.rotation.x=Math.PI/2;plate.name='alienShield';ring(0,-2,-1.3,type==='phaseSentinel'?2.5:2.2,glow,left).rotation.x=0;for(const side of [-1,1]){const crest=cone(side*.6,12.2,.1,.35,2.6,edge);crest.rotation.z=side*.2;box(side*2.3,8.6,0,2,.35,2,edge);}const cloak=mesh(new T.ConeGeometry(2.5,6,6,1,true),dark,0,5,1.4);cloak.scale.z=.45;}
   if(type==='nullDisruptor'){const antenna=box(0,12,1,.2,4,.2,edge);orb(0,14.1,1,.5,.5,.5,glow);}
 
@@ -119,26 +123,28 @@ export function createAlienModel(name){
   }else if(banner){box(0,1,-.5,.3,13,.3,edge,right);box(2,5,-.5,4,5,.15,team,right);orb(0,8,-.5,.6,.6,.6,glow,right);panel(0,6,1.5,3,3,1);}
 
  }
+ if(!unit){for(const [mat,label]of [[steel,'astral-hull-alloy'],[edge,'astral-edge-alloy'],[dark,'astral-recess-alloy'],[team,'astral-painted-alloy']]){mat.name=label;mat.userData.structure=true;}if(!['wall','gate','gate-open','trap','barricade'].includes(type)){const bounds=new T.Box3().setFromObject(root),w=bounds.max.x-bounds.min.x,d=bounds.max.z-bounds.min.z;for(const side of [-1,1]){const x=side*w*.32;panel(x,.45,d*.26,Math.max(1,w*.2),.5,Math.max(1,d*.2));for(let i=0;i<5;i++)box(x-.6+i*.3,.8,d*.26,.12,.12,Math.max(1,d*.16),dark);for(const z of [-d*.2,d*.2]){orb(x,1,z,.16,.16,.16,edge);box(x,1.6,z,.12,.8,.12,glow);}}}}
  if(type.startsWith('base')&&level>=2){const expansion=new T.Group();expansion.add(...root.children.slice());expansion.scale.set(1.08,1,1.08);root.add(expansion);}root.name=name;root.userData.alien=true;return root;
 }
 /** Animation touches only authored pivots; no geometry regeneration per frame. */
 export function animateAlien(entry,e,time){
  if(!entry.name.startsWith('alien-')||e.building)return;
- if(!entry.alienPivots){entry.alienPivots=[];entry.model.traverse(o=>{if(/^alien(Wing|Tail|Leg|Arm|Tool|Sensor|Mortar|Halo|Rifle)/.test(o.name))entry.alienPivots.push(o);});}
- const walk=e.walkUntil>time,attack=e.action?.until>time,progress=attack?Math.max(0,Math.min(1,1-(e.action.until-time)/e.action.duration)):0,strike=Math.sin(progress*Math.PI);
+ if(!entry.alienPivots){entry.alienPivots=[];entry.model.traverse(o=>{if(/^alien(Wing|Tail|Leg|Arm|Tool|Sensor|Mortar|Halo|Rifle|Torso)/.test(o.name))entry.alienPivots.push(o);});}
+ const walk=e.walkUntil>time,attack=e.action?.until>time,progress=attack?Math.max(0,Math.min(1,1-(e.action.until-time)/e.action.duration)):0,strike=progress<.22?-progress/.22*.3:progress<.4?-.3+(progress-.22)/.18*1.3:1-(progress-.4)/.6;
  for(const o of entry.alienPivots){const side=o.name.includes('-1')?-1:1;
   if(o.name.startsWith('alienWing'))o.rotation.z=side*Math.sin(time*4)*.28;
   else if(o.name==='alienTail')o.rotation.y=Math.sin(time*2)*.25;
   else if(o.name==='alienSensor')o.rotation.y=time*.8;
   else if(o.name==='alienHalo')o.rotation.y=time*.3;
   else if(o.name==='alienMortar')o.position.z=-1+(attack?Math.sin(progress*Math.PI)*.8:0);
-  else if(o.name==='alienRifle')o.position.z=attack?strike*.25:0;
+  else if(o.name==='alienTorso'){o.rotation.y=attack&&['melee','phaseSentinel'].includes(e.type)?strike*.22:0;o.scale.z=.7*(1+Math.sin(time*1.7+(e.id||0))*.008);}
+  else if(o.name==='alienRifle')o.position.z=attack?Math.sin(progress*Math.PI)*.25:0;
   else if(o.name==='alienTool')o.rotation.x=attack?-strike*.8:0;
   else if(o.name.startsWith('alienLeg'))o.rotation.x=walk?Math.sin(time*9+(o.userData.phase??side*Math.PI*.5))*.4:0;
   else if(o.name.startsWith('alienArm')){
    // Braced rifles, shields and focus hands retain their guard poses at rest.
    const braced=['ranged','sniper'].includes(e.type),caster=['trapper','hero2'].includes(e.type);
-   o.rotation.x=braced?(side<0?.45:0):caster?-.45-(attack?strike*.6:0):attack?-strike*(e.type==='melee'?1.3:.65):walk?Math.sin(time*9-side*Math.PI*.5)*.25:0;
+   o.rotation.x=braced?(side<0?.45:0):caster?-.45-(attack?strike*.6:0):side<0&&['melee','phaseSentinel'].includes(e.type)?-.18:attack?-strike*(e.type==='melee'?1.3:.65):walk?Math.sin(time*9-side*Math.PI*.5)*.25:0;
   }
  }
 }

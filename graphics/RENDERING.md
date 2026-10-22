@@ -177,3 +177,18 @@ commander UI and multiplayer checks validate integration separately.
 Grass patches scatter twelve pointed leaves with 24 triangles per instance. Green maps use dark green tints; Ember Canyon uses tan tints, including its terrain layer. Grass remains instanced in spatial chunks and shares the foliage wind clock. Buildings rotate 30 degrees to present their left corner toward the camera; connected walls and gates keep their world-aligned joins.
 
 `death-motion.js` provides analytical fall and blast trajectories. Lethal artillery strikes record their direction in shared simulation snapshots; corpses reuse the last animated unit rig, flip along a bounded ballistic arc, roll, and settle. Normal deaths tip over without flattening the model. Reduced motion disables launches and flips. Corpse lifetime is 4.2 seconds, the ruin list is bounded at 80, and expired corpse render entries are released immediately.
+
+### Asset polish and inspection
+
+`surface-detail.js` overlays restrained, object-space grain and relief on existing
+PBR textures. Screen derivatives fade subpixel grooves before they shimmer; it
+adds no texture fetches or per-frame mesh allocation. Bark, masonry, metal and
+thin/translucent surfaces use separate rules. Geometry and normal maps remain the
+source of large-scale form; this does not manufacture anatomy from textures.
+
+`model-gallery.js` inspects the actual assets with the same lighting pipeline,
+independent preview quality, orbit/zoom and authored motion. It renders only while
+open and disposes resources when closed. `unit-batches.js` also accepts finished
+rigid buildings: transparent parts and construction still use their normal paths.
+Batched casters use an actual source position for shadow-distance decisions.
+Shared Astral atlas textures retain their source data across preview/match lifetimes.

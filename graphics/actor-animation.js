@@ -2,6 +2,7 @@
  * The simulation owns attack timing; distance owns footfall timing. The mixer
  * advances only fade weights, so it cannot add another step to either clock. */
 import {animationStandard} from './appearance-standards.js';
+export function attackPoseProgress(progress){const p=Math.max(0,Math.min(1,progress));return p<.2?p*.6:p<.38?.12+(p-.2)/.18*.5:.62+(p-.38)/.62*.38;}
 export function animateActor(entry,e,time,x,y,selected=false){
  const phase=e.action?.until>time?'attack':e.walkUntil>time?'walk':'idle';
  const interval=phase==='idle'&&!selected&&!(e.hitUntil>time)?1/30:0;
@@ -19,7 +20,7 @@ export function animateActor(entry,e,time,x,y,selected=false){
  const distance=Math.min(animationStandard.maxPoseDistance,Math.hypot(x-(entry.poseX??x),y-(entry.poseY??y)));
  entry.poseX=x;entry.poseY=y;
  if(phase==='walk')entry.gait=(entry.gait||0)+distance*clip.duration/animationStandard.stride;
- entry.action.time=phase==='attack'?Math.max(0,Math.min(clip.duration,(1-(e.action.until-time)/e.action.duration)*clip.duration)):phase==='walk'?(entry.gait||0)%clip.duration:((time+e.id*.07)%clip.duration);
+ entry.action.time=phase==='attack'?Math.max(0,Math.min(clip.duration,((e.type==='melee'||e.type==='devoured'||e.type==='cavalier'||e.type==='bogbreaker')?attackPoseProgress(1-(e.action.until-time)/e.action.duration):(1-(e.action.until-time)/e.action.duration))*clip.duration)):phase==='walk'?(entry.gait||0)%clip.duration:((time+e.id*.07)%clip.duration);
  entry.mixer.update(Math.max(0,Math.min(.1,time-(entry.blendAt??time))));entry.blendAt=time;
  return true;
 }
