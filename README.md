@@ -770,3 +770,15 @@ Compare on the same device: software WebGL in a cloud container is not a gaming
 GPU benchmark. Grass keeps its full density and detail, using smaller static
 chunks to cull more invisible vertices. Pathfinding/AI spatial lookups and pick
 caches reduce overhead; extreme congestion may still produce occasional spikes.
+
+### Tactical readability update (r40)
+
+Settings now includes larger control text, stronger selection rings, team symbols and independent music/combat/alert volume sliders. Preferences stay on this device. Laser focusing rank 1 turns Astral beams purple; rank 2+ turns them red (existing +10% damage per rank remains).
+
+Signal Stone locations have walkable, destructible rubble cover (300 durability, 20% protection against ordinary ranged attacks; artillery bypasses it). Absorbed fire wears cover down. Elevated defenders receive 10% protection against ordinary ranged fire from below. These bonuses multiply with existing shields. Terrain labels identify both advantages; cover adds no path obstacles. Older saves without cover still load.
+
+Visible mines display your assigned collectors, occupancy out of five, entrance/exit lane markers, waiting positions and blocked-route warnings. Wreckage, broken shield fragments, impact craters and dark scorch patches expire after 18 seconds in a pool capped at 96 marks; offscreen and fogged effects are skipped.
+
+Performance work caches defensive-unit and Rootward queries, avoids evaluating approach points for every tree before choosing the nearest valid one, and keeps traffic updates at 2 Hz. Graphics resolution, mesh detail and textures are unchanged. Run `node tools/profile-battle-scenarios.cjs` against a local server for repeatable CPU timing; `BENCH_RENDER=1` also measures presented frames. Mine congestion can still cause occasional spikes; CPU timings alone do not establish desktop frame rates.
+
+Run `node tools/balance-armies.cjs` for mixed equal-budget faction matchups with reversed spawn sides, counter matchups and three-siege-versus-Stronghold tests. Gold and lumber have equal weight, with unspent budget reported. [Recorded arena results](docs/balance-r40.json) are a diagnostic, not player win rates: mirrored matches expose a strong side/formation bias, so no blanket faction stat changes were made from this sample. Economy, research, player control and campaign bonuses require separate testing. Siege destroyed an undefended baseline Stronghold in roughly 18–20 seconds in this sample.

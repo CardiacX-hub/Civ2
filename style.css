@@ -225,3 +225,6 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 #modelGallery{width:min(1000px,95vw);max-height:95dvh;overflow:auto}#modelGallery canvas{display:block;width:100%;height:min(52vh,500px);min-height:250px;touch-action:none;background:#202a31}#modelGallery .gallery-controls{display:flex;gap:10px;flex-wrap:wrap}#modelGallery label{font-size:12px}#galleryStatus{display:block;padding:8px;font:12px monospace}#galleryDone{display:block;margin-top:8px}
 
 #abilityReadout{display:block;font-size:11px;line-height:1.5;color:#b8e8ef;padding:6px;border-left:2px solid #63bdd4}#abilityReadout[hidden]{display:none}
+/* Readability changes affect controls, not canvas resolution or model quality. */
+body.large-interface #keySettings,body.large-interface #actions button,body.large-interface #buildActions button,body.large-interface #selectionInfo,body.large-interface #selectionStats,body.large-interface #resources{font-size:16px!important;line-height:1.4}
+body.large-interface #keySettings label{min-height:38px}
