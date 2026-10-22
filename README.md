@@ -843,3 +843,18 @@ Validation commands:
     CHECK_URL=http://localhost:3000 node tools/check-centerhold.cjs
 
 The survival regressions cover all three arena biomes, central spawn/resource safety, escalation, research limits, clearing/rewards, blocked entrances, endless defeat rules, save restoration, phoenix membership/health after revival and bounded history across 110 waves.
+
+### Crownwater Atoll (r46)
+
+Choose **Crownwater Atoll** in the battlefield picker for a single-player skirmish or an online lobby. The 4000 × 4000 preset supports two to six players, randomly assigned among six starting islands.
+
+Each home island is surrounded by water and has exactly one land causeway to its own smaller expansion island. That expansion has one additional gold mine and a second causeway into the large central island. The center contains nine mines and a dense coastal forest belt with six clear entrances. Total resources: 21 gold mines, including six home mines and six expansion mines, plus 138 central shoreline trees and additional island groves. Starting resources, unit balance and gathering rates are unchanged. Ground units must follow the island chains; flying units retain their ability to cross water.
+
+All mines retain their existing boulder artwork. Starting collectors face the outlet, with the home mine on their open side so the Stronghold and idle workers do not obstruct the initial mining route. Preset-specific validation checks dry starts, connected ground routes and dry resource footprints. This generated preset uses its own water-topology validator; the custom map editor retains its existing bounded river format.
+
+A 128 × 128 canonical land/water mask supports constant-time water checks through prefix sums. Quadtree merging reduces ocean collision to 864 square obstacles. The live renderer combines water into one mesh with matching tile-edge subdivisions and the existing wave, reflection and lighting effects. Online snapshots send a preset identifier instead of repeatedly serializing more than 80 KB of static water tiles; clients reconstruct the canonical geometry from the shared module. Saves and server checkpoints retain the full terrain.
+
+Validation: all 442 automated tests passed. New cases cover single-outlet home islands, expansion approaches, all six home and expansion gold deliveries, ground movement to the center without crossing water, dry mines/trees, save restoration, protected human/AI lobbies and compact network snapshots. Desktop and phone browser checks pass, including decoding network terrain. The live WebGL scene loads without browser or shader errors.
+
+    CHECK_URL=http://localhost:3000 node tools/check-atoll.cjs
+    CHECK_URL=http://localhost:3000 CHECK_GRAPHICS=1 node tools/check-atoll.cjs

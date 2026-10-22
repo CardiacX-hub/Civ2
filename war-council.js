@@ -32,7 +32,7 @@
   const s=matchStats(e.owner);s.trainedByType??={};s.trainedByType[e.type]=(s.trainedByType[e.type]||0)+1;
  }return e;};
  const deaths=resolveCombatDeaths;resolveCombatDeaths=function(){for(const e of state.entities)if(e.hp<=0&&!e.deathResolved&&!e.building){const s=matchStats(e.owner);s.lostByType??={};s.lostByType[e.type]=(s.lostByType[e.type]||0)+1;}return deaths();};
- const oldStart=start;start=function(options){const result=oldStart(options);if(!state)return result;state.rules=normalize(options?.rules||globalThis.KawSkirmish?.settings||{});state.telemetryActive=true;const validator=globalThis.KawMapsValidator||globalThis.KawMaps;if(validator)state.mapHealth=validator.validate(mapData());
+ const oldStart=start;start=function(options){const result=oldStart(options);if(!state)return result;state.rules=normalize(options?.rules||globalThis.KawSkirmish?.settings||{});state.telemetryActive=true;const validator=globalThis.KawMapsValidator||globalThis.KawMaps;if(validator)state.mapHealth=globalThis.KawAtoll?.active()?globalThis.KawAtoll.validate():validator.validate(mapData());
   for(let i=0;i<state.players.length;i++){const p=state.players[i];p.gold=p.wood=state.rules.resources;p.nextAI=i*.08;matchStats(i).trainedByType={};matchStats(i).lostByType={};}
   if(state.rules.victory==='domination'&&!state.posts?.length){if(globalThis.KawExperience)globalThis.KawExperience.forceObjectives=true;KawTactics.init();if(globalThis.KawExperience)globalThis.KawExperience.forceObjectives=false;}
   return result;
