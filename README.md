@@ -650,7 +650,7 @@ uses the level-one rendering scale so upgrades never shrink the stronghold.
 Clone Foundries train Riftblades, Pulse Troopers, Prism Stalkers, Phase Binders and
 noncombat Survey Skiffs. Graviton Works produce Grav Mortars at Stronghold level 2.
 Flight Nexuses require level 3 and train Shard Interceptors (spacecraft) and
-Voidwing Leviathans (living winged aliens). All use the existing gold/lumber,
+Voidwing Leviathans (heavy twin-engine interceptor spacecraft). All use the existing gold/lumber,
 supply, armor, research, AI, fog and saved-game rules. The three hero choices are
 Star Warden, Rift Seer and Void Sovereign. The models, portraits and faction names
 are original; no external game's assets are included.
@@ -674,3 +674,38 @@ a crown and command staff. Signal Bearers carry a banner without a rifle.
 Survey Skiffs use a rotating sensor dish, Shard Interceptors have swept wings,
 and Grav Mortars walk on six legs with recoiling artillery cradles. These visual
 changes retain existing combat statistics and use cached animation pivots.
+
+### Campaign talents and Astral expansion
+
+The main menu's **Campaign talent tree** offers six role branches with health,
+damage and mobility ranks. Each faction gets three starting points plus one per
+earned Crownfall star. Reset a faction's talents freely before a mission. The
+loadout is copied into the campaign save; mid-mission menu changes do not change
+that save. Only the player's units in single-player campaign missions against
+AI receive bonuses. Skirmishes, enemy AI and multiplayer never receive them;
+the server does not load browser talent code. Selected-unit stats show bonuses.
+
+Both Astral flying attackers are spacecraft: Shard Interceptor and the heavier
+Voidwing Leviathan. Riftblades use the menu Warden's silver armor, crest, energy
+blade and hexagonal shield. Buildings now have function-specific architecture.
+Alien ranged attacks and defenses emit cyan laser beams. New specialists:
+
+- **Aegis Sentinel:** heavy infantry, Stronghold 2, Clone Foundry.
+- **Null Disruptor:** laser infantry with a 25-damage, 2-second EMP stun within
+  170, 18-second cooldown, Stronghold 3, Clone Foundry; visible enemies only.
+- **Nanite Tender:** unarmed support, restores 4 health/s within 130, Stronghold 2,
+  Graviton Works. Multiple tenders do not stack healing; AI tenders follow troops.
+
+Phase Plating and Laser Focusing are researched at the Armament Lab; Restorative
+Nanites at Graviton Works; Interceptor Drives at the Flight Nexus. Higher ranks
+require Stronghold 3. Costs, queues and the same bonuses apply on the server.
+
+The original adaptive score is synthesized once into calm and combat loops and
+crossfades during battles. Existing music, sound and volume settings apply. No
+external music service, licensed recording or music download is required.
+
+Rendering retains full models and textures. Cached batch memberships eliminate
+repeated per-part UUID keys; dirty GPU updates upload the changed matrix span.
+Static landscape matrices update only when transforms change, including falling
+trees and shrink animation. `node tools/profile-render-work.cjs` compares this
+CPU workload with `ae12e61`; it does not measure end-to-end GPU frame rate.

@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm');
-const source=['game.js','navigation.js','tactics.js','warfront.js','battle-systems.js','war-council.js','strategy.js','campaign-codec.js'].map(f=>fs.readFileSync(require.resolve('../'+f),'utf8')).join('\n');
+const source=['game.js','navigation.js','tactics.js','warfront.js','battle-systems.js','war-council.js','strategy.js','astral-rules.js','campaign-codec.js'].map(f=>fs.readFileSync(require.resolve('../'+f),'utf8')).join('\n');
 const bridge=`
 globalThis.matchEngine={
  get state(){return state;},
@@ -25,7 +25,7 @@ globalThis.matchEngine={
  if(c.kind==='deploy'){return KawWarfront.deploy(e)?null:'Select artillery.';}
  if(c.kind==='bridge'){const bridge=state.siegeBridges?.find(b=>b.id===c.bridgeId);if(!bridge||!visible(bridge.x,bridge.y))return 'Choose a visible bridge.';return KawWarfront.bridgeOrder(e,c.bridgeId,!!c.repair)?null:'Choose artillery to bombard or a collector to repair a bridge.';}
  if(c.kind==='train'){const options=troopOptions(e.type,state.players[0].faction);if(!e.building||!options.includes(c.type))return 'Invalid troop for this building.';train(e,c.type);return globalThis.lastMatchMessage||null;}
- if(c.kind==='upgrade'){const options={tower:state.players[0].faction==='horde'?['towerFire']:[],base:['stronghold','bannerDamageAura','bannerHealthAura','bannerHarvestAura'],mill:['lumber','goldMining','capacity'],armory:['meleeTraining','rangedTraining','sniperTraining','devouredTraining','cavalierTraining','beetleTraining','fire'],foundry:['artillery'],forge:state.players[0].faction==='covenant'?['stickyWebs']:[],roost:state.players[0].faction==='covenant'?['waspVenom','skitterSmoke']:state.players[0].faction==='horde'?['dragonFlame']:[]};if(!e.building||typeof c.key!=='string'||!(options[e.type]?.includes(c.key)))return 'Invalid research for this building.';upgrade(e,c.key);return globalThis.lastMatchMessage||null;}
+ if(c.kind==='upgrade'){const options={tower:state.players[0].faction==='horde'?['towerFire']:[],base:['stronghold','bannerDamageAura','bannerHealthAura','bannerHarvestAura'],mill:['lumber','goldMining','capacity'],armory:['meleeTraining','rangedTraining','sniperTraining','devouredTraining','cavalierTraining','beetleTraining','fire'],foundry:['artillery'],forge:state.players[0].faction==='covenant'?['stickyWebs']:[],roost:state.players[0].faction==='covenant'?['waspVenom','skitterSmoke']:state.players[0].faction==='horde'?['dragonFlame']:[]};if(!e.building||typeof c.key!=='string'||!(options[e.type]?.includes(c.key)||globalThis.KawAstral?.validResearch(e,c.key)))return 'Invalid research for this building.';upgrade(e,c.key);return globalThis.lastMatchMessage||null;}
  if(c.kind==='addGate')return convertWallToGate(e)?null:globalThis.lastMatchMessage||'Select your completed wall.';
  if(c.kind==='toggleGate')return toggleGate(e)?null:globalThis.lastMatchMessage||'Select your completed gate.';
  if(c.kind==='cancel'){if(!e.building)return 'Select a building.';return cancelProduction(e.id,String(c.jobId))?null:'This work has already finished or was canceled.';}

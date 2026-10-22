@@ -32,7 +32,7 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=lightingStandard.exposure;
  renderer.info.autoReset=false;renderer.shadowMap.enabled=detail.shadows!=='off';renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  // All passes share one evaluated transform tree per frame.
- const scene=new THREE.Scene();scene.matrixWorldAutoUpdate=false;scene.background=new THREE.Color('#607e89');scene.fog=new THREE.Fog('#607e89',200,500);const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=lightingStandard.environment;room.dispose();pmrem.dispose();
+ const scene=new THREE.Scene();scene.matrixWorldAutoUpdate=false;scene.matrixAutoUpdate=false;scene.background=new THREE.Color('#607e89');scene.fog=new THREE.Fog('#607e89',200,500);const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=lightingStandard.environment;room.dispose();pmrem.dispose();
  const camera=cameraType==='orthographic'?new THREE.OrthographicCamera(-50,50,40,-40,.5,600):new THREE.PerspectiveCamera(42,1,.5,600);camera.position.set(90,100,145);camera.lookAt(0,15,0);
  // Hemisphere light provides restrained fill; the sun remains the dominant source.
  scene.add(new THREE.HemisphereLight(0xc7e3ff,0x4a4333,lightingStandard.fill));

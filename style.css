@@ -217,3 +217,5 @@ main{isolation:isolate}#workQueue{z-index:6;pointer-events:auto}
 
 /* Four original factions fit the existing desktop menu without narrow cards. */
 #menu .setup{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}.alien-art{background:radial-gradient(ellipse at center,#23444c,#080f1e);}.alien-art img{width:100%;height:100%;object-fit:cover;object-position:50% 32%;display:block}.faction[data-faction="alien"]{border-color:#538b9e}#selectedRaceBanner[data-faction="alien"]{border-color:#65d9e5;background:linear-gradient(110deg,#17293c,#233f4a)}
+
+#campaignTalents{width:min(1100px,94vw);max-height:88dvh;overflow:auto;background:#10272c;color:#e4efe8;border:1px solid #65c6cd;padding:22px}#campaignTalents::backdrop{background:#000b}.talent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.talent-grid article{border:1px solid #406873;background:#18343c;padding:10px;margin:12px 0}.talent-grid p{font-size:12px;line-height:1.5}.talent-grid article+article:before{content:'↓';display:block;color:#74dfe9}#campaignTalentMenu{margin:8px;padding:12px;background:#264753;color:#d8f7f4}
