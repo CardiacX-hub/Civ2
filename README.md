@@ -911,3 +911,6 @@ Battle polish r53:
 - Wounded troops using Retreat can withdraw behind healthy covering fighters while those fighters retain their attack orders. Explicit retreat points still take priority. Heavy attacks use restrained anticipation/recoil and damage-weighted hit reactions without delaying orders or changing damage.
 - Role labels and strength/weakness descriptions accompany selected/recruited units. Armory/foundry Preview equipment opens the actual game models with before/after rank toggles and numeric research descriptions. Preview-only material/geometry ownership isolates it from the live battlefield. Cloth, skin and reflective materials share surface standards; upgraded fittings receive the same lighting/shadows as other models.
 - Checks: `npm test`, `node tools/check-menu-actors.cjs`, `node tools/check-polish.cjs`, `node tools/check-transports.cjs`. Browser checks use local Chromium desktop/phone emulation, not physical iPhone hardware.
+
+### White owl cargo transport (r54)
+The Verdant Snowwing Owl replaces the Grove Ark with white layered flight feathers, golden eyes, animated wings and a woven cargo cradle. Six-passenger pickup, individual unloading and fly-and-unload orders are preserved. Wing geometry is merged by material to keep rendering costs bounded.
