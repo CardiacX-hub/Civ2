@@ -1,0 +1,3 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+test('menu fire has an emission interval and dies away instead of staying on',async()=>{const {fireEnvelope}=await import('../graphics/menu-stage.js');assert.equal(fireEnvelope(0),0);assert.equal(fireEnvelope(2),1);assert.equal(fireEnvelope(6),0);assert.equal(fireEnvelope(9),1);});
+test('menu craft translate across the sky with independent lanes and repeatable paths',async()=>{const {flightPosition}=await import('../graphics/menu-stage.js');for(let i=0;i<3;i++){assert.notEqual(flightPosition(1,i).x,flightPosition(3,i).x);assert(flightPosition(40,i).x>=-75&&flightPosition(40,i).x<75);}assert.notEqual(flightPosition(2,0).y,flightPosition(2,1).y);});
