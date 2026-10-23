@@ -3,6 +3,7 @@
  * Existing albedo/normal maps and silhouettes remain intact. */
 export function surfaceKind(material){
  const n=material.name||'';if(material.userData?.previewFloor)return 0;if(material.emissive&&material.emissive.r+material.emissive.g+material.emissive.b>.2)return 0;if(material.transparent&&material.opacity<.9||/leaf|water|cascade|flame|glow|roof/i.test(n))return 0;
+ if(/cloth|fabric|banner|canvas/i.test(n))return 5;
  if(/bark|wood|timber/i.test(n))return 2;
  if(/stone|masonry|rock/i.test(n))return 3;
  if((material.metalness||0)>.4)return 1;
@@ -15,7 +16,7 @@ export function injectSurfaceDetail(shader,kind){
  shader.fragmentShader='varying vec3 detailPosition; varying float detailDamage;\n'+shader.fragmentShader;
  // Object-space coordinates keep scratches attached to moving units. fwidth
  // integrates away subpixel grooves, avoiding extra texture reads and allocations.
- const sample=kind===2?'detailPosition.x*.9+sin(detailPosition.y*.13+detailPosition.z*.4)*.7':kind===1?'detailPosition.y*5.0+sin(detailPosition.x*.7)*.15':kind===3?'detailPosition.x*1.8+detailPosition.z*1.3+sin(detailPosition.y*2.4)*.6':'dot(detailPosition,vec3(2.1,3.7,1.6))';
+ const sample=kind===5?'detailPosition.x*8.0+sin(detailPosition.y*8.0)*.45':kind===2?'detailPosition.x*.9+sin(detailPosition.y*.13+detailPosition.z*.4)*.7':kind===1?'detailPosition.y*5.0+sin(detailPosition.x*.7)*.15':kind===3?'detailPosition.x*1.8+detailPosition.z*1.3+sin(detailPosition.y*2.4)*.6':'dot(detailPosition,vec3(2.1,3.7,1.6))';
  shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
  float detailCoord=${sample};
  float detailAA=1.0-smoothstep(.35,1.5,fwidth(detailCoord));

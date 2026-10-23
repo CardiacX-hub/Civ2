@@ -34,7 +34,7 @@
     for(const b of document.querySelectorAll('#actions button.build-action')) {
       const type=b.dataset.unitType;if(!type||b.querySelector('.unit-role-details'))continue;
       const [role,strong,weak]=KawStrategy.role(type,state.players[0].faction);b.title=role+' · '+strong+' '+weak;
-      const note=make('small',role+' · '+strong,b);note.className='unit-role-details';
+      b.dataset.help=(b.dataset.help||'')+'\nRole: '+role+'\nStrength: '+strong+'\nWeakness: '+weak;const note=make('small',role,b);note.className='unit-role-details';
     }
   };
   // tag recruitment cards at creation without changing their command behavior.

@@ -6,10 +6,14 @@ function material(race,rank){const key=race+rank;if(!materials.has(key)){const c
 export function researchRank(e,p){return Math.min(3,Math.max(0,e.type==='siege'?p.artillery||0:p[e.type+'Training']||0,e.type==='phaseSentinel'?p.phaseArmor||0:0,['ranged','sniper','air','air2','nullDisruptor'].includes(e.type)&&p.faction==='alien'?p.laserFocus||0:0));}
 export function updateResearchEquipment(entry,e,p){
  if(e.building||!entry.unit)return;const rank=researchRank(e,p),key=p.faction+':'+rank;if(entry.researchKey===key)return;entry.researchKey=key;entry.researchParts?.forEach(g=>g.removeFromParent());entry.researchParts=[];entry.batchSources=null;if(!rank)return;
- const h=entry.box.max.y-entry.box.min.y,alien=p.faction==='alien',mat=material(p.faction,rank),bones=[];entry.model.traverse(n=>{if(n.isBone&&n.children.length>=3)bones.push(n);});
+ const h=entry.box.max.y-entry.box.min.y,alien=p.faction==='alien',baseMaterial=material(p.faction,rank),bones=[];let mat=baseMaterial;
+ // Preview and battlefield renderers must not share CSM-bound materials or GPU
+ // disposal events. Preview owns clones; battle instances retain shared fittings.
+ if(entry.previewResearch){entry.previewMaterials??=new Map();const key=p.faction+':'+rank;if(!entry.previewMaterials.has(key))entry.previewMaterials.set(key,baseMaterial.clone());mat=entry.previewMaterials.get(key);entry.previewGeometries??=[box.clone(),tip.clone()];}
+entry.model.traverse(n=>{if(n.isBone&&n.children.length>=3)bones.push(n);});
  const torso=entry.model.getObjectByName('alienTorso')||bones.find(n=>Math.abs(n.position.x)<1&&n.position.y>h*.25&&n.position.y<h*.65)||entry.model;
  function group(parent){const g=new THREE.Group();g.name='researchEquipmentRank'+rank;parent.add(g);entry.researchParts.push(g);return g;}
- function plate(g,x,y,z,w,t,d,spike=false){const m=new THREE.Mesh(spike?tip:box,mat);m.position.set(x,y,z);m.scale.set(w,t,d);m.castShadow=m.receiveShadow=true;g.add(m);return m;}
+ function plate(g,x,y,z,w,t,d,spike=false){const m=new THREE.Mesh(entry.previewResearch?entry.previewGeometries[spike?1:0]:spike?tip:box,mat);m.position.set(x,y,z);m.scale.set(w,t,d);m.castShadow=m.receiveShadow=true;g.add(m);return m;}
  if(p.faction==='covenant'&&['ranged','sniper'].includes(e.type)){const crest=group(entry.model);for(let i=0;i<rank+1;i++)plate(crest,(i-rank/2)*h*.065,entry.box.min.y+h*.28,-h*.08,h*.025,h*(.08+rank*.012),h*.035,true);return;}
  const g=group(torso),dir=alien?-1:1,baseY=torso===entry.model?entry.box.min.y+h*.46:0;
  // Segmented cuirass / living-bark bands / armored siege chassis.

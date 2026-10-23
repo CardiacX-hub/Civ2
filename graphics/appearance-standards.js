@@ -6,7 +6,9 @@ export function surfaceStandard(material){
  if(!material || !Number.isFinite(material.roughness))return material;
  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
  if((material.opacity??1)<.85){material.roughness=clamp(material.roughness,.25,.8);return material;}
- if(/stone|masonry|rock|bark|wood|cloth/i.test(material.name||'')){
+ material.dithering=true;if(Number.isFinite(material.envMapIntensity))material.envMapIntensity=clamp(material.envMapIntensity,.3,1.1);
+ if(/skin|hide|leather/i.test(material.name||'')){material.metalness=0;material.roughness=clamp(material.roughness,.48,.8);}
+ else if(/stone|masonry|rock|bark|wood|cloth/i.test(material.name||'')){
   material.metalness=0;material.roughness=clamp(material.roughness,.78,.98);
  }else if(material.isMeshPhysicalMaterial){
   // Preserve authored water, scale and leaf highlights that reveal curved anatomy.

@@ -21,7 +21,9 @@
     convoy: ['Supply convoy', 'Escort to its marked depot to score.', 'Cannot attack; vulnerable without an escort.']
   };
   function role(type, faction) {
-    if (type === 'ranged' && faction === 'horde') return ['Spear support', '+40% damage against flyers; +25% against cavalry and iron beasts.', 'Needs protection against melee.'];
+    if(type==='transport')return ['Transport','Carries six ground units across water and cliffs.','Unarmed; escort against anti-air troops.'];
+    if(type==='scout'||type==='air'&&faction==='covenant')return ['Scout','Reveals distant enemies and expansions; cannot attack.','Unarmed; avoid enemy ranged units.'];
+    if (type === 'ranged' && faction === 'horde') return ['Anti-air / anti-cavalry', '+40% damage against flyers; +25% against cavalry and iron beasts.', 'Needs protection against melee.'];
     if (type.startsWith('banner')) return ['Aura bearer', 'Supports nearby allies with its selected aura.', 'Only one aura is active; protect the bearer.'];
     if (type.startsWith('hero')) return ['Hero', 'Special abilities and an aura support the army.', 'Focused fire and isolation are dangerous.'];
     if (units[type]?.flying) return ['Flying attacker', 'Crosses cliffs and bypasses ground obstacles.', 'Dominion ranged spears deal extra damage to flyers.'];

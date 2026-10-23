@@ -253,3 +253,5 @@ body.large-interface #keySettings label{min-height:38px}
 .transport-portrait{display:inline-grid;place-items:center;background:linear-gradient(135deg,#536d80,#152635);font-size:24px;color:#bde9f4}
 
 #menu.painted-menu-ready{background-image:url("assets/four-faction-battle.jpg?v=2")}
+.passenger-slots{display:grid;grid-template-columns:repeat(6,38px);gap:3px;align-items:center}.passenger-slots button{width:38px;height:42px;min-width:0;padding:2px}.passenger-slots .unit-picture{width:32px;height:32px}.passenger-slots button:disabled{font-size:9px;opacity:.45}
+@media(pointer:coarse){.passenger-slots{grid-template-columns:repeat(6,44px)}.passenger-slots button{width:44px;height:46px}.passenger-slots .unit-picture{width:38px;height:38px}}

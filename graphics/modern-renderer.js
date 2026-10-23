@@ -58,11 +58,11 @@ export function createPipeline(canvas,{quality='balanced',cinematic=false,camera
  const sharedTextures=new Map(),trackedMaterials=new Set(),emitters=[],casterPosition=new THREE.Vector3();let width=0,height=0,disposed=false;
  function prepareMaterial(material,{sss=0,rim=.12}={}){
   if(!material?.isMeshStandardMaterial||trackedMaterials.has(material))return material;
-  trackedMaterials.add(material);material.addEventListener('dispose',()=>{trackedMaterials.delete(material);csm.shaders.delete(material);});material.userData.visual={sss,rim};
+  trackedMaterials.add(material);const release=()=>{trackedMaterials.delete(material);csm.shaders.delete(material);material.removeEventListener('dispose',release);};material.addEventListener('dispose',release);material.userData.visual={sss,rim};
   // Preserve mortar and roof detail at grazing camera angles with capped filtering.
   for(const map of [material.map,material.normalMap,material.roughnessMap])if(map){const anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),quality==='low'?2:8);if(map.anisotropy!==anisotropy){map.anisotropy=anisotropy;map.needsUpdate=true;}}
   surfaceStandard(material);material.roughness=THREE.MathUtils.clamp(material.roughness,.08,1);
-  csm.setupMaterial(material);const csmCompile=material.onBeforeCompile;
+  material.userData.baseSurfaceCompile??=material.onBeforeCompile;material.onBeforeCompile=material.userData.baseSurfaceCompile;csm.setupMaterial(material);const csmCompile=material.onBeforeCompile;
   material.onBeforeCompile=shader=>{
    csmCompile(shader);injectSurfaceDetail(shader,surfaceKind(material));Object.assign(shader.uniforms,{wetness:weather.wetness,weathering:weather.weathering,rimStrength:weather.rimStrength,sssStrength:{value:sss},assetRim:{value:rim}});
    shader.vertexShader='varying vec3 visualWorld;\n'+shader.vertexShader;
