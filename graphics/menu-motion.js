@@ -1,6 +1,6 @@
 /** Motion and compositing rules for the painted Home Screen. */
 export function wingStroke(t,frequency){const p=((t*frequency)%1+1)%1;return p<.36?(1-Math.cos(Math.PI*p/.36))*.5:(1+Math.cos(Math.PI*(p-.36)/.64))*.5;}
-export function paintingPose(t){const bird=wingStroke(t,.34),dragon=wingStroke(t,.24);return{phoenixLeft:bird*.09,phoenixRight:-bird*.12,dragonLeft:dragon*.065,dragonRight:-dragon*.07,treeBreath:Math.sin(t*1.3)*.0018,treeArm:(Math.sin(t*1.3+.5)-Math.sin(.5))*.006,shipX:-t*.015};}
+export function paintingPose(t){const bird=wingStroke(t,.34),dragon=wingStroke(t,.18);return{phoenixLeft:bird*.09,phoenixRight:-bird*.12,dragonLeft:dragon*.045,dragonRight:-dragon*.05,treeBreath:Math.sin(t*1.3)*.0018,treeArm:(Math.sin(t*1.3+.5)-Math.sin(.5))*.006,shipX:-t*.015};}
 export function layerOrder(name){return({flagship:5,escorts:5,phoenixLeft:20,phoenixRight:21,phoenixBody:22,dragonLeft:30,dragonRight:31,dragonBody:32,fire:33,treeHead:40,treeArm:41,treeFeet:42,treeBody:43})[name];}
 // Texture sampling is upstream (+u,+v); visible transport is outward (-u,-v).
 // At each phase reset the resetting sample has zero contribution.

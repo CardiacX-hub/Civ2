@@ -894,3 +894,5 @@ upstream to produce outward visible flow; staggered crossfades hide phase resets
 and the muzzle pixels remain pinned. Browser regression checks compare head,
 neck and muzzle pixels across multiple poses, verify layer ordering, and check
 that menu rendering pauses outside Home on desktop and phone layouts.
+
+Menu motion r51 keeps source-frame wing edges anchored so the top of the dragon wing cannot rotate into view as a straight cut. A slower dragon stroke and restrained distal membrane flex retain the original painting; gameplay rendering is unchanged. Browser checks sample both wing-frame seams throughout the animation cycle.

@@ -7,8 +7,13 @@ import * as T from 'three';
 import {paintingPose,layerOrder,fireFlow,measureWings} from './menu-motion.js';
 export {paintingPose} from './menu-motion.js';
 const W=1672,H=941;
-const vertex=`varying vec2 paintingUV;uniform vec4 hinge;uniform float wingEnabled;
-void main(){paintingUV=uv;vec3 p=position;float w=wingEnabled*smoothstep(hinge.w,hinge.w*2.0+.1,length(p.xy));float z=hinge.x*w,y=hinge.y*w,x=hinge.z*w;
+const vertex=`varying vec2 paintingUV;uniform vec4 hinge;uniform float wingEnabled;uniform float clock;
+void main(){paintingUV=uv;vec3 p=position;float w=wingEnabled*smoothstep(hinge.w,hinge.w*2.0+.1,length(p.xy));// The painting ends at the frame: never pull its cut edge into the scene.
+float edge=smoothstep(0.0,.065,min(min(uv.x,1.0-uv.x),min(uv.y,1.0-uv.y)));
+w*=edge;
+// Distal membrane follows the main stroke with a small elastic delay.
+float flex=wingEnabled*w*w*edge*.008*(sin(clock*1.13-length(p.xy)*.003)-sin(-length(p.xy)*.003));
+float z=hinge.x*w+flex,y=hinge.y*w,x=hinge.z*w;
 p.xy=mat2(cos(z),sin(z),-sin(z),cos(z))*p.xy;p.xz=mat2(cos(y),-sin(y),sin(y),cos(y))*p.xz;p.yz=mat2(cos(x),sin(x),-sin(x),cos(x))*p.yz;
 gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`;
 const common=`precision highp float;varying vec2 paintingUV;uniform sampler2D painting;uniform sampler2D matte;uniform sampler2D cleanPlate;uniform sampler2D waterMatte;uniform sampler2D wingMatte;uniform vec3 firePhases;uniform float clock;uniform float part;
