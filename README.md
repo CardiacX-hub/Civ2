@@ -884,3 +884,13 @@ models replace the painted characters. Geometry is cropped to each layer to
 reduce transparent overdraw. Rendering stops outside Home or in hidden tabs,
 and reduced motion keeps a still composition. The original image is also the
 loading and WebGL fallback. The source JPEG itself is unchanged.
+
+Menu motion corrections (r50): wing-only anatomical mattes and an explicit
+head/neck exclusion keep the phoenix's face stationary. Complete matte bounds
+prevent wing-panel clipping. Pinned-root meshes flex without detaching at the
+shoulders. Paired wings use a coordinated, faster downstroke
+and slower recovery. Ships render behind both creatures. Fire samples travel
+upstream to produce outward visible flow; staggered crossfades hide phase resets
+and the muzzle pixels remain pinned. Browser regression checks compare head,
+neck and muzzle pixels across multiple poses, verify layer ordering, and check
+that menu rendering pauses outside Home on desktop and phone layouts.
