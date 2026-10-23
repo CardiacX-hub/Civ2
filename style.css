@@ -246,3 +246,8 @@ body.large-interface #keySettings label{min-height:38px}
 @media(pointer:coarse),(max-width:700px){body #game #touchControls button,body #game #quickCommandToggle,body #game #quickCommandWheel button{min-height:calc(44px * var(--touch-size,1));font-size:calc(11px * var(--touch-size,1))}#touchControls button{min-width:0;padding:5px 3px;overflow-wrap:anywhere}#quickCommandToggle{bottom:calc(54px * var(--touch-size,1))}#quickCommandWheel{position:fixed;bottom:14px;max-height:calc(100dvh - 28px);overflow-y:auto;z-index:80}#orderFeedback{bottom:calc(104px * var(--touch-size,1))}}
 /* Map previews stay legible as the preset library grows. */
 #mapMenu .map-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;max-width:1200px}#mapMenu .map-card{min-width:0;width:auto}#mapMenu .map-card h2{overflow-wrap:break-word}
+/* Battle-art animation remains behind every control and never intercepts taps. */
+#menu{position:relative;isolation:isolate}
+#menuAtmosphere{position:absolute;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
+#menu:has(#menuAtmosphere:not([hidden]))::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(8,13,17,.85),rgba(8,13,17,.48) 65%,rgba(8,13,17,.2))}
+.transport-portrait{display:inline-grid;place-items:center;background:linear-gradient(135deg,#536d80,#152635);font-size:24px;color:#bde9f4}

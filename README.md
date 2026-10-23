@@ -858,3 +858,22 @@ Validation: all 442 automated tests passed. New cases cover single-outlet home i
 
     CHECK_URL=http://localhost:3000 node tools/check-atoll.cjs
     CHECK_URL=http://localhost:3000 CHECK_GRAPHICS=1 node tools/check-atoll.cjs
+
+### Crownwater islands and airlifts (r47)
+The first three map choices are Crownwater Atoll (larger home islands), Crownwater
+Landring (an outer land ring connects starts), and Crownwater Shattered Isles
+(separate islands requiring air transport). All support six starting positions
+and the same home/expansion gold and rich central hub.
+
+Every faction can train its own unarmed, six-passenger transport from a level-one
+Stronghold or a Sky Roost: Skybarge, War Zeppelin, Canopy Skywhale, or Astral
+Landing Craft. Move ground troops within 160, select the transport and press
+**Embark nearby**, fly to the destination, then **Disembark**. Workers and artillery
+can embark. Passengers retain their supply cost; blocked passengers stay aboard.
+Transport destruction kills its passengers. Cargo survives save/load and online
+play. Shattered Isles AIs also use transports to raid enemy islands.
+
+The Home Screen uses a single GPU pass to animate the battle illustration's
+wings, water, foliage and fire, with cruising craft. It stops outside Home or in a
+hidden tab and respects the device's reduced-motion preference. The original
+full-resolution image remains the fallback if WebGL is unavailable.
