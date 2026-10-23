@@ -37,7 +37,7 @@
  }
  // Open a short-lived side lane without deleting the squad's destination.
  function yieldRetreatLane(e,o,f){if(isFlying(e))return;const r=trafficNeighbors(e,90).find(u=>u.owner===e.owner&&u.retreatUntil>state.time&&u.order?.kind==='move');if(r){const d=Math.hypot(r.order.x-r.x,r.order.y-r.y)||1,dx=(r.order.x-r.x)/d,dy=(r.order.y-r.y)/d,lateral=(e.x-r.x)*-dy+(e.y-r.y)*dx,side=lateral<0?-1:1,width=e.size+r.size+20,shift=side*width-lateral,point={x:e.x-dy*shift,y:e.y+dx*shift};if(!blockedGroundPoint(point.x,point.y,e.size)&&clearWallLine(e,point.x,point.y)){f.yieldX=point.x;f.yieldY=point.y;f.yieldUntil=state.time+.45;}}if(f.yieldUntil>state.time){o.x=f.yieldX;o.y=f.yieldY;f.traveling=true;}}
- const formationSpeed=effectiveSpeed;effectiveSpeed=function(e){const f=e.order?.formation,base=formationSpeed(e);return f&&!isFlying(e)&&f.groupSpeed&&['move','attackMove'].includes(e.order.kind)?Math.min(base,f.groupSpeed)*(f.leaderId===e.id?f.pace||1:1):base;};
+ const formationSpeed=effectiveSpeed;effectiveSpeed=function(e){const f=e.order?.formation,base=formationSpeed(e);return f&&!isFlying(e)&&f.groupSpeed&&e.order.kind==='move'?Math.min(base,f.groupSpeed)*(f.leaderId===e.id?f.pace||1:1):base;};
  function tick(dt){
   if(rankSession!==state){rankSession=state;formationRanks.clear();}const living=new Map(state.entities.filter(e=>e.hp>0).map(e=>[e.id,e])),groups=new Map(),retreatOwners=new Set();
   for(const e of living.values()){if(e.retreatUntil>state.time&&e.order?.kind==='move')retreatOwners.add(e.owner);const f=e.order?.formation;if(f){const key=e.owner+':'+f.leaderId+':'+f.key;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);}}

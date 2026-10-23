@@ -197,8 +197,9 @@ function combatApproachPoint(e,target){
 }
 function clampCam(){cam.x=Math.max(0,Math.min(SIZE-viewport.width,cam.x));cam.y=Math.max(0,Math.min(SIZE-viewport.height,cam.y));}
 function move(e,x,y,dt,arrival=3){
- // A deferred route is waiting for the shared planning budget, not physically stuck.
- if(e.route?.points?.deferred&&e.route.version===state.wallVersion&&Math.hypot(e.route.x-x,e.route.y-y)<=24&&(e.route.retryAt||0)>state.time)return Math.hypot(x-e.x,y-e.y);
+ // Empty routes wait briefly for planning budget or an unreachable-route retry;
+ // useful partial corridors continue immediately below. Never spin A* per tick.
+ if(e.route?.points&&!e.route.points.length&&e.route.version===state.wallVersion&&Math.hypot(e.route.x-x,e.route.y-y)<=24&&(e.route.retryAt||0)>state.time)return Math.hypot(x-e.x,y-e.y);
  // A latched detour gives congested troops time to clear their neighbor.
  if(e.navDetour&&(Math.hypot(x-e.x,y-e.y)<=arrival||e.navDetour.until<state.time||Math.hypot(e.navDetour.gx-x,e.navDetour.gy-y)>24||Math.hypot(e.x-e.navDetour.x,e.y-e.navDetour.y)<8))e.navDetour=null;
  if(dt>0&&!isFlying(e)&&Math.hypot(x-e.x,y-e.y)>Math.max(12,arrival)){
@@ -216,16 +217,31 @@ function move(e,x,y,dt,arrival=3){
 
  x=Math.max(10,Math.min(SIZE-10,x));y=Math.max(10,Math.min(SIZE-10,y));const distance=Math.hypot(x-e.x,y-e.y);if(distance<=arrival)return e.navDetour?Math.max(finalDistance,arrival+1):distance;
  let goal={x,y};if(e.route?.points?.deferred)e.route=null;
+ // Rejoin a clear destination promptly instead of following an obsolete bend.
+ if(e.route?.points?.length&&(e.route.directProbeAt||0)<=state.time){e.route.directProbeAt=state.time+.2;if(clearWallLine(e,x,y))e.route=null;}
  const routed=e.route&&e.route.version===state.wallVersion&&Math.hypot(e.route.x-x,e.route.y-y)<=24&&e.route.points.length&&distance>arrival;
  if(!isFlying(e)&&(routed||!clearWallLine(e,x,y))){
   if(!e.route||e.route.version!==state.wallVersion||Math.hypot(e.route.x-x,e.route.y-y)>24){e.route={x,y,version:state.wallVersion,time:state.time,points:wallRoute(e,x,y)};e.route.endpoint=e.route.points.at(-1);}
   while(e.route.points.length&&Math.hypot(e.route.points[0].x-e.x,e.route.points[0].y-e.y)<Math.max(12,e.size+10)&&(e.route.points.length===1||clearWallLine(e,e.route.points[1].x,e.route.points[1].y)))e.route.points.shift();
-  if(!e.route.points.length){if(e.route.points.deferred){e.route.retryAt=state.time+.10+(e.id%3)*.025;e.navWatch={x:e.x,y:e.y,gx:x,gy:y,at:state.time};return distance;}if(blockedGroundPoint(x,y,e.size)&&e.route.endpoint&&Math.hypot(e.x-e.route.endpoint.x,e.y-e.route.endpoint.y)<Math.max(12,e.size+10))return 0;if(state.time-e.route.time>.8){e.navStatus='No clear ground route';e.route=null;}return distance;}goal=e.route.points[0];
+  // Visibility look-ahead cuts grid corners without cutting through geometry.
+  // Bound both the scan length and its frequency for large armies.
+  if(e.route.points.length>1&&(e.route.lookAt||0)<=state.time){e.route.lookAt=state.time+.15;for(let i=Math.min(6,e.route.points.length-1);i>0;i--)if(clearWallLine(e,e.route.points[i].x,e.route.points[i].y)){e.route.points.splice(0,i);break;}}
+  if(!e.route.points.length){if(e.route.points.deferred){e.route.retryAt=state.time+.10+(e.id%3)*.025;e.navWatch={x:e.x,y:e.y,gx:x,gy:y,at:state.time};return distance;}if(blockedGroundPoint(x,y,e.size)&&e.route.endpoint&&Math.hypot(e.x-e.route.endpoint.x,e.y-e.route.endpoint.y)<Math.max(12,e.size+10))return 0;// A bounded A* search may return a useful partial corridor. Continue the
+   // search from its endpoint immediately; it is not a reason to idle .8s.
+   if(e.route.endpoint){const next=wallRoute(e,x,y);if(next.length){e.route={x,y,version:state.wallVersion,time:state.time,points:next,endpoint:next.at(-1)};goal=next[0];}else{e.route.points=next;e.route.retryAt=state.time+.12;return distance;}}
+   else{if(state.time-e.route.time>.8){e.navStatus='No clear ground route';e.route=null;}return distance;}}goal=e.route.points[0];
  }else e.route=null;
  const d=Math.hypot(goal.x-e.x,goal.y-e.y),step=Math.min(effectiveSpeed(e)*dt,d);if(d<=0)return distance;
  const steer=d>e.size+15?avoidUnitTraffic(e,(goal.x-e.x)/d,(goal.y-e.y)/d,step):{x:(goal.x-e.x)/d,y:(goal.y-e.y)/d};e.facing=Math.atan2(steer.y,steer.x);const nx=Math.max(10,Math.min(SIZE-10,e.x+steer.x*step)),ny=Math.max(10,Math.min(SIZE-10,e.y+steer.y*step));
- if(!isFlying(e)&&!clearWallLine(e,nx,ny)&&clearWallLine(e,e.x+(goal.x-e.x)/d*step,e.y+(goal.y-e.y)/d*step)){e.facing=Math.atan2(goal.y-e.y,goal.x-e.x);e.x+=(goal.x-e.x)/d*step;e.y+=(goal.y-e.y)/d*step;e.walkUntil=state.time+.12;return distance;}
- if(isFlying(e)||clearWallLine(e,nx,ny)){if(e.type==='pig'&&(!e.rainbow?.length||state.time-e.rainbow[e.rainbow.length-1].time>=.035)){e.rainbow??=[];e.rainbow.push({x:e.x,y:e.y-renderAltitude(e)-18,time:state.time});if(e.rainbow.length>48)e.rainbow.shift();}e.walkUntil=state.time+.12;e.x=nx;e.y=ny;}else e.route=null;
+ if(!isFlying(e)&&!clearWallLine(e,nx,ny)&&clearWallLine(e,e.x+(goal.x-e.x)/d*step,e.y+(goal.y-e.y)/d*step)){e.facing=Math.atan2(goal.y-e.y,goal.x-e.x);e.x+=(goal.x-e.x)/d*step;e.y+=(goal.y-e.y)/d*step;e.walkUntil=state.time+.12;if(e.action?.kind==='attack')e.action=null;return distance;}
+ if(isFlying(e)||clearWallLine(e,nx,ny)){if(e.type==='pig'&&(!e.rainbow?.length||state.time-e.rainbow[e.rainbow.length-1].time>=.035)){e.rainbow??=[];e.rainbow.push({x:e.x,y:e.y-renderAltitude(e)-18,time:state.time});if(e.rainbow.length>48)e.rainbow.shift();}e.walkUntil=state.time+.12;if(e.action?.kind==='attack')e.action=null;e.x=nx;e.y=ny;
+ }else{
+  // Keep moving tangentially around a corner rather than stopping to discard
+  // and rebuild the route every tick. Test the swept segment, never teleport.
+  const heading=Math.atan2(goal.y-e.y,goal.x-e.x);let slide=null,best=Infinity;
+  for(const angle of [-.3,.3,-.6,.6,-.95,.95]){const sx=e.x+Math.cos(heading+angle)*step,sy=e.y+Math.sin(heading+angle)*step;if(sx<10||sy<10||sx>SIZE-10||sy>SIZE-10||!clearWallLine(e,sx,sy))continue;const score=Math.hypot(goal.x-sx,goal.y-sy);if(score<best-1e-6||Math.abs(score-best)<1e-6&&sy<(slide?.y??Infinity)){slide={x:sx,y:sy};best=score;}}
+  if(slide){e.facing=Math.atan2(slide.y-e.y,slide.x-e.x);e.x=slide.x;e.y=slide.y;e.walkUntil=state.time+.12;if(e.action?.kind==='attack')e.action=null;}else e.route=null;
+ }
  return e.navDetour?Math.max(finalDistance,arrival+1):distance;
 }
 

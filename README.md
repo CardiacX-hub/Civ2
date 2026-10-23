@@ -917,3 +917,6 @@ The Verdant Snowwing Owl replaces the Grove Ark with white layered flight feathe
 
 ### Menu creature and waterfall motion (r55)
 Phoenix wing roots now sit lower and farther apart at the shoulders. Tree cutouts share one continuous vertex deformation for chest breathing, crown sway and arm movement while keeping roots planted. Water masking retains thin cascade detail and adds downward foam flow while excluding rigid bridges and stone. Desktop and phone checks sample rendered water, tree, head and bridge pixels across multiple animation phases.
+
+### Continuous movement and attack approach (r56)
+Ground routes use bounded visibility look-ahead and rejoin direct paths when clear. Exhausted partial corridors extend immediately; unreachable and budget-deferred routes retain a retry delay. Short swept tangent moves help units around static corners without crossing obstacles. Attack-move uses each unit's own speed while normal move formations still pace slower members. Movement clears stale stationary attack poses, preserving slow, stun and terrain restrictions.
