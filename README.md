@@ -896,3 +896,10 @@ neck and muzzle pixels across multiple poses, verify layer ordering, and check
 that menu rendering pauses outside Home on desktop and phone layouts.
 
 Menu motion r51 keeps source-frame wing edges anchored so the top of the dragon wing cannot rotate into view as a straight cut. A slower dragon stroke and restrained distal membrane flex retain the original painting; gameplay rendering is unchanged. Browser checks sample both wing-frame seams throughout the animation cycle.
+
+Menu and transport update r52:
+- Full, Reduced and Still menu motion are saved under Settings. Reduced motion preference is respected, and all animation pauses off Home. Complete wing sprites and transparent foreground cutouts are separate from the scenery; character proportions stay fixed when the layout rearranges them for portrait screens. A bounded GPU pool adds outward embers/smoke and local heat shimmer.
+- Dawnward Skybarge is a larger hot-air balloon; Dominion War Zeppelin is larger with armor bands; Verdant Grove Ark uses living roots, vein-ribbed leaf sails and crystal pods. Static details and sail details are merged by material to limit draw calls; original procedural grain is shared.
+- Pick up nearby units recruits up to six ground units within 420, which approach and board automatically within 160. Selecting troops and ordering them onto a friendly transport also works (right-click on PC, tap in Order mode on touch). Stop or a new move order cancels boarding. Cargo remains authoritative online and survives checkpoints.
+- Detailed-renderer startup uses a loading screen rather than temporarily displaying Classic graphics. Single-player simulation waits while that screen is active. Cargo indexing, cached wall neighbors and discovered-grass checks avoid repeated scans without reducing geometry or texture resolution.
+- Validation: `npm test`, `node tools/check-menu-actors.cjs`, `node tools/check-transports.cjs`, and `node tools/check-graphics-startup.cjs` (Chromium desktop/mobile emulation; local server port 3100 or CHECK_URL).
