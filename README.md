@@ -920,3 +920,8 @@ Phoenix wing roots now sit lower and farther apart at the shoulders. Tree cutout
 
 ### Continuous movement and attack approach (r56)
 Ground routes use bounded visibility look-ahead and rejoin direct paths when clear. Exhausted partial corridors extend immediately; unreachable and budget-deferred routes retain a retry delay. Short swept tangent moves help units around static corners without crossing obstacles. Attack-move uses each unit's own speed while normal move formations still pace slower members. Movement clears stale stationary attack poses, preserving slow, stun and terrain restrictions.
+
+### Battle performance (r57)
+Target acquisition queries hostile faction buckets instead of repeatedly scanning friendly formations. Collision-avoidance buckets separate ground and flying units. Single-player now runs bounded 20 Hz simulation updates while rendering and animation interpolation continue at the display rate; pause, loading and new matches reset pending simulation time. Geometry, textures, shadows and effects retain their current settings.
+
+In the seeded six-player, 1,200-unit, 10-second CPU stress sample, mean simulation time changed from 34.0 to 30.2 ms and p95 from 46.0 to 34.8 ms on the development machine. These are instrumented simulation timings, not GPU frame rates or a guarantee for every device. `node tools/check-simulation-clock.cjs` verifies browser timing and pause/resume; `node tools/check-graphics-startup.cjs` verifies saved graphics startup.

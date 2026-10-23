@@ -1,0 +1,8 @@
+'use strict';
+const assert=require('node:assert/strict'),{chromium}=require('/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+(async()=>{const b=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox','--enable-unsafe-swiftshader']});try{const p=await b.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(process.env.CHECK_URL||'http://localhost:3100');await p.waitForFunction(()=>window.KawBattlefield&&window.KawFixedClock);const result=await p.evaluate(()=>{
+ const original=frame;frame=()=>{};requestAnimationFrame=()=>{};KawBattlefield.setEnabled(false);start({players:[{name:'A',faction:'human',color:'#53c9eb',ai:false},{name:'B',faction:'horde',color:'#ef685a',ai:false}]});state.count=0;state.ai=999;paused=false;render=()=>{};KawVisual.present=()=>{};KawExperience.frame=()=>{};let updates=0;const step=tick;tick=dt=>{updates++;step(dt);};last=1000;const before=state.time;
+ for(let i=1;i<=60;i++)original(1000+i*1000/60);const elapsed=state.time-before,count=updates;
+ paused=true;for(let i=61;i<=120;i++)original(1000+i*1000/60);const pausedUpdates=updates-count,remainder=KawLocalClock.remainder;
+ paused=false;original(1000+121*1000/60);return{count,elapsed,pausedUpdates,remainder,resumeUpdates:updates-count};
+ });assert.equal(result.count,20);assert(Math.abs(result.elapsed-1)<1e-8);assert.equal(result.pausedUpdates,0);assert.equal(result.remainder,0);assert.equal(result.resumeUpdates,0);assert.deepEqual(errors,[]);console.log({...result,errors});}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
