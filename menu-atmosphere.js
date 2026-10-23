@@ -1,2 +1,2 @@
 /* The bundled renderer installs articulated layers of the original painting. */
-window.KawMenuAtmosphereVersion='anatomical-wings-r53';
+window.KawMenuAtmosphereVersion='attached-wings-r55';

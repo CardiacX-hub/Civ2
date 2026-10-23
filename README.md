@@ -914,3 +914,6 @@ Battle polish r53:
 
 ### White owl cargo transport (r54)
 The Verdant Snowwing Owl replaces the Grove Ark with white layered flight feathers, golden eyes, animated wings and a woven cargo cradle. Six-passenger pickup, individual unloading and fly-and-unload orders are preserved. Wing geometry is merged by material to keep rendering costs bounded.
+
+### Menu creature and waterfall motion (r55)
+Phoenix wing roots now sit lower and farther apart at the shoulders. Tree cutouts share one continuous vertex deformation for chest breathing, crown sway and arm movement while keeping roots planted. Water masking retains thin cascade detail and adds downward foam flow while excluding rigid bridges and stone. Desktop and phone checks sample rendered water, tree, head and bridge pixels across multiple animation phases.
