@@ -873,10 +873,14 @@ can embark. Passengers retain their supply cost; blocked passengers stay aboard.
 Transport destruction kills its passengers. Cargo survives save/load and online
 play. Shattered Isles AIs also use transports to raid enemy islands.
 
-The Home Screen uses independent 3D phoenix, dragon, treant and spacecraft models
-over a scenery-only plate (r48). Skeleton clips flap wings, including articulated
-dragon elbows and tips. A mouth socket emits a bounded fire-particle stream;
-spacecraft cross the sky with blue thrusters. The treant keeps its feet planted
-while its torso, head and arms move. No picture stretching or image UV warping is
-used. Rendering stops off Home and in hidden tabs; reduced motion shows a still
-pose. A static image remains available during loading or if WebGL is unavailable.
+The Home Screen restores the original four-faction painting (r49). Character
+silhouette mattes select the original full-resolution pixels; separate hinged
+layers animate phoenix/dragon wings, the planted treant and flying spacecraft.
+The background is sampled unchanged outside the vacated silhouettes. A clean
+plate fills the newly exposed areas; those hidden surfaces are necessarily
+reconstructed. A separate water matte confines flowing texture animation to
+rivers and waterfalls, keeping rocks and bridges stationary. No low-detail game
+models replace the painted characters. Geometry is cropped to each layer to
+reduce transparent overdraw. Rendering stops outside Home or in hidden tabs,
+and reduced motion keeps a still composition. The original image is also the
+loading and WebGL fallback. The source JPEG itself is unchanged.

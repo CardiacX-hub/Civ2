@@ -1,2 +1,2 @@
-/* The bundled 3D renderer installs the Home Screen character stage. */
-window.KawMenuAtmosphereVersion='rigged-characters-r48';
+/* The bundled renderer installs articulated layers of the original painting. */
+window.KawMenuAtmosphereVersion='painted-layers-r49';

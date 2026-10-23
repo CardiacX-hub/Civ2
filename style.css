@@ -252,4 +252,4 @@ body.large-interface #keySettings label{min-height:38px}
 #menu:has(#menuAtmosphere:not([hidden]))::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(8,13,17,.85),rgba(8,13,17,.48) 65%,rgba(8,13,17,.2))}
 .transport-portrait{display:inline-grid;place-items:center;background:linear-gradient(135deg,#536d80,#152635);font-size:24px;color:#bde9f4}
 
-#menu.rigged-menu-ready{background-image:linear-gradient(90deg,rgba(8,13,17,.75),rgba(8,13,17,.15)),url("assets/menu-battle-scenery.jpg?v=r48")}
+#menu.painted-menu-ready{background-image:url("assets/four-faction-battle.jpg?v=2")}
